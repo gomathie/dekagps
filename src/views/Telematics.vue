@@ -5,14 +5,14 @@
 import CTA from '../components/CTA.vue';
 
 const features = [
-  { icon: '📍', title: 'Live GPS Tracking', desc: "Monitor every vehicle's real-time location." },
-  { icon: '🛠️', title: 'Vehicle Diagnostics', desc: 'Get instant alerts for engine faults, maintenance needs, and fuel levels.' },
-  { icon: '🧭', title: 'Driver Behavior Monitoring', desc: 'Track speed, harsh braking, acceleration, and idling.' },
-  { icon: '⛽', title: 'Fuel Monitoring', desc: "Monitor every vehicle's fuel consumption rate." },
-  { icon: '🕘', title: 'Trip History & Playback', desc: 'Review route histories with speed and stop reports.' },
-  { icon: '📊', title: 'Custom Reports', desc: 'Generate automated insights for performance, safety, and compliance.' },
-  { icon: '🎥', title: 'AI Video Monitoring', desc: 'Utilize cutting-edge AI-driven video technology to safeguard your most valuable assets.' },
-  { icon: '🗺️', title: 'Geofencing', desc: 'Create custom zones and receive instant exit/entry notifications.' }
+  { title: 'Live GPS Tracking', desc: "Monitor every vehicle's real-time location." },
+  { title: 'Vehicle Diagnostics', desc: 'Get instant alerts for engine faults, maintenance needs, and fuel levels.' },
+  { title: 'Driver Behavior Monitoring', desc: 'Track speed, harsh braking, acceleration, and idling.' },
+  { title: 'Fuel Monitoring', desc: "Monitor every vehicle's fuel consumption rate." },
+  { title: 'Trip History & Playback', desc: 'Review route histories with speed and stop reports.' },
+  { title: 'Custom Reports', desc: 'Generate automated insights for performance, safety, and compliance.' },
+  { title: 'AI Video Monitoring', desc: 'Utilize cutting-edge AI-driven video technology to safeguard your most valuable assets.' },
+  { title: 'Geofencing', desc: 'Create custom zones and receive instant exit/entry notifications.' }
 ];
 
 const industries = [
@@ -96,7 +96,6 @@ const gallery = [
         </div>
         <div class="grid-4">
           <article v-for="feature in features" :key="feature.title" class="card">
-            <span class="card__icon">{{ feature.icon }}</span>
             <h3>{{ feature.title }}</h3>
             <p>{{ feature.desc }}</p>
           </article>
