@@ -473,10 +473,17 @@ a {
   background: rgba(0, 23, 45, 0.8);
 }
 
-.feature-card .feature-icon,
-.solution-card .icon {
-  font-size: 2rem;
-  margin-bottom: 1.5rem;
+/* Emoji clip-art icons were removed site-wide: a gold accent rule above the
+   card title keeps the same visual rhythm without relying on platform emoji. */
+.feature-card h3::before,
+.solution-card h3::before {
+  content: '';
+  display: block;
+  width: 34px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--accent-gold);
+  margin-bottom: 1rem;
 }
 
 .feature-card h3,
@@ -626,13 +633,11 @@ a {
   padding: 10px 0;
 }
 
-.benefit-item .b-icon {
-  flex-shrink: 0;
-  width: 15%;
-}
-
-.benefit-item .b-icon img {
-  width: 100%;
+/* Fallback for benefit items that no longer render an icon image.
+   Components may override this rule with their own scoped styling. */
+.benefit-item {
+  border-left: 3px solid var(--accent-gold);
+  padding-left: 1.25rem;
 }
 
 .benefit-item h4 {

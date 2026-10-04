@@ -44,32 +44,26 @@ import CTA from '../../components/CTA.vue';
       
       <div class="container grid-3" style="margin-top: 4rem;">
         <div class="benefit-card">
-          <div class="icon">📍</div>
           <h3>Field Activity Tracking</h3>
           <p>Monitor every single field operation in real-time. Precisely track plowing, planting, spraying, and harvesting routes to ensure total coverage without costly overlaps.</p>
         </div>
         <div class="benefit-card">
-          <div class="icon">🚜</div>
           <h3>Equipment Management</h3>
           <p>Protect your high-value agricultural machinery. Schedule proactive maintenance based on actual engine hours rather than calendar days to eliminate unexpected breakdowns during peak seasons.</p>
         </div>
         <div class="benefit-card">
-          <div class="icon">🌡️</div>
           <h3>Environmental Monitoring</h3>
           <p>Integrate advanced sensors to track ambient temperature, soil moisture, and humidity. Use this granular environmental data to optimize watering and fertilization schedules.</p>
         </div>
         <div class="benefit-card">
-          <div class="icon">⛽</div>
           <h3>Fuel Optimization</h3>
           <p>Stop agricultural fuel theft and reduce waste. High-precision tank sensors monitor fuel levels 24/7, instantly alerting you to sudden drops or highly inefficient operating rates.</p>
         </div>
         <div class="benefit-card">
-          <div class="icon">📊</div>
           <h3>Performance Analytics</h3>
           <p>Transform raw farm data into actionable insights. Generate detailed reports comparing yields, machine utilization rates, and operator efficiency across different plots of land.</p>
         </div>
         <div class="benefit-card">
-          <div class="icon">⏱️</div>
           <h3>Work Hour Tracking</h3>
           <p>Automate your agricultural workforce management. Accurately track operator hours, verify timesheets, and optimize labor allocation based on real-time field activity.</p>
         </div>
@@ -196,8 +190,15 @@ import CTA from '../../components/CTA.vue';
   border-radius: 12px;
   text-align: left;
 }
-.icon {
-  font-size: 2rem;
+/* Emoji clip-art icons were removed in favour of a gold accent rule so the
+   legacy service pages match the design system of the rest of the site. */
+.benefit-card h3::before {
+  content: '';
+  display: block;
+  width: 34px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--accent-gold);
   margin-bottom: 1rem;
 }
 .checklist {
@@ -228,7 +229,7 @@ import CTA from '../../components/CTA.vue';
   margin: 0;
 }
 .check-icon {
-  color: #10b981;
+  color: var(--accent-gold);
   font-weight: bold;
   margin-top: 2px;
 }

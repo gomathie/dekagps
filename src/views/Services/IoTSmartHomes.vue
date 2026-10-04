@@ -40,22 +40,18 @@ import CTA from '../../components/CTA.vue';
       
       <div class="container grid-4" style="margin-top: 4rem;">
         <div class="benefit-card">
-
           <h3>Smart Automation</h3>
           <p>Schedule lighting, climate, and appliances to suit your lifestyle.</p>
         </div>
         <div class="benefit-card">
-
           <h3>Remote Control</h3>
           <p>Manage devices from your phone—anytime, anywhere.</p>
         </div>
         <div class="benefit-card">
-
           <h3>Energy Efficiency</h3>
           <p>Track energy usage and reduce utility costs.</p>
         </div>
         <div class="benefit-card">
-
           <h3>Home Security</h3>
           <p>Live surveillance, smart locks, and real-time alerts to keep your home secure.</p>
         </div>
@@ -124,7 +120,6 @@ import CTA from '../../components/CTA.vue';
     <section class="service-section testimonial-section">
       <div class="container text-center">
         <div class="testimonial-content">
-
           <blockquote>"OneGPS made our home smart—easy to control and totally secure."</blockquote>
           <cite>— Amara K., Homeowner</cite>
         </div>
@@ -200,8 +195,6 @@ import CTA from '../../components/CTA.vue';
   border-radius: 12px;
   text-align: left;
 }
-
-
 /* Emoji clip-art icons were removed in favour of a gold accent rule so the
    legacy service pages match the design system of the rest of the site. */
 .benefit-card h3::before {
@@ -280,7 +273,6 @@ import CTA from '../../components/CTA.vue';
   margin: 0;
 }
 .check-icon {
-
   color: var(--accent-gold);
   font-weight: bold;
 }
@@ -291,9 +283,6 @@ import CTA from '../../components/CTA.vue';
   max-width: 600px;
   margin: 0 auto;
 }
-
-
-
 .testimonial-content::before {
   content: '';
   display: block;

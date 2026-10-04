@@ -44,27 +44,22 @@ import CTA from '../../components/CTA.vue';
       
       <div class="container grid-3" style="margin-top: 4rem;">
         <div class="benefit-card">
-          <div class="icon">🌐</div>
           <h3>Custom Website Development</h3>
           <p>Responsive, SEO-ready websites built to engage and convert.</p>
         </div>
         <div class="benefit-card">
-          <div class="icon">💻</div>
           <h3>Web Application Development</h3>
           <p>Powerful, cloud-based apps designed for scale and performance.</p>
         </div>
         <div class="benefit-card">
-          <div class="icon">🛒</div>
           <h3>E-commerce Solutions</h3>
           <p>Fully integrated online stores with secure payments and real-time inventory.</p>
         </div>
         <div class="benefit-card">
-          <div class="icon">🔌</div>
           <h3>API Development & Integration</h3>
           <p>Connect your systems with scalable, secure REST and GraphQL APIs.</p>
         </div>
         <div class="benefit-card">
-          <div class="icon">🛠️</div>
           <h3>Maintenance & Support</h3>
           <p>Ongoing updates, security patches, and performance monitoring.</p>
         </div>
@@ -224,8 +219,15 @@ import CTA from '../../components/CTA.vue';
   border-radius: 12px;
   text-align: left;
 }
-.icon {
-  font-size: 2rem;
+/* Emoji clip-art icons were removed in favour of a gold accent rule so the
+   legacy service pages match the design system of the rest of the site. */
+.benefit-card h3::before {
+  content: '';
+  display: block;
+  width: 34px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--accent-gold);
   margin-bottom: 1rem;
 }
 .tags-container {
@@ -303,7 +305,7 @@ import CTA from '../../components/CTA.vue';
   margin: 0;
 }
 .check-icon {
-  color: #10b981;
+  color: var(--accent-gold);
   font-weight: bold;
 }
 @media (max-width: 768px) {
