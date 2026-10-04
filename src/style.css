@@ -157,6 +157,13 @@ a {
   box-shadow: 0 8px 25px rgba(230, 172, 3, 0.4);
 }
 
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
 .btn-secondary {
   background: transparent;
   color: var(--text-primary);
@@ -1319,6 +1326,12 @@ textarea.form-control {
   color: #ff9d9d;
   font-size: 0.85rem;
   margin-bottom: 1rem;
+}
+
+/* Recovery path offered when a submission could not be delivered. */
+.form-error a {
+  color: var(--accent-gold);
+  text-decoration: underline;
 }
 
 .form-success {

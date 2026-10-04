@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - **Analytics Routing Hook:** Added a global `router.afterEach` hook in `src/router/index.js` to manually dispatch Google Analytics pageview events on route navigation, ensuring accurate tracking across the SPA.
 - **Scroll Reveal Animations:** Created a global custom Vue directive (`v-reveal`) in `src/main.js` and CSS classes in `src/style.css` to add smooth scroll-triggered fade-in and slide-up animations across multiple sections.
+- [**Per-Route Meta Descriptions](https://docs.pilot-gps.africa/):** Every route in `src/router/index.js` now carries a `meta.description`, and a shared `setMeta()` helper in the `router.afterEach` hook re-applies `<meta name="description">`, `og:title` and `og:description` on each client-side navigation (an SPA navigation does not reload `index.html`). `index.html` gained the default `description` and Open Graph tags for crawlers and link previews.
+- **Contact Form Delivery:** `src/components/ContactForm.vue` now POSTs the request as JSON to the endpoint configured through the new `VITE_CONTACT_ENDPOINT` environment variable (documented in `README.md`), with a submitting state, email-format validation and clickable `mailto:` fallback when delivery fails.
 
 ### Changed
 - **UI & Aesthetics Refinements:**
@@ -17,6 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Redesigned primary buttons (`.btn-primary`) with modern gold gradients and dynamic hover glow effects.
   - Added a `.gradient-text` utility class and applied it to the Hero section heading.
 - **Content Optimization:** Refined the copy in `Home.vue`, `Solutions.vue`, and `Industries.vue`. Integrated more advanced, professional telematics vocabulary (e.g., CAN bus integration, capacitive fuel sensors, OBD-II diagnostics) to better reflect a top-tier GPS tracking and IoT solutions provider.
+- **Contact Form Honesty:** The form used to switch to a "request captured" success state without sending anything. It now only reports success after an accepted HTTP response; otherwise it explains the failure and offers the email fallback. The `:disabled` state of `.btn-primary` and link styling inside `.form-error` were added to `src/style.css` to support this.
 
 ### Fixed
+- **Non-functional Contact Form:** Submitting `ContactForm.vue` (used by `/contact` and `/book-a-demo`) previously showed a fake success message and never sent the enquiry — a silent lead loss. See the delivery changes above.
 - **HTML Layout Bugs:** Removed duplicated, improperly nested `.feature-card` and `.benefit-card` `<div>` tags in `src/views/Home.vue` and `src/views/Services/FleetManagement.vue` that were causing layout inconsistencies.
+- **Hero Background Missing in Production:** The home page hero background (`Leverage-1.webp`) was referenced as a raw relative path string inside `Hero.vue`, so Vite never emitted the file and the image 404'd in the built site. It is now a static asset import, which Vite fingerprints and rewrites for the production bundle.
+- **Broken Partner Logo Fallback:** The `@error` fallback on the industrial partner logo in `Home.vue` pointed at another raw relative asset path, which could never resolve once bundled. The fallback now uses an imported asset, so it works in both dev and production.

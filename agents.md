@@ -129,6 +129,88 @@ In a multi-agent / multi-session workflow, context is easily lost between sessio
 
 ---
 
+**Date:** 2026-10-04 (Session 3)
+
+**Agent Action:** Production-build audit — fixed the hero background image that disappeared after `vite build`, and repaired a dead `@error` asset fallback.
+
+**What was done:**
+
+1. **Hero background not shipped to production (`src/components/Hero.vue`).**
+   - The component stored the background image as a raw *string* in `<script setup>` (`const bgImage = '../../images/Leverage-1.webp'`) and used it through a CSS-in-JS binding (`:style="{ backgroundImage: url(...) }"`).
+   - Vite only rewrites *asset imports*, so no image was emitted for the hero: it worked in `npm run dev` (project root is served statically, so the relative path resolved) and silently 404'd in the built bundle.
+   - Replaced the string with a real static import (`import bgImage from '../../images/Leverage-1.webp'`) and intentionally kept the existing `:style` binding.
+2. **Dead `@error` fallback on the home page (`src/views/Home.vue`).**
+   - The industrial partner logo had `@error="(e) => e.target.src='../../images/industrial-logo_logo2.webp'"`.
+   - That fallback is *runtime* code: the relative string is never processed by Vite, so if the primary asset ever failed to load, the fallback would fail in exactly the same way (and it also tripped over Vue's `transformAssetUrls`, which rewrote the literal inside the handler into a bare module specifier).
+   - Imported the fallback asset (`industrialLogoFallback`) and pointed the handler at that binding; also removed the two stale “build these sections inline for now” comments from the script block.
+3. **Audit of every other asset reference.** Verified that all remaining image references are either Vue template `src`/`url()` attributes (processed by Vite) or static `new URL('../../images/…', import.meta.url).href` calls with string literals (also processed). No other dev-only paths were found.
+
+**Files changed:**
+- `src/components/Hero.vue` — asset import instead of raw path string
+- `src/views/Home.vue` — working `@error` fallback + import, stale comments removed
+- `CHANGELOG.md` — entries under `Fixed`/`Changed`
+
+**Why:**
+The hero image is the first visual the visitor sees on the landing page; it rendered in development and was missing in every production build, which is the single most damaging class of bug for a marketing site. The `@error` fallback was a latent bug of the same origin (an asset path sitting in JavaScript instead of in an import), so it was corrected in the same pass rather than left to fail later.
+
+**Method:**
+- Traced the hero from `Home.vue` → `Hero.vue` → the string binding, and compared against sibling components, which already use `import x from '../../images/…'` (the established project pattern).
+- Confirmed the root cause by running `npm run build` and inspecting `dist/assets`, where `Leverage-1*.webp` was absent while every other image was emitted.
+- Applied the same pattern to the `@error` fallback, keeping the behaviour (fall back to a second logo) but making the fallback path build-safe.
+
+**Verification:**
+- `npm run build` → `✓ built in 1.72s`, no warnings or errors.
+- `dist/assets/Leverage-1-B8X9433S.webp` now exists and the hashed URL is referenced from the built entry chunk.
+- A regex sweep of `dist/assets/index-*.js` for `../../images` returns no matches, i.e. no un-processed asset paths remain in the production bundle.
+
+---
+
+**Date:** 2026-10-04 (Session 4)
+
+**Agent Action:** Added per-route meta descriptions (SEO/social), fixed the `<meta name="description">`-never-updates SPA problem, and made the contact/demo form actually deliver submissions instead of faking a success state.
+
+**What was done:**
+
+1. **Per-route descriptions (`src/router/index.js`).** Every route now carries a `meta.description` alongside its existing `meta.title` (21 routes). The existing `router.afterEach` hook — which already handled `<title>` and the Analytics pageview — now also calls a new local `setMeta()` helper that writes `description`, `og:title` and `og:description` after each client-side navigation, and falls back to a shared `DEFAULT_DESCRIPTION` constant when a route has no description.
+   - Root cause: Analytics was fixed for SPA navigation in an earlier session but metadata was not. A `createWebHistory` navigation never reloads the document, so whatever `index.html` shipped with (or whatever was set on the first route) stayed in `<head>` for the entire session.
+   - `setMeta()` creates the tag if it is missing, so a future edit to `index.html` cannot silently break the feature.
+2. **Static metadata defaults (`index.html`).** Added `description`, `og:type`, `og:site_name`, `og:title` and `og:description` immediately after the viewport tag, using the same text as the home route so the pre-JS crawler snapshot matches what the SPA renders. The Google tag remains untouched at the very top of `<head>` (single copy, unchanged).
+3. **Contact form delivery (`src/components/ContactForm.vue`).** The component previously showed "Your request has been captured" after client-side validation only — no network request was ever made (the old comment even admitted this). It now:
+   - POSTs `application/json` (`{ name, email, subject, message, page }`) to `import.meta.env.VITE_CONTACT_ENDPOINT`.
+   - Reports success **only** after an `ok` HTTP response, and shows a `Sending…` disabled state while in flight.
+   - On a missing endpoint or a failed/thrown request, logs the error and offers a `mailto:` fallback pre-filled from the form fields (link provided by a `computed`), matching the address already published on `/contact` and in the footer.
+   - Adds email-format validation (the previous code only checked that the fields were non-empty) and resets the new error/submitting state in `reset()`.
+   - Props, `defineExpose({ reset })` and the confirmation UI are unchanged, so `Contact.vue` and `BookADemo.vue` (the only consumers) needed no edits.
+4. **Styles (`src/style.css`).** Added `.btn-primary:disabled` (busy state) and link styling inside `.form-error` for the fallback anchor, reusing the existing `--accent-gold` token.
+5. **Configuration docs (`README.md`, `.gitignore`).** Documented `VITE_CONTACT_ENDPOINT` in a new README "Configuration" section (payload shape, JSON POST, Formspree example, warning that `VITE_` variables are public) and added `.env` / `.env.*` (with `!.env.example` negation) to `.gitignore`.
+
+**Files changed:**
+- `src/router/index.js` — `meta.description` for all routes, `DEFAULT_DESCRIPTION`, `setMeta()` helper, extended `afterEach`
+- `index.html` — default description + Open Graph tags
+- `src/components/ContactForm.vue` — real JSON submission, submitting/error/fallback states, email validation
+- `src/style.css` — `.btn-primary:disabled`, `.form-error a`
+- `README.md` — Configuration section
+- `.gitignore` — ignore environment files
+- `CHANGELOG.md` — entries under `Added`/`Changed`/`Fixed`
+
+**Why:**
+- The site is a marketing/SEO product, yet every route shared one description: search and social previews could not tell `/fuel-monitoring` from `/pricing`, and because `document.head` is never re-evaluated in an SPA, the first-visited page's metadata leaked into every other page of the session.
+- The contact form was the project's most concrete violation of the "no fake implementations" rule: `/contact` and `/book-a-demo` are the two conversion pages, and both accepted leads, told the visitor they had been received, and dropped them. Making it work was the priority; the endpoint is configuration rather than hard-coded data, per the project's no-hard-coded-production-data rule, and an email fallback keeps the page usable until a backend is chosen.
+
+**Method:**
+- Traced the existing `afterEach` hook first (rather than adding a second metadata mechanism) and extended it, following the pattern already established for Analytics.
+- Wrote descriptions from each view's own content and the existing FAQ/pricing copy so no capability was invented; kept them under ~160 characters.
+- Reused the published contact address instead of introducing a new constant elsewhere.
+- No new dependencies, and no changes to `main.js`, `vite.config.js` or `package.json`.
+
+**Verification:**
+- `npm run build` → `✓ built in 1.49s`, no errors or warnings; 128 modules transformed.
+- Grepped for `ContactForm`/`formRef` consumers to confirm the shared component's props/exposed API stayed compatible.
+- Confirmed `gtag.js` still appears exactly once in `index.html`.
+- Out of scope but noted: the user still needs to set `VITE_CONTACT_ENDPOINT` (e.g. a Formspree form) for online delivery; until then the form shows the email fallback rather than a false success.
+
+---
+
 ## Standing Instructions for ALL Future Agents
 
 > **READ THIS BEFORE MAKING ANY CHANGES.**
