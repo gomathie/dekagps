@@ -9,7 +9,7 @@ import CTA from '../../components/CTA.vue';
         <div class="badge">FLEET MANAGEMENT</div>
         <h1>Your Fleet's <span class="highlight-gradient">Efficiency and Safety</span></h1>
         <p class="subtitle">From real-time GPS tracking to AI-driven fuel analytics, OneGPS provides the end-to-end visibility you need to reduce operational costs, eliminate unscheduled downtime, and scale.</p>
-        <a href="#" class="btn-primary btn-large" style="margin-top: 1rem; display: inline-block;">Get Started</a>
+        <router-link to="/book-a-demo" class="btn-primary btn-large" style="margin-top: 1rem; display: inline-block;">Get Started</router-link>
       </div>
       <div class="hero-visual">
          <img src="../../../images/truck-vehicle-with-trailers-background_600x316.webp" alt="Fleet Management" class="main-image">
@@ -145,7 +145,7 @@ import CTA from '../../components/CTA.vue';
         <h2>Optimize Your Fleet Today</h2>
         <p>Start managing your fleet more efficiently with customized telematics.</p>
         <div class="cta-buttons">
-           <a href="#" class="btn-primary btn-large">Book a Demo</a>
+           <router-link to="/book-a-demo" class="btn-primary btn-large">Book a Demo</router-link>
         </div>
       </div>
     </section>

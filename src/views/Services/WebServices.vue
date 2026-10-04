@@ -9,7 +9,7 @@ import CTA from '../../components/CTA.vue';
         <div class="badge">WEB SERVICES</div>
         <h1>Build, Launch, and Scale <span class="highlight-gradient">with Confidence</span></h1>
         <p class="subtitle">Custom web development, fast deployment, and secure, scalable solutions tailored to your business goals.</p>
-        <a href="#" class="btn-primary btn-large" style="margin-top: 1rem; display: inline-block;">Get Started</a>
+        <router-link to="/book-a-demo" class="btn-primary btn-large" style="margin-top: 1rem; display: inline-block;">Get Started</router-link>
       </div>
       <div class="hero-visual">
          <img src="../../../images/be-change-inspired-active-thunder-website.webp" alt="Web Services" class="main-image">
@@ -160,7 +160,7 @@ import CTA from '../../components/CTA.vue';
         <h2>Let's Build Something Great Together</h2>
         <p>From concept to code, we deliver web solutions that drive real business results.</p>
         <div class="cta-buttons">
-           <a href="#" class="btn-primary btn-large">Book a Demo</a>
+           <router-link to="/book-a-demo" class="btn-primary btn-large">Book a Demo</router-link>
         </div>
       </div>
     </section>

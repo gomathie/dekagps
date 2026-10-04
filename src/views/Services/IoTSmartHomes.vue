@@ -9,7 +9,7 @@ import CTA from '../../components/CTA.vue';
         <div class="badge">SMART LIVING</div>
         <h1>IoT & Smart Home <span class="highlight-gradient">Solutions</span></h1>
         <p class="subtitle">Install smart sensors, cameras, and controllers. Advanced smart home security systems featuring real-time monitoring, remote access, and automated alerts.</p>
-        <a href="#" class="btn-primary btn-large" style="margin-top: 1rem; display: inline-block;">Request a Demo</a>
+        <router-link to="/book-a-demo" class="btn-primary btn-large" style="margin-top: 1rem; display: inline-block;">Request a Demo</router-link>
       </div>
       <div class="hero-visual">
          <img src="../../../images/Smart-Home-Interface.webp" alt="Smart Home" class="main-image">
@@ -136,7 +136,7 @@ import CTA from '../../components/CTA.vue';
         <h2>Ready to Make Your Home Smarter?</h2>
         <p>Connect with our team to build a custom smart home system today.</p>
         <div class="cta-buttons">
-           <a href="#" class="btn-primary btn-large">Contact Us</a>
+           <router-link to="/contact" class="btn-primary btn-large">Contact Us</router-link>
         </div>
       </div>
     </section>

@@ -9,7 +9,7 @@ import CTA from '../../components/CTA.vue';
         <div class="badge">SAFETY</div>
         <h1>Driver Behavior <span class="highlight-gradient">Monitoring</span></h1>
         <p class="subtitle">Assess driver performance by evaluating skills through penalty points for violations such as speeding, excessive acceleration, and harsh braking.</p>
-        <a href="#" class="btn-primary btn-large" style="margin-top: 1rem; display: inline-block;">Request a Demo</a>
+        <router-link to="/book-a-demo" class="btn-primary btn-large" style="margin-top: 1rem; display: inline-block;">Request a Demo</router-link>
       </div>
       <div class="hero-visual">
          <img src="../../../images/freepik__adjust__45541.webp" alt="Driver Behavior" class="main-image">
@@ -105,7 +105,7 @@ import CTA from '../../components/CTA.vue';
         <h2>Improve Driver Safety Today</h2>
         <p>Get real-time insights into driver performance and reduce fleet risk.</p>
         <div class="cta-buttons">
-           <a href="#" class="btn-primary btn-large">Book a Demo</a>
+           <router-link to="/book-a-demo" class="btn-primary btn-large">Book a Demo</router-link>
         </div>
       </div>
     </section>

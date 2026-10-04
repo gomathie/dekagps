@@ -3,12 +3,12 @@
 import CTA from '../components/CTA.vue';
 
 const industries = [
-  { icon: '🚚', title: 'Logistics & Transportation' },
-  { icon: '🏗️', title: 'Construction & Heavy Equipment' },
-  { icon: '📦', title: 'Courier & Delivery' },
-  { icon: '🧰', title: 'Service Providers' },
-  { icon: '🌾', title: 'Agriculture' },
-  { icon: '♻️', title: 'Waste Management' }
+  { title: 'Logistics & Transportation', desc: 'Live visibility on every route, depot and drop-off point.' },
+  { title: 'Construction & Heavy Equipment', desc: 'Track plant, trailers and site machinery across dispersed sites.' },
+  { title: 'Courier & Delivery', desc: 'Proof of delivery, route optimisation and customer ETAs.' },
+  { title: 'Service Providers', desc: 'Dispatch, job verification and timesheets for field teams.' },
+  { title: 'Agriculture', desc: 'Monitor field activity, machinery use and fuel per hectare.' },
+  { title: 'Waste Management', desc: 'Route compliance, collections proof and bin-level reporting.' }
 ];
 
 const adaptations = [
@@ -62,8 +62,8 @@ const benefits = [
         </div>
         <div class="grid-3">
           <article v-for="industry in industries" :key="industry.title" class="card">
-            <span class="card__icon">{{ industry.icon }}</span>
             <h3>{{ industry.title }}</h3>
+            <p>{{ industry.desc }}</p>
           </article>
         </div>
       </div>

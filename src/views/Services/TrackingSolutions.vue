@@ -9,7 +9,7 @@ import CTA from '../../components/CTA.vue';
         <div class="badge">TRACKING</div>
         <h1>Real-Time Tracking <span class="highlight-gradient">Solutions</span></h1>
         <p class="subtitle">Real-time GPS tracking solutions for vehicles, assets, and personnel—engineered for control, efficiency, and security.</p>
-        <a href="#" class="btn-primary btn-large" style="margin-top: 1rem; display: inline-block;">Book a Demo</a>
+        <router-link to="/book-a-demo" class="btn-primary btn-large" style="margin-top: 1rem; display: inline-block;">Book a Demo</router-link>
       </div>
       <div class="hero-visual">
          <img src="../../../images/real-time-vehicle-tracking.webp" alt="Tracking Solutions" class="main-image">
@@ -167,7 +167,7 @@ import CTA from '../../components/CTA.vue';
         <h2>Gain Full Control of Your Moving World</h2>
         <p>Take the first step toward smarter tracking today.</p>
         <div class="cta-buttons">
-           <a href="#" class="btn-primary btn-large">Book a Demo</a>
+           <router-link to="/book-a-demo" class="btn-primary btn-large">Book a Demo</router-link>
         </div>
       </div>
     </section>

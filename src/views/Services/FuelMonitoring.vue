@@ -9,7 +9,7 @@ import CTA from '../../components/CTA.vue';
         <div class="badge">FUEL MANAGEMENT</div>
         <h1>Fuel <span class="highlight-gradient">Monitoring</span></h1>
         <p class="subtitle">Monitor fuel usage for each vehicle in your fleet. Utilize fleet fuel tracking to lower expenses, decrease CO2 emissions, and encourage fuel-efficient practices!</p>
-        <a href="#" class="btn-primary btn-large" style="margin-top: 1rem; display: inline-block;">Get Started</a>
+        <router-link to="/book-a-demo" class="btn-primary btn-large" style="margin-top: 1rem; display: inline-block;">Get Started</router-link>
       </div>
       <div class="hero-visual">
          <img src="../../../images/real-time-fuel-monitoring.webp" alt="Fuel Monitoring" class="main-image">
@@ -118,7 +118,7 @@ import CTA from '../../components/CTA.vue';
         <h2>Start Saving on Fuel Today</h2>
         <p>Our specialists will show you how fuel tracking can transform your fleet.</p>
         <div class="cta-buttons">
-           <a href="#" class="btn-primary btn-large">Book a Demo</a>
+           <router-link to="/book-a-demo" class="btn-primary btn-large">Book a Demo</router-link>
         </div>
       </div>
     </section>

@@ -2,12 +2,12 @@
 import CTA from '../components/CTA.vue';
 
 const topics = [
-  { icon: '🔐', title: 'Account Setup', desc: 'Get your organisation, users and roles configured correctly from day one.' },
-  { icon: '🔌', title: 'Device Installation Guides', desc: 'Wiring diagrams and step-by-step installation support for every tracker we supply.' },
-  { icon: '📱', title: 'Dashboard and App Navigation', desc: 'Find reports, build geofences and set notifications without guesswork.' },
-  { icon: '🛰️', title: 'GPS Accuracy & Signal Issues', desc: 'Diagnose antenna placement, SIM connectivity and jamming interference.' },
-  { icon: '⬆️', title: 'Firmware Update', desc: 'Guidance on safe over-the-air and wired firmware upgrades.' },
-  { icon: '💳', title: 'Billing and Subscription', desc: 'Invoices, plan changes, SIM renewals and account renewals handled fast.' }
+  { title: 'Account Setup', desc: 'Get your organisation, users and roles configured correctly from day one.' },
+  { title: 'Device Installation Guides', desc: 'Wiring diagrams and step-by-step installation support for every tracker we supply.' },
+  { title: 'Dashboard and App Navigation', desc: 'Find reports, build geofences and set notifications without guesswork.' },
+  { title: 'GPS Accuracy & Signal Issues', desc: 'Diagnose antenna placement, SIM connectivity and jamming interference.' },
+  { title: 'Firmware Update', desc: 'Guidance on safe over-the-air and wired firmware upgrades.' },
+  { title: 'Billing and Subscription', desc: 'Invoices, plan changes, SIM renewals and account renewals handled fast.' }
 ];
 
 const commitments = [
@@ -60,7 +60,6 @@ const channels = [
         </div>
         <div class="grid-3">
           <article v-for="topic in topics" :key="topic.title" class="card">
-            <span class="card__icon">{{ topic.icon }}</span>
             <h3>{{ topic.title }}</h3>
             <p>{{ topic.desc }}</p>
           </article>
