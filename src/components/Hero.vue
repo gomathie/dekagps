@@ -1,5 +1,5 @@
 <template>
-  <header class="hero" :style="{ backgroundImage: `url(${bgImage})` }">
+  <header class="hero" :style="{ backgroundImage: `url('${bgImage}')` }">
     <div class="container">
       <div class="hero-inner">
         <div class="hero-text-box" v-reveal>
@@ -16,7 +16,10 @@
 </template>
 
 <script setup>
-const bgImage = '../../images/Leverage-1.webp';
+// Imported so Vite fingerprints the file and rewrites the URL for the production
+// bundle. A raw relative string only resolves while the dev server serves the
+// project root, which is why the hero background disappeared after `vite build`.
+import bgImage from '../../images/Leverage-1.webp';
 </script>
 
 <style scoped>

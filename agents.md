@@ -149,3 +149,1358 @@ In a multi-agent / multi-session workflow, context is easily lost between sessio
 4. **Never add more than one Google tag** (`gtag.js`) per HTML file.
 5. **All new Vue views** go in `src/views/`, components in `src/components/`, and routes must be registered in `src/router/index.js`.
 6. **Maintain the glassmorphism dark aesthetic** — navy backgrounds, gold accents, backdrop-filter blur on cards.
+
+# Agent Guidelines & Project Instructions — OneGPS
+
+> **READ THIS FILE COMPLETELY BEFORE MODIFYING THE PROJECT.**
+>
+> This project is an existing, working application. Your responsibility is to **understand, preserve, improve, and extend the existing system** — not to continuously invent replacement implementations.
+
+---
+
+# 1. Core Engineering Principles
+
+## 1.1 Fix the Root Cause — Never Build Around a Bug
+
+When something is broken, investigate and fix the actual problem.
+
+**DO NOT:**
+- Build a second implementation to bypass a broken implementation.
+- Create a new component because the existing component has a bug.
+- Add another API endpoint because the existing endpoint is malfunctioning.
+- Create duplicate state because existing state is not behaving correctly.
+- Add CSS overrides repeatedly until the visual problem disappears.
+- Add condition after condition to hide an underlying defect.
+- Create a new helper when an existing helper should be corrected.
+- Replace working architecture just because fixing it requires investigation.
+
+**Required approach:**
+
+```text
+Problem
+   ↓
+Reproduce
+   ↓
+Trace existing implementation
+   ↓
+Find root cause
+   ↓
+Fix root cause
+   ↓
+Verify affected flows
+```
+
+Do not use:
+
+```text
+Problem
+   ↓
+Add workaround
+   ↓
+Problem still exists
+   ↓
+Add another workaround
+   ↓
+Technical debt
+```
+
+If an existing implementation is fundamentally incorrect, explain why before replacing it.
+
+---
+
+# 2. Existing Code First
+
+Before writing new code, determine whether the project already contains code that performs the same or a similar function.
+
+Search for:
+
+- components
+- composables
+- utilities
+- services
+- API clients
+- layouts
+- CSS classes
+- variables
+- router logic
+- validation logic
+- state management
+- helper functions
+- constants
+- configuration
+- existing patterns
+
+The default priority is:
+
+```text
+1. Reuse existing code
+2. Extend existing code
+3. Refactor existing code if necessary
+4. Write new code only when none of the above are appropriate
+```
+
+New code is the **last option**, not the first.
+
+---
+
+# 3. Do Not Duplicate Existing Functionality
+
+Never create two implementations responsible for the same thing unless there is a documented architectural reason.
+
+Examples:
+
+If the project already has:
+
+```javascript
+formatDate()
+```
+
+do not create:
+
+```javascript
+convertDate()
+formatMyDate()
+prettyDate()
+```
+
+unless their responsibilities are genuinely different.
+
+If there is already a reusable:
+
+```text
+Button.vue
+Modal.vue
+Card.vue
+Navbar.vue
+ApiService
+```
+
+extend or reuse it instead of creating:
+
+```text
+NewButton.vue
+CustomModal2.vue
+BetterCard.vue
+NavbarNew.vue
+ApiServiceV2
+```
+
+Avoid naming patterns such as:
+
+```text
+ComponentNew
+ComponentFixed
+Component2
+ComponentFinal
+ComponentUpdated
+ComponentWorking
+```
+
+Those are usually signs that the existing architecture was not properly understood.
+
+---
+
+# 4. Read Before You Write
+
+Before implementing any non-trivial change:
+
+1. Read `agents.md`.
+2. Read `CHANGELOG.md`.
+3. Inspect the relevant directory.
+4. Read the files directly involved.
+5. Search for related functionality elsewhere in the project.
+6. Identify existing architectural patterns.
+7. Trace the current behavior.
+8. Determine the root cause or proper extension point.
+9. Decide on the smallest safe change.
+10. Only then modify the project.
+
+Do not begin coding immediately after receiving a task.
+
+---
+
+# 5. Smallest Correct Change
+
+Prefer the smallest change that completely solves the problem.
+
+Avoid unnecessary:
+
+- rewrites
+- abstractions
+- dependencies
+- components
+- services
+- directories
+- configuration
+- global state
+- database fields
+- CSS systems
+- architectural layers
+
+A task affecting one component should generally not result in changes across twenty unrelated files.
+
+Before modifying a file, ask:
+
+> Does this file actually need to change for the requested feature or fix?
+
+If not, leave it alone.
+
+---
+
+# 6. Preserve Working Code
+
+Working code should not be rewritten simply because another implementation appears cleaner.
+
+Refactoring is appropriate when it:
+
+- fixes a demonstrated problem
+- removes meaningful duplication
+- improves maintainability required by the task
+- resolves architectural inconsistency
+- prevents an identified bug
+- is necessary for the requested feature
+
+Do not perform unrelated refactors while implementing a feature.
+
+For example:
+
+```text
+Task: Add a pricing CTA
+```
+
+does **not** justify:
+
+```text
+Rewrite Navbar
+Replace router
+Reorganize CSS
+Rename every component
+Change folder structure
+Replace existing animation system
+```
+
+Stay within scope.
+
+---
+
+# 7. Follow Existing Architecture
+
+The existing project architecture is the source of truth.
+
+Do not introduce a new architectural pattern unless there is a strong technical reason.
+
+If the project uses:
+
+```text
+src/views/
+src/components/
+src/router/
+```
+
+continue using them.
+
+If similar pages use a shared component, use that component.
+
+If API calls go through an existing service layer, do not call APIs directly from random components.
+
+If styling is centralized, do not introduce another styling framework.
+
+Consistency is more valuable than introducing a theoretically cleaner pattern in one isolated feature.
+
+---
+
+# 8. Never Mask Errors
+
+Do not "fix" errors by suppressing them without understanding them.
+
+Avoid:
+
+```javascript
+try {
+   ...
+} catch (e) {}
+```
+
+or hiding console errors simply to make the application appear functional.
+
+Errors should either:
+
+- be fixed
+- be handled intentionally
+- be logged appropriately
+- result in a useful user-facing state
+
+Never silently swallow important failures.
+
+---
+
+# 9. Avoid Patch-on-Patch Development
+
+Before adding a new condition, CSS override, watcher, timeout, event listener, or workaround, determine why the current implementation requires it.
+
+Be especially suspicious of:
+
+```css
+!important
+```
+
+nested overrides, repeated media queries, duplicated event listeners, repeated `setTimeout()` fixes, duplicated watchers, route-specific hacks, and hard-coded exceptions.
+
+One justified exception is acceptable.
+
+Five exceptions usually indicate that the underlying implementation needs correction.
+
+---
+
+# 10. Components Must Have Clear Ownership
+
+Every component should have a clear responsibility.
+
+Do not:
+
+- duplicate business logic across components
+- place unrelated functionality into large components
+- create components for trivial markup with no reuse value
+- create near-identical components for minor visual variations
+
+When multiple screens share substantial UI or behavior, extract or extend a shared component.
+
+When only one small piece differs, use:
+
+- props
+- slots
+- configuration
+- variants
+
+instead of duplicating the entire component.
+
+---
+
+# 11. Prefer Existing Design Tokens and CSS
+
+Before adding a new:
+
+- color
+- font size
+- spacing rule
+- border radius
+- shadow
+- button style
+- card style
+
+search the existing stylesheet.
+
+Use the existing OneGPS design system wherever possible.
+
+Do not introduce slightly different values such as:
+
+```css
+#E5AB03
+#E6AD03
+#E7AC04
+```
+
+when the project already defines:
+
+```css
+#E6AC03
+```
+
+Maintain visual consistency.
+
+---
+
+# 12. No New Dependency Without Need
+
+Do not install a package merely to solve something that:
+
+- Vue already supports
+- JavaScript already supports
+- CSS already supports
+- the project already implements
+
+Before installing a dependency:
+
+1. Verify there is no existing equivalent.
+2. Confirm native functionality is insufficient.
+3. Consider bundle-size impact.
+4. Consider maintenance/security implications.
+5. Explain why the dependency is necessary.
+
+Never replace an existing library simply because you personally prefer another one.
+
+---
+
+# 13. Do Not Break Existing Public Contracts
+
+Be careful when changing:
+
+- component props
+- event names
+- route names
+- route paths
+- API request formats
+- API response handling
+- local storage keys
+- query parameters
+- CSS class contracts
+- environment variable names
+
+Search for consumers before changing any shared interface.
+
+If an existing contract must change, update all affected consumers.
+
+---
+
+# 14. Do Not Guess About the Codebase
+
+Never assume that something:
+
+- does not exist
+- is unused
+- works a certain way
+- can safely be deleted
+- is legacy
+- is duplicated
+
+without searching the project first.
+
+Verify assumptions against the actual repository.
+
+The repository is the source of truth.
+
+---
+
+# 15. Debug Before Rebuilding
+
+When a feature does not work:
+
+1. reproduce the issue
+2. identify the responsible component
+3. trace data flow
+4. inspect relevant state
+5. inspect events
+6. inspect router behavior if applicable
+7. inspect API responses if applicable
+8. inspect console/runtime errors
+9. identify root cause
+10. modify only what is necessary
+
+Do not respond to a bug by rebuilding the feature from scratch unless the existing implementation is demonstrably unrecoverable.
+
+---
+
+# 16. Respect Existing Data Flow
+
+Do not create redundant copies of data unless necessary.
+
+Avoid patterns such as:
+
+```text
+API data
+→ copied to component state
+→ copied to another object
+→ watched
+→ copied again
+```
+
+Prefer a clear source of truth.
+
+For derived values, prefer computed properties when appropriate.
+
+For shared state, follow whatever shared-state architecture already exists in the project.
+
+---
+
+# 17. No Hard-Coded Production Data
+
+Do not hard-code values that should come from:
+
+- configuration
+- environment variables
+- props
+- APIs
+- CMS/content objects
+- shared constants
+
+Examples include:
+
+- production URLs
+- API keys
+- credentials
+- environment-specific endpoints
+- tokens
+- secrets
+
+Never commit secrets to the frontend repository.
+
+---
+
+# 18. Preserve Responsive Behaviour
+
+Every frontend change must be checked conceptually against:
+
+- mobile
+- tablet
+- laptop
+- desktop
+
+Do not fix desktop layout by breaking mobile layout.
+
+Avoid arbitrary fixed widths unless required by the design.
+
+Use the project's existing responsive breakpoints where possible.
+
+---
+
+# 19. Preserve Accessibility
+
+Interactive elements should remain semantically correct.
+
+Prefer:
+
+```html
+<button>
+<a>
+<input>
+<label>
+<nav>
+```
+
+over clickable generic elements such as:
+
+```html
+<div @click="">
+```
+
+Ensure relevant functionality remains usable with:
+
+- keyboard navigation
+- focus states
+- semantic HTML
+- appropriate labels
+- reasonable contrast
+
+---
+
+# 20. Remove Dead Code Created by Your Changes
+
+After completing the implementation:
+
+- remove unused imports
+- remove obsolete variables
+- remove superseded CSS
+- remove debug logs
+- remove temporary comments
+- remove abandoned implementations
+
+Do not leave:
+
+```javascript
+// old code
+// temporary fix
+// maybe use this later
+```
+
+unless the comment provides genuine long-term engineering value.
+
+Git provides history. The source code should represent the current implementation.
+
+---
+
+# 21. No Fake Implementations
+
+Do not create functionality that visually appears complete but does not actually work unless the task explicitly asks for a prototype.
+
+Do not add:
+
+- fake buttons
+- fake API integrations
+- placeholder forms presented as operational
+- nonfunctional controls
+- fabricated backend responses
+
+If backend functionality is unavailable, clearly separate the UI from the missing integration.
+
+---
+
+# 22. Avoid Overengineering
+
+Do not create enterprise-level abstractions for simple requirements.
+
+For example, a simple reusable CTA does not require:
+
+```text
+CTAFactory
+CTARepository
+CTAService
+CTAProvider
+CTAAdapter
+CTAManager
+```
+
+Use straightforward Vue patterns appropriate to the scale of OneGPS.
+
+---
+
+# 23. Security Comes Before Convenience
+
+Never weaken security merely to make a feature work.
+
+Do not:
+
+- expose secrets in frontend code
+- disable validation globally
+- bypass authentication
+- disable authorization checks
+- trust client-supplied authorization decisions
+- use unsafe HTML unnecessarily
+- expose internal debugging data to users
+
+Any authentication or authorization change should preserve existing security boundaries.
+
+---
+
+# 24. Verify Before Declaring Success
+
+Do not claim a feature is fixed merely because code was changed.
+
+After changing the project:
+
+1. review the modified code
+2. check imports
+3. check syntax
+4. check affected routes
+5. check related components
+6. run available lint/build/test commands
+7. inspect errors
+8. resolve errors introduced by the change
+
+At minimum, run the project's available production build when feasible.
+
+For Vite projects this will commonly include:
+
+```bash
+npm run build
+```
+
+Do not ignore build errors.
+
+---
+
+# 25. Do Not Change Unrelated Files
+
+Avoid formatter-driven or automated changes that modify large amounts of unrelated code.
+
+A Git diff should make it easy to understand:
+
+> "These lines changed because of this task."
+
+Large unrelated diffs make debugging and review difficult.
+
+---
+
+# 26. Preserve User-Facing Behaviour Unless Requested
+
+Bug fixes should generally preserve existing:
+
+- layout
+- copy
+- interaction behavior
+- URLs
+- navigation patterns
+
+unless changing them is explicitly part of the task.
+
+Do not use a bug report as an opportunity to redesign the product.
+
+---
+
+# 27. Existing Functionality Takes Priority Over New Features
+
+A new feature must not knowingly break an existing one.
+
+When there is tension between the new feature and established behavior, modify the implementation so both work where reasonably possible.
+
+Do not simply remove old functionality to make new functionality easier to implement.
+
+---
+
+# 28. Refactor Before Duplicating
+
+If existing code is almost reusable but not quite, consider safely generalizing it.
+
+Example:
+
+Instead of:
+
+```text
+VehicleFeatureCard.vue
+MotorbikeFeatureCard.vue
+TruckFeatureCard.vue
+```
+
+consider:
+
+```text
+FeatureCard.vue
+```
+
+with appropriate props or slots.
+
+However, do not over-generalize unrelated concepts simply to reduce file count.
+
+---
+
+# 29. Maintain Naming Consistency
+
+Study existing naming conventions before introducing:
+
+- files
+- functions
+- props
+- events
+- CSS classes
+- route names
+- constants
+
+Do not mix naming styles arbitrarily.
+
+If the repository uses:
+
+```text
+FleetManagement.vue
+VehicleTracking.vue
+FuelMonitoring.vue
+```
+
+follow the same convention.
+
+---
+
+# 30. Comments Explain Why, Not What
+
+Avoid comments such as:
+
+```javascript
+// increment count
+count++
+```
+
+Useful comments explain architectural reasoning:
+
+```javascript
+// SPA navigation does not trigger a full page load,
+// so Analytics pageviews must be sent after route changes.
+```
+
+Prefer readable code over excessive comments.
+
+---
+
+# 31. No Premature "Cleanup"
+
+Do not delete unfamiliar files merely because they appear unused.
+
+Before deletion:
+
+- search imports
+- search route references
+- search dynamic usage
+- inspect build/config references
+
+Some assets and files may be referenced dynamically.
+
+---
+
+# 32. Protect Project Configuration
+
+Take extra care when modifying:
+
+```text
+package.json
+vite.config.*
+src/main.js
+src/router/index.js
+.env*
+index.html
+```
+
+These files have application-wide effects.
+
+Do not modify them unnecessarily for a local component problem.
+
+---
+
+# 33. Task Scope Discipline
+
+For every task determine:
+
+```text
+Requested change
+↓
+Files directly responsible
+↓
+Dependencies affected
+↓
+Minimum implementation
+```
+
+Do not turn small tasks into broad architecture projects unless the existing architecture makes the requested change impossible or unsafe.
+
+---
+
+# 34. Stop and Reassess When Complexity Explodes
+
+If a seemingly simple task starts requiring:
+
+- many new files
+- multiple workarounds
+- duplicated logic
+- global configuration changes
+- extensive CSS overrides
+
+stop implementation and reassess the root cause.
+
+Unexpected complexity is often evidence that the wrong extension point is being used.
+
+---
+
+# 35. Change Priority
+
+When deciding how to implement something, use this order:
+
+```text
+Correctness
+↓
+Security
+↓
+Preservation of existing behavior
+↓
+Consistency with current architecture
+↓
+Maintainability
+↓
+Performance
+↓
+Developer convenience
+```
+
+---
+
+# 36. Required Agent Workflow
+
+For any significant task follow:
+
+## Step 1 — Understand
+
+Read:
+
+```text
+agents.md
+CHANGELOG.md
+relevant source files
+related components
+related styles
+related routes
+```
+
+## Step 2 — Investigate
+
+Determine:
+
+```text
+How does it currently work?
+Where does the behavior originate?
+Is similar functionality already implemented?
+Is this a bug or a missing feature?
+What is the root cause?
+```
+
+## Step 3 — Plan
+
+Identify:
+
+- files that genuinely need modification
+- existing functionality to reuse
+- risks
+- expected behavior
+
+## Step 4 — Implement
+
+Make the smallest correct change.
+
+## Step 5 — Verify
+
+Check:
+
+- requested functionality
+- existing related functionality
+- responsive behavior
+- runtime errors
+- build errors
+
+## Step 6 — Clean
+
+Remove:
+
+- temporary code
+- console logs
+- obsolete imports
+- superseded code
+
+## Step 7 — Document
+
+Update:
+
+```text
+agents.md
+CHANGELOG.md
+```
+
+for significant changes.
+
+---
+
+# Critical Requirement: Google Tag (`gtag.js`)
+
+Whenever creating any **new HTML page, HTML entrypoint, or HTML template**, you MUST copy the Google tag immediately after the opening `<head>` element.
+
+## Rules
+
+1. **Placement:** Immediately after `<head>`, before other head elements.
+2. **No duplicates:** Never add more than one Google tag to an HTML document.
+3. **Vue SPA views do not require independent copies of the script.** SPA route navigation is handled by the existing router Analytics implementation.
+4. Before inserting the tag, verify that it is not already present.
+
+## Exact Google Tag
+
+```html
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-F5BVYX6K72"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+    dataLayer.push(arguments);
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'G-F5BVYX6K72');
+</script>
+```
+
+---
+
+# Project Overview & Tech Stack
+
+- **Project:** OneGPS
+- **Product:** Modern premium GPS tracking and telematics solutions
+- **Framework:** Vue 3
+- **Build Tool:** Vite
+- **Routing:** Vue Router
+- **Styling:** Vanilla CSS
+- **Visual Direction:** Premium dark interface, navy backgrounds, gold accents and restrained glassmorphism
+- **Primary HTML Entry:** `index.html`
+
+---
+
+# Vue Project Structure
+
+Follow the established structure.
+
+```text
+src/
+├── components/
+├── views/
+├── router/
+│   └── index.js
+├── main.js
+└── style.css
+```
+
+## Views
+
+Full pages belong under:
+
+```text
+src/views/
+```
+
+## Components
+
+Reusable UI belongs under:
+
+```text
+src/components/
+```
+
+Do not put full pages inside the component directory.
+
+Do not create a component for every trivial piece of markup.
+
+## Routing
+
+Any navigable Vue view must be registered appropriately in:
+
+```text
+src/router/index.js
+```
+
+Before creating a route:
+
+1. check that it does not already exist
+2. follow existing route naming conventions
+3. preserve existing URLs unless a URL change is requested
+
+---
+
+# OneGPS Design Standards
+
+Maintain the established premium OneGPS visual identity.
+
+Primary characteristics:
+
+- dark navy backgrounds
+- gold accents
+- clean typography
+- generous spacing
+- restrained gradients
+- subtle glass effects
+- responsive layouts
+- professional telematics imagery
+- polished enterprise appearance
+
+Avoid excessive:
+
+- glow effects
+- animations
+- gradients
+- blur
+- oversized typography
+- decorative elements
+
+Premium design should feel deliberate rather than visually noisy.
+
+---
+
+# Existing Animation System
+
+The application already contains the global:
+
+```text
+v-reveal
+```
+
+directive.
+
+Before introducing another animation library or implementation, determine whether `v-reveal` can satisfy the requirement.
+
+Do not create competing scroll-animation systems without a documented reason.
+
+---
+
+# Analytics Architecture
+
+OneGPS is a Vue SPA.
+
+The Google Analytics base tag is located in:
+
+```text
+index.html
+```
+
+Route changes are tracked through the existing:
+
+```javascript
+router.afterEach(...)
+```
+
+implementation in:
+
+```text
+src/router/index.js
+```
+
+Do not create another router Analytics implementation unless replacing the existing one intentionally.
+
+Do not insert repeated Google Analytics scripts into Vue components.
+
+---
+
+# Content Standards
+
+OneGPS should communicate as a professional telematics platform.
+
+Where relevant, use accurate industry terminology such as:
+
+- GNSS/GPS tracking
+- fleet telematics
+- geofencing
+- CAN bus
+- OBD-II
+- fuel monitoring
+- capacitive fuel sensors
+- driver behavior
+- immobilization
+- IoT devices
+- telemetry
+- API integration
+- real-time tracking
+- overspeed monitoring
+
+Do not invent product capabilities.
+
+Existing or requested capabilities should guide product copy.
+
+---
+
+# Agent Changelog & Documentation Requirement
+
+## CRITICAL RULE FOR ALL AGENTS
+
+After completing a **significant**:
+
+- feature
+- bug fix
+- integration
+- architectural change
+- refactor
+- configuration change
+
+document the work.
+
+Update:
+
+```text
+agents.md
+```
+
+and:
+
+```text
+CHANGELOG.md
+```
+
+Do not create entries for extremely trivial changes that add no useful historical context.
+
+---
+
+# CHANGELOG.md Requirements
+
+Follow the existing Keep a Changelog structure.
+
+Add entries under:
+
+```text
+[Unreleased]
+
+Added
+Changed
+Fixed
+Removed
+Security
+```
+
+Use the category appropriate to the change.
+
+Keep entries concise and user/developer meaningful.
+
+---
+
+# agents.md Change Log Format
+
+Use:
+
+```markdown
+**Date:** YYYY-MM-DD
+
+**Agent Action:** Short description
+
+**What was done:**
+- Change 1
+- Change 2
+
+**Files changed:**
+- path/to/file
+- path/to/file
+
+**Why:**
+Explanation of why the change was necessary.
+
+**Method:**
+Technical explanation of how it was implemented.
+
+**Verification:**
+- Build/test performed
+- Relevant behavior checked
+```
+
+---
+
+# Existing Project History
+
+## Date: 2026-10-04
+
+### Agent Action
+Vue 3 SPA finalization, UI refinement and content overhaul.
+
+### Changes
+
+#### Analytics Routing Fix
+
+Google Analytics is loaded from `index.html`.
+
+Because Vue Router performs client-side navigation without full HTML reloads, `src/router/index.js` contains a `router.afterEach` hook that sends Analytics pageview events after navigation.
+
+Do not duplicate this functionality.
+
+#### UI & Aesthetics
+
+Introduced a global Vue:
+
+```text
+v-reveal
+```
+
+directive in:
+
+```text
+src/main.js
+```
+
+and corresponding reveal styles in:
+
+```text
+src/style.css
+```
+
+Enhanced:
+
+```text
+feature-card
+solution-card
+btn-primary
+```
+
+with the established OneGPS premium visual style.
+
+#### Content
+
+Professionalized copy in:
+
+```text
+Home.vue
+Solutions.vue
+Industries.vue
+```
+
+including relevant telematics terminology.
+
+#### HTML Cleanup
+
+Corrected duplicate nested:
+
+```text
+.feature-card
+.benefit-card
+```
+
+elements in:
+
+```text
+Home.vue
+FleetManagement.vue
+```
+
+---
+
+# Date: 2026-10-04 — Session 2
+
+## Favicon Update
+
+Replaced the generic Vite favicon with a custom OneGPS favicon.
+
+Brand colors:
+
+```text
+Navy: #00172D
+Gold: #E6AC03
+```
+
+Updated:
+
+```text
+public/favicon.svg
+index.html
+```
+
+Additional browser metadata was added for Safari, Chrome/Android and Windows integration.
+
+Do not replace these values with arbitrary alternatives without a branding requirement.
+
+---
+
+# CHANGELOG.md Creation
+
+A project-level:
+
+```text
+CHANGELOG.md
+```
+
+was introduced using the Keep a Changelog convention.
+
+Future significant changes must continue using this file.
+
+---
+
+# Final Standing Rules
+
+Every future agent working on OneGPS must follow these rules:
+
+1. Read `agents.md` before modifying the project.
+2. Read `CHANGELOG.md` before significant work.
+3. Understand existing functionality before coding.
+4. Search the repository before creating anything new.
+5. Fix root causes rather than layering workarounds over problems.
+6. Reuse existing code whenever possible.
+7. Extend existing code before creating parallel implementations.
+8. Never duplicate functionality without a documented reason.
+9. Follow existing architecture and conventions.
+10. Make the smallest correct change.
+11. Do not rewrite working code unnecessarily.
+12. Do not perform unrelated refactors.
+13. Do not introduce dependencies unnecessarily.
+14. Do not suppress errors merely to hide them.
+15. Do not create duplicate state or competing sources of truth.
+16. Preserve existing public interfaces where possible.
+17. Never expose secrets in frontend code.
+18. Preserve responsive behavior.
+19. Preserve accessibility.
+20. Avoid patch-on-patch CSS and JavaScript.
+21. Remove temporary and obsolete code after implementation.
+22. Do not create fake or nonfunctional production features.
+23. Do not guess about the repository — inspect it.
+24. Do not delete unfamiliar code without checking its usage.
+25. Do not modify global configuration for local problems unless necessary.
+26. Test or build the project after significant modifications.
+27. Never claim success when verification fails.
+28. Document significant changes in `agents.md`.
+29. Document significant changes in `CHANGELOG.md`.
+30. Never add duplicate `gtag.js` implementations.
+31. Preserve the existing OneGPS visual language.
+32. Prefer maintainability and consistency over cleverness.
+33. When implementation complexity unexpectedly grows, stop and investigate why.
+34. A bug should normally result in a **fix**, not a second implementation.
+35. Existing code is the starting point. **Build on it; do not build around it.**
+
+---
+
+# Golden Rule
+
+> **Understand first. Reuse second. Modify third. Create new code only when necessary.**
+
+And when something is broken:
+
+> **Do not build a new solution on top of the problem. Find the cause and fix the problem at its source.**

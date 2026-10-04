@@ -193,9 +193,10 @@ const isAnnual = ref(false);
   color: var(--text-primary);
 }
 .discount-badge {
-  background: #10b981;
-  color: white !important;
+  background: var(--accent-gold);
+  color: var(--bg-primary) !important;
   font-size: 0.7rem;
+  font-weight: 700;
   padding: 2px 8px;
   border-radius: 10px;
   margin-left: 0.5rem;
@@ -278,8 +279,9 @@ input:checked + .slider:before {
   left: 50%;
   transform: translateX(-50%);
   background: var(--primary-color);
-  color: white;
+  color: var(--bg-primary);
   margin: 0;
+  font-weight: 700;
 }
 .plan-desc {
   color: var(--primary-color);
@@ -315,7 +317,7 @@ ul li {
   gap: 0.5rem;
 }
 .check {
-  color: #10b981;
+  color: var(--accent-gold);
   font-weight: bold;
 }
 .text-center {

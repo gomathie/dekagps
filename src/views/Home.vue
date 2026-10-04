@@ -2,9 +2,7 @@
 import Hero from '../components/Hero.vue';
 import Solutions from '../components/Solutions.vue';
 import CTA from '../components/CTA.vue';
-
-// We can create a new component for 'Trusted By', 'Why Partner With Us', and 'About Us', or build them inline.
-// For now, let's build them inline in the Home view to match the new structure, reusing what we can.
+import industrialLogoFallback from '../../images/industrial-logo_logo2.webp';
 </script>
 
 <template>
@@ -19,7 +17,7 @@ import CTA from '../components/CTA.vue';
           <img src="../../images/telto-e1724330667289-1-300x69.png" alt="Teltonika">
           <img src="../../images/pilot-logo-new-1-e1773316299924.png" alt="Pilot">
           <img src="../../images/xbr1-1-e1773316267570.png" alt="XBR">
-          <img src="../../images/industrial-logo_logo2-1-e1773316282668.webp" alt="Industrial" @error="(e) => e.target.src='../../images/industrial-logo_logo2.webp'">
+          <img src="../../images/industrial-logo_logo2-1-e1773316282668.webp" alt="Industrial" @error="(e) => e.target.src = industrialLogoFallback">
         </div>
       </div>
     </section>
