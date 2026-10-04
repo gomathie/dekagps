@@ -2,11 +2,11 @@
   <header class="hero" :style="{ backgroundImage: `url(${bgImage})` }">
     <div class="container">
       <div class="hero-inner">
-        <div class="hero-text-box">
-          <h1>Cutting-Edge Fleet &amp;<br>Technology Solutions</h1>
+        <div class="hero-text-box" v-reveal>
+          <h1 class="gradient-text">Cutting-Edge Fleet &amp;<br>Technology Solutions</h1>
           <div class="gold-divider"></div>
           <p class="subtitle">Our cutting-edge technologies optimize all business processes to give the highest efficiency. The best solutions you can always trust!</p>
-          <router-link to="/services" class="btn-ghost">
+          <router-link to="/services" class="btn-primary" style="margin-top: 1rem;">
             Explore More <i class="fas fa-long-arrow-alt-right"></i>
           </router-link>
         </div>

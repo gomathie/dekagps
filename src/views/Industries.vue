@@ -8,7 +8,7 @@ import CTA from '../components/CTA.vue';
       <div class="hero-content">
         <div class="badge">INDUSTRIES</div>
         <h1>Perfect Fit for <span class="highlight-gradient">Any Industry</span></h1>
-        <p class="subtitle">Manage your drivers and vehicles with ease, as well as ensure compliance and safety across diverse sectors.</p>
+        <p class="subtitle">Leverage advanced telematics, IoT sensors, and data analytics to streamline operations, ensure compliance, and maximize safety across diverse sectors.</p>
         <router-link to="/book-a-demo" class="btn-primary btn-large" style="margin-top: 1rem; display: inline-block;">Get Started</router-link>
       </div>
     </header>
@@ -20,7 +20,7 @@ import CTA from '../components/CTA.vue';
             <img src="../../images/Trucks-parked-lined-up-_-Premium-Photo.webp" alt="Transport & Logistics">
             <div class="card-content">
               <h3>Transport & Logistics</h3>
-              <p>Manage your drivers and vehicles with ease, as well as ensure compliance and safety.</p>
+              <p>Optimize routing, ensure strict regulatory compliance, monitor driver behavior, and secure your cargo in transit.</p>
               <router-link to="/industries/perfect-fit" class="learn-more">Learn More →</router-link>
             </div>
           </div>
@@ -28,7 +28,7 @@ import CTA from '../components/CTA.vue';
             <img src="../../images/hitrcae.com-construction-500x332-1.webp" alt="Construction">
             <div class="card-content">
               <h3>Construction</h3>
-              <p>Protect and maintain your assets, easily calculate costs, and manage workers.</p>
+              <p>Protect heavy machinery with geofencing, track engine hours for maintenance, and monitor site productivity remotely.</p>
               <router-link to="/industries/perfect-fit" class="learn-more">Learn More →</router-link>
             </div>
           </div>
@@ -36,7 +36,7 @@ import CTA from '../components/CTA.vue';
             <img src="../../images/11754543_4804443-768x512.webp" alt="Courier & Delivery" @error="(e) => e.target.style.display='none'">
             <div class="card-content">
               <h3>Courier & Delivery</h3>
-              <p>Track your vehicles' live locations, optimise fuel consumption, fleet efficiency, and size.</p>
+              <p>Achieve real-time dispatch visibility, optimize delivery routes, and provide accurate ETAs to end-customers.</p>
               <router-link to="/industries/perfect-fit" class="learn-more">Learn More →</router-link>
             </div>
           </div>
@@ -44,7 +44,7 @@ import CTA from '../components/CTA.vue';
             <img src="../../images/1gV-Wcn3-bAx5DBELHEPtdg-768x513.webp" alt="Service Providers" @error="(e) => e.target.style.display='none'">
             <div class="card-content">
               <h3>Service Providers</h3>
-              <p>Make work easier for every department – managers, field employees, and accountants.</p>
+              <p>Digitize field operations with live location tracking, digital dispatching, and automated mileage reporting.</p>
               <router-link to="/industries/perfect-fit" class="learn-more">Learn More →</router-link>
             </div>
           </div>
@@ -52,7 +52,7 @@ import CTA from '../components/CTA.vue';
             <img src="../../images/tractor-agricultural-machine-cultivating-field-500x332-1.webp" alt="Agriculture">
             <div class="card-content">
               <h3>Agriculture</h3>
-              <p>Increase safety and efficiency, speed up administrative tasks and maintenance.</p>
+              <p>Deploy precision farming techniques using IoT environmental sensors and track exact tractor acreage.</p>
               <router-link to="/industries/perfect-fit" class="learn-more">Learn More →</router-link>
             </div>
           </div>
@@ -60,7 +60,7 @@ import CTA from '../components/CTA.vue';
             <img src="../../images/06f687e3-15d6-4a37-b4e4-1b75687a8e69-500x332-1.webp" alt="Waste Management" @error="(e) => e.target.style.display='none'">
             <div class="card-content">
               <h3>Waste Management</h3>
-              <p>Achieve better sustainability, fewer accidents, and more efficient back-office operations.</p>
+              <p>Optimize collection routes, monitor PTO (Power Take-Off) events, and reduce operational carbon footprint.</p>
               <router-link to="/industries/perfect-fit" class="learn-more">Learn More →</router-link>
             </div>
           </div>
@@ -68,7 +68,7 @@ import CTA from '../components/CTA.vue';
             <img src="../../images/PTS-Vehicle-Hire-Berkshire-_-Ambulance-Hire-in-Berkshire.webp" alt="Emergency Services">
             <div class="card-content">
               <h3>Emergency Services</h3>
-              <p>Enhance Emergency Response, Optimise Route, & Monitor Driver Behaviour.</p>
+              <p>Ensure rapid incident response, optimize dispatch paths, and maintain strict driver safety protocols.</p>
               <router-link to="/industries/perfect-fit" class="learn-more">Learn More →</router-link>
             </div>
           </div>
@@ -76,7 +76,7 @@ import CTA from '../components/CTA.vue';
             <img src="../../images/Pills-And-Capsules-In-The-Shopping-Cart-Medicine-Health-Pills-PNG-Transparent-Image-and-Clipart-for-Free-Download.webp" alt="Pharmaceutical">
             <div class="card-content">
               <h3>Pharmaceutical</h3>
-              <p>Control Temperature, Manage Drivers, & Track Vehicle in Real-time.</p>
+              <p>Enforce cold chain integrity with live temperature/humidity monitoring and automated deviation alerts.</p>
               <router-link to="/industries/perfect-fit" class="learn-more">Learn More →</router-link>
             </div>
           </div>
@@ -84,7 +84,7 @@ import CTA from '../components/CTA.vue';
             <img src="../../images/pexels-oleksandr-p-1031698-1-500x332-1.webp" alt="Oil & Gas">
             <div class="card-content">
               <h3>Oil & Gas</h3>
-              <p>Control Temperature in Real-Time, Improve Visibility, & Safeguard Cargo.</p>
+              <p>Secure hazardous cargo transports with live telemetry, valve monitoring, and strict driver vetting.</p>
               <router-link to="/industries/perfect-fit" class="learn-more">Learn More →</router-link>
             </div>
           </div>

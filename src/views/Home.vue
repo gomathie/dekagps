@@ -12,7 +12,7 @@ import CTA from '../components/CTA.vue';
     <Hero />
     
     <!-- Trusted By Section -->
-    <section class="trusted-by">
+    <section class="trusted-by" v-reveal>
       <div class="container">
         <p class="trusted-label">TRUSTED BY INDUSTRY LEADERS & HARDWARE PROVIDERS</p>
         <div class="logo-carousel">
@@ -29,37 +29,37 @@ import CTA from '../components/CTA.vue';
 
     <!-- Why Partner With Us -->
     <section class="why-partner" id="features">
-      <div class="section-header text-center" style="margin-bottom: 4rem;">
+      <div class="section-header text-center" style="margin-bottom: 4rem;" v-reveal>
         <h2>Why Partner With OneGPS</h2>
         <p class="subtitle">Everything you need to scale your fleet operations</p>
       </div>
       <div class="features-grid">
-        <div class="feature-card">
+        <div class="feature-card" v-reveal>
           <div class="feature-icon">🧩</div>
           <h3>Perfect fit for any industry</h3>
           <p>The OneGPS fleet management software fits diverse projects, from real-time fleet tracking to full digitalization and business intelligence, delivering valuable insights for strategic growth.</p>
         </div>
-        <div class="feature-card">
+        <div class="feature-card" v-reveal>
           <div class="feature-icon">🔌</div>
           <h3>Seamless API Integrations</h3>
           <p>Seamlessly transmit processed data to visualization tools and external systems through APIs. Build a tailored solution and integrate with ERP, BI, accounting, and more.</p>
         </div>
-        <div class="feature-card">
+        <div class="feature-card" v-reveal>
           <div class="feature-icon">⚙️</div>
           <h3>Hardware-Agnostic Solution</h3>
           <p>OneGPS integrates with most GPS device models — from small scooter trackers to complex devices with multiple inputs, CAN bus, and OBD support.</p>
         </div>
-        <div class="feature-card">
+        <div class="feature-card" v-reveal>
           <div class="feature-icon">🎧</div>
           <h3>Technical Consulting</h3>
           <p>Partners benefit from technical support in five languages, project implementation assistance, expert-led training sessions, and certification opportunities.</p>
         </div>
-        <div class="feature-card">
+        <div class="feature-card" v-reveal>
           <div class="feature-icon">🏷️</div>
           <h3>White-Labeling</h3>
           <p>Partners can use the fleet management platform under the OneGPS brand or opt for a customized, white-labeled solution with its own brand identity.</p>
         </div>
-        <div class="feature-card">
+        <div class="feature-card" v-reveal>
           <div class="feature-icon">👥</div>
           <h3>OneGPS Community</h3>
           <p>The largest network of telematics and IoT experts. A platform for knowledge exchange, technology sharing, and collaborative problem-solving.</p>
@@ -68,7 +68,7 @@ import CTA from '../components/CTA.vue';
     </section>
     
     <!-- Intermediate CTA -->
-    <section class="intermediate-cta">
+    <section class="intermediate-cta" v-reveal>
       <div class="cta-inner">
         <h2>Interested in a tracker installation?</h2>
         <p>Talk to us today</p>
@@ -77,7 +77,7 @@ import CTA from '../components/CTA.vue';
     </section>
 
     <!-- About Us Section -->
-    <section class="about-us">
+    <section class="about-us" v-reveal>
       <div class="about-container">
         <div class="about-visual">
            <img src="../../images/portrait-african-american-man-factory.webp" alt="Worker">
@@ -86,7 +86,7 @@ import CTA from '../components/CTA.vue';
           <span class="badge">ABOUT US</span>
           <h2>Our Mission & Vision</h2>
           <p>To revolutionize the way businesses manage their fleets, providing real-time insights and actionable data that drive smarter decisions, reduce costs, and improve safety.</p>
-          <router-link to="/services" class="btn-ghost" style="margin-top: 1rem; display: inline-block;">Learn More About Us</router-link>
+          <router-link to="/services" class="btn-outline" style="margin-top: 1rem; display: inline-block;">Learn More About Us</router-link>
         </div>
         
         <div class="about-benefits">
@@ -108,7 +108,7 @@ import CTA from '../components/CTA.vue';
             <div class="b-icon">💼</div>
             <div>
               <h4 style="margin: 0 0 0.25rem 0;">Advanced Technologies</h4>
-              <p style="margin: 0; font-size: 0.9rem; color: var(--text-muted);">Wonderful customer support with advanced technologies and 24/7 assistance.</p>
+              <p style="margin: 0; font-size: 0.9rem; color: var(--text-muted);">State-of-the-art telemetry integration, scalable architecture, and dedicated 24/7 multilingual technical support.</p>
             </div>
           </div>
         </div>

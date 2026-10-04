@@ -176,7 +176,16 @@ const router = createRouter({
 
 router.afterEach((to) => {
   const base = 'OneGPS'
-  document.title = to.meta?.title ? `${to.meta.title} | ${base}` : `${base} | GPS Tracking & Telematics`
+  const newTitle = to.meta?.title ? `${to.meta.title} | ${base}` : `${base} | GPS Tracking & Telematics`
+  document.title = newTitle
+
+  // Send pageview to Google Analytics on route change
+  if (typeof gtag !== 'undefined') {
+    gtag('config', 'G-F5BVYX6K72', {
+      page_path: to.path,
+      page_title: newTitle
+    })
+  }
 })
 
 export default router

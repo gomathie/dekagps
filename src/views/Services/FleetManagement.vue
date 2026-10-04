@@ -42,22 +42,26 @@ import CTA from '../../components/CTA.vue';
       </div>
       <div class="container grid-4">
         <div class="benefit-card">
-          <div class="icon">👥</div>
+
+        <div class="benefit-card">
           <h3>Oversee Multi-Level Fleets</h3>
           <p>Define complex user hierarchies and granular access permissions. Allocate specific responsibilities to branch managers or dispatchers while maintaining a unified global view.</p>
         </div>
         <div class="benefit-card">
-          <div class="icon">⚠️</div>
+
+        <div class="benefit-card">
           <h3>Critical Event Management</h3>
           <p>Respond instantly to overdue services, unauthorized vehicle use, or sudden financial spikes. Our dashboard prioritizes high-impact alerts.</p>
         </div>
         <div class="benefit-card">
-          <div class="icon">📊</div>
+
+        <div class="benefit-card">
           <h3>Optimize Asset Utilization</h3>
           <p>Strategically organize workloads based on live vehicle health data. Identify inoperable units early and redistribute tasks.</p>
         </div>
         <div class="benefit-card">
-          <div class="icon">🔄</div>
+
+        <div class="benefit-card">
           <h3>Data-Driven Asset Renewal</h3>
           <p>Use detailed breakdown analytics to evaluate vehicle ROI. Pinpoint high-mileage assets that have become financial liabilities.</p>
         </div>
@@ -206,8 +210,17 @@ import CTA from '../../components/CTA.vue';
   padding: 2rem;
   border-radius: 12px;
 }
-.icon {
-  font-size: 2rem;
+
+
+/* Emoji clip-art icons were removed in favour of a gold accent rule so the
+   legacy service pages match the design system of the rest of the site. */
+.benefit-card h3::before {
+  content: '';
+  display: block;
+  width: 34px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--accent-gold);
   margin-bottom: 1rem;
 }
 .text-center {
@@ -253,7 +266,8 @@ import CTA from '../../components/CTA.vue';
   border-radius: 8px;
 }
 .check-icon {
-  color: #10b981;
+
+  color: var(--accent-gold);
   font-weight: bold;
 }
 .tech-grid {

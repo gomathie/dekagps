@@ -1,35 +1,35 @@
 <template>
   <section class="solutions" id="solutions">
     <div class="container text-center">
-      <h2>Our Solutions</h2>
-      <p class="subtitle" style="margin-bottom: 4rem;">Comprehensive technology solutions tailored for your business needs</p>
+      <h2 v-reveal>Our Solutions</h2>
+      <p class="subtitle" style="margin-bottom: 4rem;" v-reveal>Comprehensive technology solutions tailored for your business needs</p>
       
       <div class="solutions-grid">
-        <div class="solution-card">
+        <div class="solution-card" v-reveal>
           <div class="icon">🚛</div>
-          <h3>Fleet / Fuel Management</h3>
-          <p>Fuel represents a significant cost for a fleet. A comprehensive solution is necessary to effectively track and manage fuel usage and the fleet's activities.</p>
+          <h3>Fleet & Fuel Management</h3>
+          <p>Mitigate fuel theft and optimize consumption. Our advanced telematics integrate seamlessly with CAN bus and capacitive fuel level sensors to deliver real-time analytics and predictive maintenance.</p>
           <router-link to="/services/fleet-management" class="learn-more">Learn More →</router-link>
         </div>
         
-        <div class="solution-card">
+        <div class="solution-card" v-reveal>
           <div class="icon">📡</div>
-          <h3>Telematics</h3>
-          <p>Gain essential insights for effective fleet or asset management by obtaining precise, current information on the locations of vehicles, assets, and personnel.</p>
+          <h3>Advanced Telematics</h3>
+          <p>Achieve unprecedented visibility into your operations. Monitor live asset locations, route histories, and OBD-II engine diagnostics to ensure peak fleet performance and security.</p>
           <router-link to="/services/tracking-solutions" class="learn-more">Learn More →</router-link>
         </div>
         
-        <div class="solution-card">
+        <div class="solution-card" v-reveal>
           <div class="icon">🏠</div>
-          <h3>IoT and Smart Homes</h3>
-          <p>Advanced smart home security systems, featuring real-time monitoring, remote access, and automated alerts, ensuring your home and family are safe and secure.</p>
+          <h3>IoT & Smart Environments</h3>
+          <p>Extend connectivity beyond vehicles. We deliver comprehensive IoT ecosystems for smart homes and industrial automation, featuring real-time alerting, sensor data, and remote access.</p>
           <router-link to="/services/iot-smart-homes" class="learn-more">Learn More →</router-link>
         </div>
         
-        <div class="solution-card">
+        <div class="solution-card" v-reveal>
           <div class="icon">🌐</div>
-          <h3>Web Services</h3>
-          <p>We deliver custom web solutions, from stunning website designs to fully functional e-commerce stores with expert digital and social media management.</p>
+          <h3>Custom Web & API Solutions</h3>
+          <p>Leverage our robust REST webhooks and custom development services to integrate telematics data seamlessly into your ERP, CRM, or bespoke logistics portals.</p>
           <router-link to="/services/web-services" class="learn-more">Learn More →</router-link>
         </div>
       </div>
