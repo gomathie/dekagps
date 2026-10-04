@@ -23,37 +23,30 @@ import CTA from '../../components/CTA.vue';
         
         <div class="grid-3">
           <div class="benefit-card">
-            <div class="icon">🛡️</div>
             <h3>Safeguard Fuel Against Theft</h3>
             <p>Implement fuel monitoring systems to identify irregularities and safeguard your assets.</p>
           </div>
           <div class="benefit-card">
-            <div class="icon">👤</div>
             <h3>Improve Driving Culture</h3>
             <p>Combine fuel monitoring with driver behavior analysis to identify fuel-wasting habits.</p>
           </div>
           <div class="benefit-card">
-            <div class="icon">📈</div>
             <h3>Enhance Fuel Efficiency</h3>
             <p>Immediate insights into fuel consumption trends. Detect inefficiencies and optimize usage.</p>
           </div>
           <div class="benefit-card">
-            <div class="icon">🦅</div>
             <h3>Aerial Perspective</h3>
             <p>Track every ounce of filled or used fuel and understand how it impacts the budget.</p>
           </div>
           <div class="benefit-card">
-            <div class="icon">⚡</div>
             <h3>Real-time Control</h3>
             <p>Track fuel consumption and current tank levels with just a few clicks.</p>
           </div>
           <div class="benefit-card">
-            <div class="icon">🕒</div>
             <h3>Past Records</h3>
             <p>Consistently review fuel data and pinpoint areas for improvement.</p>
           </div>
           <div class="benefit-card">
-            <div class="icon">🎯</div>
             <h3>Accuracy Throughout Projects</h3>
             <p>Receive precise data for different vehicles, regardless of landscape or project conditions.</p>
           </div>
@@ -192,8 +185,15 @@ import CTA from '../../components/CTA.vue';
   border-radius: 8px;
   margin-bottom: 1.5rem;
 }
-.icon {
-  font-size: 2rem;
+/* Emoji clip-art icons were removed in favour of a gold accent rule so the
+   legacy service pages match the design system of the rest of the site. */
+.benefit-card h3::before {
+  content: '';
+  display: block;
+  width: 34px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--accent-gold);
   margin-bottom: 1rem;
 }
 .layout-grid {
@@ -214,7 +214,7 @@ import CTA from '../../components/CTA.vue';
   gap: 1rem;
 }
 .check-icon {
-  color: #10b981;
+  color: var(--accent-gold);
   font-weight: bold;
 }
 </style>

@@ -33,3 +33,24 @@ Whenever creating any new HTML page, HTML entrypoint, or template for this websi
 - If creating a standalone HTML page (e.g. landing page, legal page, error page, or secondary Vite HTML page), ensure the Google tag snippet above is included immediately below the `<head>` tag.
 - For Vue views and components, build under `src/views/` and `src/components/`, and register any new routes in [`src/router/index.js`](file:///c:/Users/gomat/Downloads/DEV%20PROJECTS/onegps/src/router/index.js).
 - Ensure all interactive elements and pages adhere to the responsive design and premium visual standards established in the project.
+
+---
+
+## Agent Changelog & Documentation Requirement
+
+**CRITICAL RULE FOR ALL AGENTS:** 
+Whenever an agent completes a significant task, feature, or refactor in this project, they **MUST** document their changes in this section of `agents.md`. State clearly what was changed, which files were impacted, and the reasoning behind it. This maintains project continuity.
+
+### Recent Changes Log
+
+**Date:** 2026-10-04
+**Agent Action:** Vue 3 SPA Finalization, UI Refinement, and Content Overhaul
+**Changes Made:**
+1. **Analytics Routing Fix:** The Google Analytics tag (`gtag.js`) is correctly placed in `index.html`. Since the project is an SPA, I updated `src/router/index.js` with a `router.afterEach` hook to manually send Google Analytics pageview events on route change. This guarantees accurate page tracking as users navigate without triggering a hard reload.
+2. **UI & Aesthetics Refinement:** 
+   - Added a global Vue directive (`v-reveal`) in `src/main.js` and CSS classes in `src/style.css` to introduce smooth scroll-triggered fade-in animations across all pages.
+   - Enhanced `feature-card`, `solution-card`, and `btn-primary` in `style.css` with a premium glassmorphism aesthetic (`backdrop-filter: blur(12px)`) and modern gradients.
+3. **Content Research & Optimization:** 
+   - Refined the copy in `Home.vue`, `Solutions.vue`, and `Industries.vue` to sound more professional and technical (utilizing industry terms like *CAN bus, capacitive fuel sensors, IoT environments, OBD-II*), accurately reflecting a top-tier GPS telematics provider.
+   - Internal service pages like `FleetManagement.vue` were verified to be extremely accurate and highly technical.
+4. **HTML Cleanup:** Fixed duplicate nested `.feature-card` and `.benefit-card` `<div>` tags in `Home.vue` and `FleetManagement.vue` that were causing potential layout and spacing anomalies.

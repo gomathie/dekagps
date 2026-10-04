@@ -23,17 +23,14 @@ import CTA from '../../components/CTA.vue';
         
         <div class="grid-3">
           <div class="benefit-card">
-            <div class="icon">🚚</div>
             <h3>Vehicle Tracking</h3>
             <p>Real-time location monitoring, speed analysis, route history playback, fuel consumption metrics, and comprehensive driver behavior analytics designed for any vehicle type.</p>
           </div>
           <div class="benefit-card">
-            <div class="icon">📦</div>
             <h3>Asset Tracking</h3>
             <p>Monitor the exact location of valuable equipment, generators, or goods in transit. Utilize advanced geo-fencing and receive instant movement or tamper alerts.</p>
           </div>
           <div class="benefit-card">
-            <div class="icon">📊</div>
             <h3>Fleet Management</h3>
             <p>A robust, centralized platform for dispatch coordination, automated maintenance scheduling, compliance tracking, and deep-dive operational analytics reporting.</p>
           </div>
@@ -71,32 +68,26 @@ import CTA from '../../components/CTA.vue';
         
         <div class="grid-3">
           <div class="dark-card">
-            <div class="icon">📍</div>
             <h3>Real-Time GPS Tracking</h3>
             <p>Gain instant, second-by-second visibility into your entire fleet or asset inventory from any device.</p>
           </div>
           <div class="dark-card">
-            <div class="icon">🗺️</div>
             <h3>Geofencing</h3>
             <p>Establish virtual perimeters and automatically trigger alerts the moment an asset enters or leaves a designated safe zone.</p>
           </div>
           <div class="dark-card">
-            <div class="icon">🛣️</div>
             <h3>Route Optimization</h3>
             <p>Calculate and dispatch the smartest, most efficient paths to reduce mileage, cut fuel costs, and ensure faster delivery times.</p>
           </div>
           <div class="dark-card">
-            <div class="icon">👤</div>
             <h3>Driver Behavior Monitoring</h3>
             <p>Protect your vehicles by monitoring and scoring drivers on speeding, harsh braking, rapid cornering, and excessive idling.</p>
           </div>
           <div class="dark-card">
-            <div class="icon">📄</div>
             <h3>Reporting & Analytics</h3>
             <p>Generate custom dashboards and schedule automated reports to track ROI, fuel usage, and overall fleet performance.</p>
           </div>
           <div class="dark-card">
-            <div class="icon">📱</div>
             <h3>Mobile App</h3>
             <p>Stay connected on the go with our fully-featured iOS and Android mobile applications, bringing fleet control to your pocket.</p>
           </div>
@@ -235,8 +226,16 @@ import CTA from '../../components/CTA.vue';
 .dark-card {
   background: rgba(0, 0, 0, 0.3);
 }
-.icon {
-  font-size: 2rem;
+/* Emoji clip-art icons were removed in favour of a gold accent rule so the
+   legacy service pages match the design system of the rest of the site. */
+.benefit-card h3::before,
+.dark-card h3::before {
+  content: '';
+  display: block;
+  width: 34px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--accent-gold);
   margin-bottom: 1rem;
 }
 .highlight-box {
@@ -303,7 +302,7 @@ import CTA from '../../components/CTA.vue';
   border: 1px solid var(--glass-border);
 }
 .check-icon {
-  color: #10b981;
+  color: var(--accent-gold);
   font-weight: bold;
   margin-top: 2px;
 }

@@ -39,32 +39,32 @@ import CTA from '../../components/CTA.vue';
       
       <div class="container grid-3" style="margin-top: 4rem;">
         <div class="benefit-card">
-          <div class="icon">⏱️</div>
+        <div class="benefit-card">
           <h3>Speed Monitoring</h3>
           <p>Ensure absolute compliance with road speed limits. Our system triggers instant alerts for excessive speeding, allowing managers to intervene before costly fines or severe accidents occur.</p>
         </div>
         <div class="benefit-card">
-          <div class="icon">🛑</div>
+        <div class="benefit-card">
           <h3>Harsh Braking Detection</h3>
           <p>Pinpoint dangerous, aggressive braking patterns. Use hard data to proactively coach drivers, improve overall road safety, and significantly reduce wear and tear on brake pads and rotors.</p>
         </div>
         <div class="benefit-card">
-          <div class="icon">🚀</div>
+        <div class="benefit-card">
           <h3>Rapid Acceleration Tracking</h3>
           <p>Monitor jackrabbit starts and erratic acceleration. Eliminating this aggressive driving style is proven to substantially cut fuel waste and minimize stress on the vehicle drivetrain.</p>
         </div>
         <div class="benefit-card">
-          <div class="icon">⏳</div>
+        <div class="benefit-card">
           <h3>Idle Time Monitoring</h3>
           <p>Combat unnecessary fuel burn and emissions. Identify drivers who leave engines running during extended stops and enforce corporate anti-idling policies to drastically reduce overhead.</p>
         </div>
         <div class="benefit-card">
-          <div class="icon">🛡️</div>
+        <div class="benefit-card">
           <h3>Safety Scoring</h3>
           <p>Automatically compile comprehensive telemetry data into a straightforward 0-100 safety score for each driver, giving you a clear, objective benchmark of fleet risk levels.</p>
         </div>
         <div class="benefit-card">
-          <div class="icon">🏅</div>
+        <div class="benefit-card">
           <h3>Driver Ranking</h3>
           <p>Foster a healthy culture of competition. Rank drivers on a dynamic leaderboard and introduce gamification to incentivize and reward your safest, most efficient operators.</p>
         </div>
@@ -169,8 +169,15 @@ import CTA from '../../components/CTA.vue';
   border-radius: 12px;
   text-align: left;
 }
-.icon {
-  font-size: 2rem;
+/* Emoji clip-art icons were removed in favour of a gold accent rule so the
+   legacy service pages match the design system of the rest of the site. */
+.benefit-card h3::before {
+  content: '';
+  display: block;
+  width: 34px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--accent-gold);
   margin-bottom: 1rem;
 }
 .highlight-box {
@@ -215,7 +222,7 @@ import CTA from '../../components/CTA.vue';
   border: 1px solid var(--glass-border);
 }
 .check-icon {
-  color: #10b981;
+  color: var(--accent-gold);
   font-weight: bold;
   margin-top: 2px;
 }
