@@ -35,32 +35,26 @@ import CTA from '../components/CTA.vue';
       </div>
       <div class="features-grid">
         <div class="feature-card" v-reveal>
-
           <h3>Perfect fit for any industry</h3>
           <p>The OneGPS fleet management software fits diverse projects, from real-time fleet tracking to full digitalization and business intelligence, delivering valuable insights for strategic growth.</p>
         </div>
         <div class="feature-card" v-reveal>
-
           <h3>Seamless API Integrations</h3>
           <p>Seamlessly transmit processed data to visualization tools and external systems through APIs. Build a tailored solution and integrate with ERP, BI, accounting, and more.</p>
         </div>
         <div class="feature-card" v-reveal>
-
           <h3>Hardware-Agnostic Solution</h3>
           <p>OneGPS integrates with most GPS device models — from small scooter trackers to complex devices with multiple inputs, CAN bus, and OBD support.</p>
         </div>
         <div class="feature-card" v-reveal>
-
           <h3>Technical Consulting</h3>
           <p>Partners benefit from technical support in five languages, project implementation assistance, expert-led training sessions, and certification opportunities.</p>
         </div>
         <div class="feature-card" v-reveal>
-
           <h3>White-Labeling</h3>
           <p>Partners can use the fleet management platform under the OneGPS brand or opt for a customized, white-labeled solution with its own brand identity.</p>
         </div>
         <div class="feature-card" v-reveal>
-
           <h3>OneGPS Community</h3>
           <p>The largest network of telematics and IoT experts. A platform for knowledge exchange, technology sharing, and collaborative problem-solving.</p>
         </div>
@@ -91,21 +85,18 @@ import CTA from '../components/CTA.vue';
         
         <div class="about-benefits">
           <div class="benefit-item">
-
             <div>
               <h4 style="margin: 0 0 0.25rem 0;">Experience</h4>
               <p style="margin: 0; font-size: 0.9rem; color: var(--text-muted);">We have more than 15 years of experience in providing Vehicle Tracking & Fleet Management solutions.</p>
             </div>
           </div>
           <div class="benefit-item">
-
             <div>
               <h4 style="margin: 0 0 0.25rem 0;">Affordability</h4>
               <p style="margin: 0; font-size: 0.9rem; color: var(--text-muted);">We offer dependable and high-quality GPS hardware and software that remains budget-friendly for everyone.</p>
             </div>
           </div>
           <div class="benefit-item">
-
             <div>
               <h4 style="margin: 0 0 0.25rem 0;">Advanced Technologies</h4>
               <p style="margin: 0; font-size: 0.9rem; color: var(--text-muted);">State-of-the-art telemetry integration, scalable architecture, and dedicated 24/7 multilingual technical support.</p>
@@ -176,16 +167,7 @@ import CTA from '../components/CTA.vue';
   font-size: 0.95rem;
 }
 
-
-
-
-
-
-
-
-
 .intermediate-cta {
-
   /* Kept the previous gradient overlay but aligned it to the brand palette. */
   background: linear-gradient(180deg, rgba(0, 16, 34, 0.86), rgba(0, 23, 45, 0.94)), url('../../images/truck-vehicle-with-trailers-background_600x316.webp') center/cover;
   border: 1px solid var(--border-gold);
@@ -246,12 +228,6 @@ import CTA from '../components/CTA.vue';
   padding: 1.5rem;
   border-radius: 12px;
 }
-
-
-
-
-
-
 @media (max-width: 768px) {
   .about-container {
     grid-template-columns: 1fr;
