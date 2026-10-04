@@ -39,22 +39,18 @@ onMounted(() => {
     </div>
     <div class="features-grid">
       <div class="feature-card" ref="featureCards">
-        <div class="feature-icon">🛰️</div>
         <h3>Real-Time Location</h3>
         <p>Pinpoint accuracy with sub-second updates across our global satellite network. Never lose sight of what matters.</p>
       </div>
       <div class="feature-card" ref="featureCards">
-        <div class="feature-icon">🛡️</div>
         <h3>Smart Geofencing</h3>
         <p>Set custom boundaries and receive instant alerts when assets enter or leave designated zones.</p>
       </div>
       <div class="feature-card" ref="featureCards">
-        <div class="feature-icon">📊</div>
         <h3>Advanced Analytics</h3>
         <p>Turn movement data into actionable insights. Optimize routes, reduce fuel consumption, and improve efficiency.</p>
       </div>
       <div class="feature-card" ref="featureCards">
-        <div class="feature-icon">🔔</div>
         <h3>Instant Alerts</h3>
         <p>Customizable notifications for speed violations, harsh braking, unauthorized movement, or maintenance needs.</p>
       </div>

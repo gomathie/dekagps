@@ -33,7 +33,7 @@ import CTA from '../components/CTA.vue';
             </div>
           </div>
           <div class="industry-card">
-            <img src="../../images/11754543_4804443-768x512.webp" alt="Courier & Delivery" @error="(e) => e.target.style.display='none'">
+            <img src="../../images/courier-delivery-industry.jpg" alt="Courier & Delivery">
             <div class="card-content">
               <h3>Courier & Delivery</h3>
               <p>Achieve real-time dispatch visibility, optimize delivery routes, and provide accurate ETAs to end-customers.</p>
@@ -73,7 +73,7 @@ import CTA from '../components/CTA.vue';
             </div>
           </div>
           <div class="industry-card">
-            <img src="../../images/Pills-And-Capsules-In-The-Shopping-Cart-Medicine-Health-Pills-PNG-Transparent-Image-and-Clipart-for-Free-Download.webp" alt="Pharmaceutical">
+            <img src="../../images/pharmaceutical-industry.jpg" alt="Pharmaceutical">
             <div class="card-content">
               <h3>Pharmaceutical</h3>
               <p>Enforce cold chain integrity with live temperature/humidity monitoring and automated deviation alerts.</p>
@@ -81,7 +81,7 @@ import CTA from '../components/CTA.vue';
             </div>
           </div>
           <div class="industry-card">
-            <img src="../../images/pexels-oleksandr-p-1031698-1-500x332-1.webp" alt="Oil & Gas">
+            <img src="../../images/oil-gas-industry.jpg" alt="Oil & Gas">
             <div class="card-content">
               <h3>Oil & Gas</h3>
               <p>Secure hazardous cargo transports with live telemetry, valve monitoring, and strict driver vetting.</p>
