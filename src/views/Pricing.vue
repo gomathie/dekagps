@@ -43,7 +43,7 @@ const isAnnual = ref(false);
               <li><span class="check">✓</span> Daily Ignition & Mileage Reports</li>
               <li><span class="check">✓</span> Standard Email & Phone Support</li>
             </ul>
-            <a href="#" class="btn-ghost" style="width: 100%; text-align: center; margin-top: auto;">Get Started</a>
+            <router-link to="/book-a-demo" class="btn-ghost" style="width: 100%; text-align: center; margin-top: auto;">Get Started</router-link>
           </div>
           
           <div class="pricing-card featured dark-card">
@@ -65,7 +65,7 @@ const isAnnual = ref(false);
               <li><span class="check">✓</span> REST API Access for ERP & Accounting Systems</li>
               <li><span class="check">✓</span> Priority Support (Phone & WhatsApp)</li>
             </ul>
-            <a href="#" class="btn-primary" style="width: 100%; text-align: center; margin-top: auto;">Choose Standard</a>
+            <router-link to="/book-a-demo" class="btn-primary" style="width: 100%; text-align: center; margin-top: auto;">Choose Standard</router-link>
           </div>
           
           <div class="pricing-card">
@@ -86,7 +86,7 @@ const isAnnual = ref(false);
               <li><span class="check">✓</span> Dedicated Account Manager & 99.9% SLA</li>
               <li><span class="check">✓</span> 24/7 Stolen Vehicle Recovery Priority Dispatch</li>
             </ul>
-            <a href="#" class="btn-ghost" style="width: 100%; text-align: center; margin-top: auto;">Contact Enterprise</a>
+            <router-link to="/contact" class="btn-ghost" style="width: 100%; text-align: center; margin-top: auto;">Contact Enterprise</router-link>
           </div>
         </div>
       </div>
@@ -142,7 +142,7 @@ const isAnnual = ref(false);
 
         <div style="margin-top: 4rem;">
           <p class="subtitle">Need a customized multi-country or white-label fleet solution?</p>
-          <a href="#" class="btn-primary">Request a Custom Quote</a>
+          <router-link to="/contact" class="btn-primary">Request a Custom Quote</router-link>
         </div>
       </div>
     </section>
@@ -152,7 +152,7 @@ const isAnnual = ref(false);
         <h2>Not Sure Which Plan is Right for You?</h2>
         <p>Our fleet specialists will analyze your vehicle operations and recommend the most cost-effective setup.</p>
         <div class="cta-buttons">
-           <a href="#" class="btn-primary btn-large">Talk to Sales</a>
+           <router-link to="/contact" class="btn-primary btn-large">Talk to Sales</router-link>
         </div>
       </div>
     </section>

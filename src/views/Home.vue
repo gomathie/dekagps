@@ -45,11 +45,9 @@ import CTA from '../components/CTA.vue';
           <p>Seamlessly transmit processed data to visualization tools and external systems through APIs. Build a tailored solution and integrate with ERP, BI, accounting, and more.</p>
         </div>
         <div class="feature-card">
-          <div class="feature-card">
           <div class="feature-icon">⚙️</div>
           <h3>Hardware-Agnostic Solution</h3>
           <p>OneGPS integrates with most GPS device models — from small scooter trackers to complex devices with multiple inputs, CAN bus, and OBD support.</p>
-        </div>
         </div>
         <div class="feature-card">
           <div class="feature-icon">🎧</div>
@@ -74,7 +72,7 @@ import CTA from '../components/CTA.vue';
       <div class="cta-inner">
         <h2>Interested in a tracker installation?</h2>
         <p>Talk to us today</p>
-        <a href="#" class="btn-primary btn-large" style="margin-top: 1rem;">Book a Demo</a>
+        <router-link to="/book-a-demo" class="btn-primary btn-large" style="margin-top: 1rem;">Book a Demo</router-link>
       </div>
     </section>
 
@@ -88,7 +86,7 @@ import CTA from '../components/CTA.vue';
           <span class="badge">ABOUT US</span>
           <h2>Our Mission & Vision</h2>
           <p>To revolutionize the way businesses manage their fleets, providing real-time insights and actionable data that drive smarter decisions, reduce costs, and improve safety.</p>
-          <a href="#" class="btn-ghost" style="margin-top: 1rem; display: inline-block;">Learn More About Us</a>
+          <router-link to="/services" class="btn-ghost" style="margin-top: 1rem; display: inline-block;">Learn More About Us</router-link>
         </div>
         
         <div class="about-benefits">

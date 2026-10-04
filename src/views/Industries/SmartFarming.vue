@@ -9,7 +9,7 @@ import CTA from '../../components/CTA.vue';
         <div class="badge">AGRICULTURE</div>
         <h1>Smart Farming <span class="highlight-gradient">Solutions</span></h1>
         <p class="subtitle">A straightforward yet powerful solution for the agribusiness sector, enabling the management of field activities through telematics data.</p>
-        <a href="#" class="btn-primary btn-large" style="margin-top: 1rem; display: inline-block;">Request a Demo</a>
+        <router-link to="/book-a-demo" class="btn-primary btn-large" style="margin-top: 1rem; display: inline-block;">Request a Demo</router-link>
       </div>
       <div class="hero-visual">
          <img src="../../../images/tractor-agricultural-machine-cultivating-field-500x332-1.webp" alt="Smart Farming" class="main-image">
@@ -84,7 +84,7 @@ import CTA from '../../components/CTA.vue';
         <div class="text-content">
           <h2>Actionable Agro Analytics</h2>
           <p>Generate detailed operational reports by season, machinery type, or field plots. Compare operator performance and maximize harvest yields.</p>
-          <a href="#" class="btn-primary" style="margin-top: 1.5rem; display: inline-block;">Get Agri Solutions</a>
+          <router-link to="/book-a-demo" class="btn-primary" style="margin-top: 1.5rem; display: inline-block;">Get Agri Solutions</router-link>
         </div>
       </div>
     </section>
@@ -123,7 +123,7 @@ import CTA from '../../components/CTA.vue';
         <h2>Modernize Your Farm Operations</h2>
         <p>Get precise data-driven insights for your agricultural fleet.</p>
         <div class="cta-buttons">
-           <a href="#" class="btn-primary btn-large">Book a Demo</a>
+           <router-link to="/book-a-demo" class="btn-primary btn-large">Book a Demo</router-link>
         </div>
       </div>
     </section>

@@ -9,7 +9,7 @@ import CTA from '../components/CTA.vue';
         <div class="badge">INDUSTRIES</div>
         <h1>Perfect Fit for <span class="highlight-gradient">Any Industry</span></h1>
         <p class="subtitle">Manage your drivers and vehicles with ease, as well as ensure compliance and safety across diverse sectors.</p>
-        <a href="#" class="btn-primary btn-large" style="margin-top: 1rem; display: inline-block;">Get Started</a>
+        <router-link to="/book-a-demo" class="btn-primary btn-large" style="margin-top: 1rem; display: inline-block;">Get Started</router-link>
       </div>
     </header>
 
@@ -21,7 +21,7 @@ import CTA from '../components/CTA.vue';
             <div class="card-content">
               <h3>Transport & Logistics</h3>
               <p>Manage your drivers and vehicles with ease, as well as ensure compliance and safety.</p>
-              <a href="#" class="learn-more">Learn More →</a>
+              <router-link to="/industries/perfect-fit" class="learn-more">Learn More →</router-link>
             </div>
           </div>
           <div class="industry-card">
@@ -29,7 +29,7 @@ import CTA from '../components/CTA.vue';
             <div class="card-content">
               <h3>Construction</h3>
               <p>Protect and maintain your assets, easily calculate costs, and manage workers.</p>
-              <a href="#" class="learn-more">Learn More →</a>
+              <router-link to="/industries/perfect-fit" class="learn-more">Learn More →</router-link>
             </div>
           </div>
           <div class="industry-card">
@@ -37,7 +37,7 @@ import CTA from '../components/CTA.vue';
             <div class="card-content">
               <h3>Courier & Delivery</h3>
               <p>Track your vehicles' live locations, optimise fuel consumption, fleet efficiency, and size.</p>
-              <a href="#" class="learn-more">Learn More →</a>
+              <router-link to="/industries/perfect-fit" class="learn-more">Learn More →</router-link>
             </div>
           </div>
           <div class="industry-card">
@@ -45,7 +45,7 @@ import CTA from '../components/CTA.vue';
             <div class="card-content">
               <h3>Service Providers</h3>
               <p>Make work easier for every department – managers, field employees, and accountants.</p>
-              <a href="#" class="learn-more">Learn More →</a>
+              <router-link to="/industries/perfect-fit" class="learn-more">Learn More →</router-link>
             </div>
           </div>
           <div class="industry-card">
@@ -53,7 +53,7 @@ import CTA from '../components/CTA.vue';
             <div class="card-content">
               <h3>Agriculture</h3>
               <p>Increase safety and efficiency, speed up administrative tasks and maintenance.</p>
-              <a href="#" class="learn-more">Learn More →</a>
+              <router-link to="/industries/perfect-fit" class="learn-more">Learn More →</router-link>
             </div>
           </div>
           <div class="industry-card">
@@ -61,7 +61,7 @@ import CTA from '../components/CTA.vue';
             <div class="card-content">
               <h3>Waste Management</h3>
               <p>Achieve better sustainability, fewer accidents, and more efficient back-office operations.</p>
-              <a href="#" class="learn-more">Learn More →</a>
+              <router-link to="/industries/perfect-fit" class="learn-more">Learn More →</router-link>
             </div>
           </div>
           <div class="industry-card">
@@ -69,7 +69,7 @@ import CTA from '../components/CTA.vue';
             <div class="card-content">
               <h3>Emergency Services</h3>
               <p>Enhance Emergency Response, Optimise Route, & Monitor Driver Behaviour.</p>
-              <a href="#" class="learn-more">Learn More →</a>
+              <router-link to="/industries/perfect-fit" class="learn-more">Learn More →</router-link>
             </div>
           </div>
           <div class="industry-card">
@@ -77,7 +77,7 @@ import CTA from '../components/CTA.vue';
             <div class="card-content">
               <h3>Pharmaceutical</h3>
               <p>Control Temperature, Manage Drivers, & Track Vehicle in Real-time.</p>
-              <a href="#" class="learn-more">Learn More →</a>
+              <router-link to="/industries/perfect-fit" class="learn-more">Learn More →</router-link>
             </div>
           </div>
           <div class="industry-card">
@@ -85,7 +85,7 @@ import CTA from '../components/CTA.vue';
             <div class="card-content">
               <h3>Oil & Gas</h3>
               <p>Control Temperature in Real-Time, Improve Visibility, & Safeguard Cargo.</p>
-              <a href="#" class="learn-more">Learn More →</a>
+              <router-link to="/industries/perfect-fit" class="learn-more">Learn More →</router-link>
             </div>
           </div>
         </div>
@@ -97,7 +97,7 @@ import CTA from '../components/CTA.vue';
         <h2>Find Your Industry Solution</h2>
         <p>Contact us for a tailored fleet management plan.</p>
         <div class="cta-buttons">
-           <a href="#" class="btn-primary btn-large">Book a Demo</a>
+           <router-link to="/book-a-demo" class="btn-primary btn-large">Book a Demo</router-link>
         </div>
       </div>
     </section>
