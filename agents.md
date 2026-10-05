@@ -211,6 +211,39 @@ The hero image is the first visual the visitor sees on the landing page; it rend
 
 ---
 
+**Date:** 2026-10-04 (Session 5)
+
+**Agent Action:** Repaired a corrupted `README.md` (UTF-16 fragment + NUL bytes made Git treat it as a binary file) and audited the repository for the same defect.
+
+**What was done:**
+
+1. **`README.md` no longer binary.** The file ended with 21 stray bytes: a UTF-16LE fragment (`# dekagps` plus a trailing `0A`) appended after the final newline. The NUL bytes made Git classify the whole file as binary, so every diff for it displayed as "Binary files differ" and the Markdown was hidden from normal review. The corrupted tail was removed byte-precisely at the last valid newline (index 2069); the legitimate UTF-8 content is otherwise untouched.
+2. **Root cause identified.** PowerShell `>` / `>>` redirection writes UTF-16LE by default (as does `Out-File` / `Set-Content`), which is exactly the byte pattern found. The corrupt tail is the shell-encoded text `# dekagps` — a string that appears nowhere else in the repository, i.e. an accidental redirect artifact, not intentional content.
+3. **Repository-wide scan.** Every tracked text file was checked for NUL bytes. The only text file affected was `README.md`; all other NUL hits are legitimate binary media (`images/**`, `references/*.pdf`, `src/assets/*`). No other file needed repair.
+4. **Caution added for future agents:** do not write project text files through PowerShell redirection. Use the editor/file tools (or `Set-Content -Encoding utf8NoBOM`) so UTF-16 is never introduced into source files.
+
+**Files changed:**
+- `README.md` — removed the 21-byte UTF-16 `# dekagps` tail; file is now valid UTF-8 (2070 bytes, 0 NUL bytes)
+- `agents.md` — this entry (and the redirection caution above)
+- `CHANGELOG.md` — entry under `Fixed`
+
+**Why:**
+A corrupted `README.md` is the first file a contributor or reviewer opens, and Git refusing to diff it as text hides the entire project onboarding/configuration documentation from review. The corruption was already committed to `HEAD`, so it was silently present for anyone cloning the repo. Removing the stray bytes fixes the actual cause rather than masking the symptom with a `.gitattributes` `-diff`/`text` override.
+
+**Method:**
+- Compared the working tree against `HEAD` byte-for-byte and located the first NUL at offset 2071 (HEAD carried the identical corrupted tail).
+- Verified the last valid byte was `0x0A` at index 2069 and the following byte `0x23` (`#`), then truncated to the first 2070 bytes so nothing legitimate was dropped.
+- Re-read the file to confirm 0 NUL bytes and used `git diff --text` to confirm the only change is the removal of the corrupted tail.
+
+**Verification:**
+- `README.md` → 2070 bytes, 0 NUL bytes; reads as clean Markdown.
+- `git diff --text -- README.md` shows only the two removed garbage lines and the blank line; no other lines changed.
+- `npm run build` → `✓ built in 1.11s`, no errors (documentation-only change; the app bundle is unaffected).
+- Tracked-text-file NUL sweep → only `README.md` matched, and it is now clean.
+- Note: the corrected `README.md` sits in the working tree; committing it will also replace the corrupt blob currently in `HEAD`.
+
+---
+
 ## Standing Instructions for ALL Future Agents
 
 > **READ THIS BEFORE MAKING ANY CHANGES.**
