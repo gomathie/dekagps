@@ -73,9 +73,21 @@ const BRAND_REPLACEMENTS = [
   [/\bpilot\b/g, 'OneGPS']
 ]
 
-/** Hosts that belong to the reference product and must be re-pointed. */
+/**
+ * Hosts that belong to the reference product and must be re-pointed.
+ * Deliberately the apex/www host only: technical hosts such as
+ * `adm.pilot-gps.africa` or `tasks.pilot-gps.africa` are real service
+ * endpoints and rewriting them would produce links that do not resolve.
+ */
 const DOCS_HOSTS = ['docs.pilot-gps.africa']
-const PRODUCT_HOSTS = ['pilot-gps.africa']
+const PRODUCT_HOSTS = [/^https?:\/\/(?:www\.)?pilot-gps\.africa(?:\/|$)/i]
+
+/**
+ * URLs, hosts and dotted identifiers (`copilotDoor`, `com.octys.pilottracker`)
+ * are kept verbatim: applying the word-level brand rules inside them turns
+ * `pilot-gps.com` into the nonsense `OneGPS-gps.com`.
+ */
+const URL_LIKE = /(?:[A-Za-z][A-Za-z0-9+.-]*:\/\/|www\.)[^\s"'<>()]+|[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+/g
 
 const args = new Map(
   process.argv.slice(2).map((raw) => {
@@ -165,14 +177,23 @@ const brandAudit = new Set()
 
 function brandify(value) {
   if (!value) return value
-  let out = value
+
+  const protectedTokens = []
+  const marker = '\u0000'
+  const masked = value.replace(URL_LIKE, (token) => {
+    protectedTokens.push(token)
+    return `${marker}${protectedTokens.length - 1}${marker}`
+  })
+
+  let out = masked
   for (const [pattern, replacement] of BRAND_REPLACEMENTS) {
     out = out.replace(pattern, () => {
       brandAudit.add(replacement)
       return replacement
     })
   }
-  return out
+
+  return out.replace(/\u0000(\d+)\u0000/g, (match, index) => protectedTokens[Number(index)])
 }
 
 /**
@@ -578,7 +599,7 @@ class PageConverter {
       )
     }
 
-    if (PRODUCT_HOSTS.some((host) => href.includes(host))) {
+    if (PRODUCT_HOSTS.some((pattern) => pattern.test(href))) {
       return { t: 'a', href: `https://onegps.africa${href.replace(/^https?:\/\/[^/]*/i, '')}`, external: true, in: children }
     }
 
