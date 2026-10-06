@@ -191,6 +191,36 @@ const routes = [
         'Answers to common questions about OneGPS trackers, installation, subscriptions, data accuracy, mobile access and technical support.'
     }
   },
+  /* ── Resources ── */
+  {
+    path: '/docs',
+    name: 'Docs',
+    component: () => import('../views/Docs.vue'),
+    meta: {
+      title: 'User Guide',
+      description:
+        'The complete OneGPS user guide: platform basics, tracking, reports, fuel monitoring, mobile apps and integrations — searchable, per version.'
+    }
+  },
+  {
+    path: '/docs/:version',
+    name: 'DocsVersion',
+    component: () => import('../views/Docs.vue'),
+    meta: {
+      title: 'User Guide',
+      description:
+        'Browse the OneGPS user guide by version: sections, page counts and the full documentation for that release.'
+    }
+  },
+  {
+    path: '/docs/:version/:slug',
+    name: 'DocsPage',
+    component: () => import('../views/Docs.vue'),
+    meta: {
+      title: 'User Guide',
+      description: 'Step-by-step OneGPS product documentation.'
+    }
+  },
   {
     path: '/blog',
     name: 'Blog',

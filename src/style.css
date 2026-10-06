@@ -1615,3 +1615,76 @@ textarea.form-control {
   .card { padding: 1.5rem; }
 }
 
+
+/* ─── PRINT (user guide) ───
+   The guide is the only printable part of the site: the reference documentation
+   ships separate print pages, this replaces them with real print styles. */
+@media print {
+  .navbar,
+  footer,
+  .docs-hero,
+  .docs-aside,
+  .docs-aside__toggle,
+  .docs-pager,
+  .docs-article__print,
+  .docs-lightbox,
+  .breadcrumbs {
+    display: none !important;
+  }
+
+  body,
+  .docs,
+  .docs-layout,
+  .docs-article {
+    background: #fff !important;
+    color: #111 !important;
+  }
+
+  .docs-layout {
+    display: block !important;
+    padding: 0 !important;
+    max-width: none !important;
+  }
+
+  .docs-article h1,
+  .docs-onpage a,
+  .docs-pager__title {
+    color: #111 !important;
+  }
+
+  .docs-table th {
+    background: #f1f1f1 !important;
+    color: #111 !important;
+  }
+
+  .docs-table th,
+  .docs-table td,
+  .docs-p,
+  .docs-list,
+  .docs-onpage a {
+    color: #222 !important;
+  }
+
+  .docs-table-wrap {
+    overflow: visible !important;
+  }
+
+  .docs-onpage,
+  .docs-table-wrap,
+  .docs-code,
+  .docs-quote {
+    border-color: #ccc !important;
+    background: transparent !important;
+  }
+
+  .docs-heading,
+  .docs-figure,
+  .docs-table tr {
+    break-inside: avoid;
+  }
+
+  .docs-figure__trigger {
+    border-color: #ccc !important;
+    background: transparent !important;
+  }
+}

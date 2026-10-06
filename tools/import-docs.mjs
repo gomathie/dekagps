@@ -19,19 +19,24 @@
  *   4. mirrors images, downscaled + re-encoded (IMPLEMENTATION_PLAN.md D1);
  *   5. writes `src/docs/**` ES modules consumed by the Vue docs view.
  *
+ * The Dr.Explain tab widget is not converted: none of the imported versions uses
+ * it. Should a later version introduce one, its panels are still rendered — the
+ * generic block recursion emits them one after another.
+ *
  * Usage:
  *   node tools/import-docs.mjs                          # every version
  *   node tools/import-docs.mjs --versions=7.10          # one or more versions
  *   node tools/import-docs.mjs --versions=7.10 --fresh  # ignore cache and generated files
  *   node tools/import-docs.mjs --only=concepts.html     # debug one page (prints blocks)
- *   node tools/import-docs.mjs --no-images              # skip the image mirror
+  *   node tools/import-docs.mjs --no-images               # skip the image mirror
+ *   node tools/import-docs.mjs --rename-assets           # re-apply asset naming
  *
  * Runs are resumable: HTML is cached in node_modules/.cache/docs-import and
  * already mirrored images are reused instead of re-downloaded.
  */
 
 import { existsSync } from 'node:fs'
-import { mkdir, readFile, readdir, stat, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, readdir, rename, stat, writeFile } from 'node:fs/promises'
 import { execFile } from 'node:child_process'
 import https from 'node:https'
 import path from 'node:path'
@@ -81,6 +86,7 @@ const args = new Map(
 
 const FRESH = args.has('fresh')
 const SKIP_IMAGES = args.has('no-images')
+const RENAME_ASSETS = args.has('rename-assets')
 const ONLY_PAGE = typeof args.get('only') === 'string' ? args.get('only') : null
 const ONLY_VERSIONS = (() => {
   const value = args.get('versions')
@@ -90,10 +96,10 @@ const ONLY_VERSIONS = (() => {
 })()
 
 const VERSIONS = [
-  { id: '7.10', label: '7.10', base: REF_ORIGIN, current: true, note: 'Current version', mirrorImages: true },
-  { id: '7.9', label: '7.9', base: `${REF_ORIGIN}7.9/`, note: 'Previous version', mirrorImages: false },
-  { id: '7.8', label: '7.8', base: `${REF_ORIGIN}7.8/`, note: 'Previous version', mirrorImages: false },
-  { id: '7.7', label: '7.7', base: `${REF_ORIGIN}7.7/`, note: 'Previous version', mirrorImages: false }
+  { id: '7.10', label: '7.10', base: REF_ORIGIN, current: true, note: 'Current version' },
+  { id: '7.9', label: '7.9', base: `${REF_ORIGIN}7.9/`, note: 'Previous version' },
+  { id: '7.8', label: '7.8', base: `${REF_ORIGIN}7.8/`, note: 'Previous version' },
+  { id: '7.7', label: '7.7', base: `${REF_ORIGIN}7.7/`, note: 'Previous version' }
 ]
 
 /* ─────────────────────────────── network ─────────────────────────────── */
@@ -169,6 +175,19 @@ function brandify(value) {
   return out
 }
 
+/**
+ * Slug/file-name variant of `brandify`. `\b` does not match between `_` and a
+ * letter, so identifiers such as `pilot_tracker` or `what_s_new_in_pilot_7_10`
+ * (file names, link targets, image names) need their own pass.
+ *
+ * Compound identifiers that are not the product name are deliberately left
+ * alone (see IMPLEMENTATION_PLAN.md, decision D3):
+ *   copilotDoor, pilotgps.com, PilotGpsBot, pilot_map_url …
+ */
+function brandifyToken(value) {
+  return brandify(value.replace(/(^|[^A-Za-z0-9])(pilot)(?=[^A-Za-z0-9]|$)/gi, (match, prefix) => prefix + 'OneGPS'))
+}
+
 function slugify(value) {
   return String(value)
     .normalize('NFKD')
@@ -181,7 +200,7 @@ function slugify(value) {
 /** Page slug from a reference file name, white-labeled. */
 function pageSlugFromHref(href) {
   const file = decodeURIComponent(String(href).split('#')[0].replace(/^.*\//, '')).replace(/\.html?$/i, '')
-  return brandify(file)
+  return brandifyToken(file)
     .replace(/_+/g, '-')
     .replace(/[^A-Za-z0-9-]/g, '-')
     .replace(/-+/g, '-')
@@ -190,7 +209,7 @@ function pageSlugFromHref(href) {
 
 function imageFileName(source) {
   const base = decodeURIComponent(String(source).split('/').pop())
-  return brandify(base).replace(/[^A-Za-z0-9._-]/g, '_')
+  return brandifyToken(base).replace(/[^A-Za-z0-9._-]/g, '_')
 }
 
 /* ───────────────────────────── HTML parsing ───────────────────────────── */
@@ -337,6 +356,7 @@ const hasClass = (node, name) => classOf(node).split(/\s+/).includes(name)
 const mirroredImages = new Map()
 let imageQueue = []
 let stagingCounter = 0
+let droppedImages = 0
 
 function existingImageFor(key) {
   const jpeg = path.join(ASSET_DIR, `${key.replace(/\.[^.]+$/, '')}.jpg`)
@@ -362,8 +382,9 @@ function registerImage(version, source) {
     return info
   }
 
-  if (SKIP_IMAGES || !version.mirrorImages) {
+  if (SKIP_IMAGES) {
     mirroredImages.set(key, null)
+    droppedImages++
     return null
   }
 
@@ -430,8 +451,7 @@ async function runResizeBatch(jobs) {
   return results
 }
 
-/** Downloads + resizes everything queued and fills `mirroredImages`. */
-async function mirrorQueuedImages() {
+/** Downloads + resizes everything queued and fills `mirroredImages`. */async function mirrorQueuedImages() {
   if (!imageQueue.length) return
   const queue = imageQueue
   imageQueue = []
@@ -443,6 +463,7 @@ async function mirrorQueuedImages() {
     } catch (error) {
       console.warn(`  ! image download failed: ${job.key} (${error.message})`)
       mirroredImages.set(job.key, null)
+      droppedImages++
       return null
     }
   })
@@ -511,7 +532,6 @@ class PageConverter {
     this.usedHeadingIds = new Set()
     this.anchorPoints = []
     this.pendingLinks = []
-    this.tabCount = 0
     this.blockCursor = 0
   }
 
@@ -767,23 +787,6 @@ class PageConverter {
       return
     }
 
-    if (hasClass(node, 'b-tabs__wrapperItems')) {
-      const tabs = []
-      for (const item of node.children || []) {
-        if (!hasClass(item, 'b-tabs__wrapperItem')) continue
-        const labelNode = findFirst(item, (n) => hasClass(n, 'b-tabs__selectorContent'))
-        const bodyNode = findFirst(item, (n) => hasClass(n, 'b-tabs__wrapperItemInner'))
-        const label = brandify(decodeEntities(textOf(labelNode))).trim() || `Tab ${tabs.length + 1}`
-        const blocks = bodyNode ? this.blocksFrom(bodyNode.children) : []
-        if (blocks.length) tabs.push({ label, blocks })
-      }
-      if (tabs.length) {
-        this.tabCount += tabs.length
-        out.push({ t: 'tabs', tabs })
-      }
-      return
-    }
-
     if (hasClass(node, 'list-marker')) return
 
     if (hasBlockDescendant(node)) {
@@ -909,8 +912,7 @@ async function collectPage(version, entry) {
     blocks,
     toc: converter.headings,
     anchors: converter.anchorPoints,
-    linkCount: converter.pendingLinks.length,
-    tabCount: converter.tabCount
+    linkCount: converter.pendingLinks.length
   }
 }
 
@@ -1129,6 +1131,25 @@ async function writeVersionFiles(version, pages, tree) {
   return pageMap
 }
 
+/* ──────────────────────────── maintenance ──────────────────────────── */
+
+/**
+ * Mirrored files are named with `imageFileName()`, so changing the white-label
+ * rules in that function would orphan every file already on disk (and cause a
+ * full re-download). This renames them to the current rules instead.
+ */
+async function renameMirroredAssets() {
+  if (!existsSync(ASSET_DIR)) return 0
+  let renamed = 0
+  for (const file of await readdir(ASSET_DIR)) {
+    const target = imageFileName(file)
+    if (target === file) continue
+    await rename(path.join(ASSET_DIR, file), path.join(ASSET_DIR, target))
+    renamed++
+  }
+  return renamed
+}
+
 /* ──────────────────────────────── main ──────────────────────────────── */
 
 async function importVersion(version) {
@@ -1240,6 +1261,13 @@ async function writeVersionIndex(summaries) {
 
 async function main() {
   await mkdir(CACHE_DIR, { recursive: true })
+
+  if (RENAME_ASSETS) {
+    const renamed = await renameMirroredAssets()
+    console.log(`renamed ${renamed} mirrored asset file(s) to the current naming rules`)
+    return
+  }
+
   const summaries = []
   for (const version of VERSIONS) {
     const summary = await importVersion(version)
@@ -1259,7 +1287,7 @@ async function main() {
   }
 
   console.log(`\nnetwork: ${fetchStats.requests} requests, ${(fetchStats.bytes / 1048576).toFixed(1)} MB`)
-  console.log(`images known: ${mirroredImages.size}`)
+  console.log(`images known: ${mirroredImages.size}${droppedImages ? ` (${droppedImages} not mirrored)` : ''}`)
 }
 
 main().catch((error) => {
