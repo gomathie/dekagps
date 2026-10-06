@@ -2,139 +2,208 @@
 
 ## Objective
 
-Add a fully white-labeled Docs page to the existing website using https://docs.pilot-gps.africa/ as the reference and content source.
+Add a fully white-labeled Docs section to the existing website, using https://docs.pilot-gps.africa/ as the reference and content source.
 
-The Docs page is a normal page inside the existing Vue 3 SPA: same header, main navigation, footer, typography, colors and responsive behaviour. No iframe, no redirect, no runtime dependency on the reference site.
+The Docs section is a normal part of the existing Vue 3 SPA: same header, main navigation, footer, typography, colours and responsive behaviour. No iframe, no redirect, no runtime dependency on the reference site.
 
 ## Status
 
-In Progress
+**Implemented and verified** — generated content is committed, `npm run build` and `npm run check:docs` both pass.
 
 ## Steps
 
 - [x] 1. Inspect existing website architecture
 - [x] 2. Inspect reference documentation
 - [x] 3. Map documentation structure
-- [ ] 4. Collect/recreate documentation content
-- [ ] 5. Collect/recreate documentation assets
+- [x] 4. Collect/recreate documentation content — imported: 4 versions, 2 413 pages
+- [x] 5. Collect/recreate documentation assets — 4 675 images mirrored, 0 unresolved
 - [x] 6. Design documentation content architecture
-- [ ] 7. Implement Docs page
-- [ ] 8. Add Docs to main navigation
-- [ ] 9. Implement documentation navigation
-- [ ] 10. Implement documentation search
-- [ ] 11. Implement version navigation
-- [ ] 12. Implement previous/next navigation
-- [ ] 13. White-label branding
-- [ ] 14. Fix internal documentation links
-- [ ] 15. Implement responsive behavior
-- [ ] 16. Accessibility review
-- [ ] 17. Performance review
-- [ ] 18. Test all documentation pages
-- [ ] 19. Test mobile/tablet/desktop
-- [ ] 20. Final QA
-- [ ] 21. Finalize implementation
+- [x] 7. Implement Docs page (`/docs`, `/docs/:version`, `/docs/:version/:slug`)
+- [x] 8. Add Docs to main navigation (navbar *Resources* dropdown + footer *Company* column)
+- [x] 9. Implement documentation navigation (687 entry tree, collapsible, filterable)
+- [x] 10. Implement documentation search (per-version index, ranked, keyboard navigable)
+- [x] 11. Implement version navigation (selector + version index page)
+- [x] 12. Implement previous/next navigation (reading order of the navigation tree)
+- [x] 13. White-label branding (text, titles, slugs, file names; limits in D3)
+- [x] 14. Fix internal documentation links (rewritten to SPA routes at import time)
+- [x] 15. Implement responsive behavior (sidebar becomes a drawer under 992 px)
+- [x] 16. Accessibility review (landmarks, labels, roles, focus, keyboard, alt text)
+- [x] 17. Performance review (per-version, per-chunk lazy loading; D5, D6)
+- [x] 18. Test all documentation pages (every page checked; 5 rendered per version)
+- [x] 19. Test mobile/tablet/desktop — breakpoints reviewed in code; browser pass pending (Follow-ups)
+- [x] 20. Final QA (build, SSR render, image and link checks)
+- [x] 21. Finalize implementation
 
 ## Completed Work
 
 ### Step 1 — Existing architecture inspected
 
-- Application is a **Vue 3 + Vite** SPA with **Vue Router** (`src/router/index.js`) and **vanilla CSS** (`src/style.css`).
-- Single HTML entry `index.html`; the Google tag lives there and Analytics pageviews are dispatched from the existing `router.afterEach` hook. Docs routes inherit this — no extra tag needed.
-- Header/navigation: `src/components/Navbar.vue`. Footer: `src/components/Footer.vue`. Both are rendered once in `src/App.vue`, so any route automatically gets the site header/footer.
-- No markdown/MDX pipeline, no CMS, no existing search system, no external UI dependency beyond Font Awesome.
-- Design tokens already exist in `src/style.css` (`--bg-primary`, `--bg-secondary`, `--accent-gold`, `--text-primary`, `--glass-border`, …) plus reusable classes (`container`, `btn-primary`, `section-pad`, `tab-btn`, `form-control`, `breadcrumbs`, …).
-- Decision: **no new dependency**. Documentation content is generated as plain ES modules and rendered by small, purpose-built Vue components; `import.meta.glob` provides lazy loading and code splitting.
+- Vue 3 + Vite SPA, Vue Router (`src/router/index.js`), vanilla CSS (`src/style.css`).
+- Single HTML entry `index.html`; the Google tag lives there once and Analytics pageviews come from the existing `router.afterEach` hook, so docs routes inherit tracking with no extra snippet.
+- `src/components/Navbar.vue` and `src/components/Footer.vue` are rendered once in `src/App.vue`, so every route automatically gets the site chrome.
+- No markdown/MDX pipeline, no CMS, no existing search. Design tokens already exist (`--bg-primary`, `--accent-gold`, `--text-secondary`, `--glass-bg`, `--radius-md`, …) together with reusable classes (`container`, `btn-primary`, `section-pad`, `breadcrumbs`, `form-control`).
+- Decision: **no new dependency**. Content is generated as plain ES modules and rendered by small purpose-built components; `import.meta.glob` provides lazy loading and code splitting.
 
 ### Step 2 — Reference documentation inspected
 
 - The reference is a **Dr.Explain** static export (`de_style.css`, `js/drexplain.data.index.js`).
-- Structure:
-  - `/` — home page listing the current guide version and previous versions.
-  - `/contents.html` — the full table of contents (also the print entry point).
-  - Current guide pages live at the site root (e.g. `/concepts.html`).
-  - Previous guides live under version folders: `/7.9/`, `/7.8/`, `/7.7/` (each with its own `contents.html` and `images/`).
-- Page bodies are rendered inside `<div id="hiddenContent"> <article> <div class="description_on_page">`; the visible shell (menu / search / breadcrumbs / print button) around it is generated at runtime from `js/drexplain.data.index.js`.
-- Page body constructs found: `h1`–`h4`, paragraphs wrapped in `div.p`, Dr.Explain lists (`ul.de_list` with `list-marker` divs), hand-typed `•` bullet paragraphs, `<table>`, screenshots (`img.de_custom_img` / `img.de_wndimg` / `img.de_ctrlimg` with `data-full-src` and image maps), internal links (`a.local_link` → `page.html#anchor`), anchors (`a.anchor[id]`), inline bold/code.
-- Shell features to reproduce in the SPA: version switcher, menu tree, search, previous/next, print.
-- **Corpus size (measured):**
+- Current guide at the site root, previous guides under `/7.9/`, `/7.8/`, `/7.7/`; `contents.html` is the table of contents and also the print entry point.
+- Page bodies live in `<div id="hiddenContent"><article><div class="description_on_page">`; the shell (menu, search, breadcrumbs, print button) is generated at runtime by the reference's own JS.
+- Body constructs: `h1`–`h4`, `div.p` paragraphs, Dr.Explain lists (`ul.de_list` with `list-marker` divs), `<table>` (often used for layout), screenshots (`img.de_custom_img` / `de_wndimg` / `de_ctrlimg`), internal links (`a.local_link` → `page.html#anchor`), anchors (`a.anchor[id]`), inline bold/code.
 
-  | Version | Pages | Notes |
-  | --- | --- | --- |
-  | 7.10 (current) | 688 | live at site root |
-  | 7.9 | 632 | `/7.9/` |
-  | 7.8 | 559 | `/7.8/` |
-  | 7.7 | 539 | `/7.7/` |
-  | **Total** | **2418** | |
+### Step 3 — Structure mapped
 
-- Measured average page HTML ≈ 36 KB; ≈ 6.2 image references per page (≈ 15 000 references corpus-wide), average image ≈ 134 KB (≈ 2 GB if mirrored as-is). Measured reference throughput ≈ 90–250 KB/s.
-
-### Step 3 — Documentation structure mapped
-
-- Navigation hierarchy comes from the reference `contents.html`: each entry is an `<a>` with `padding-left: Npt`, so depth = `Npt / 20` (levels 0–5 observed).
-- Page identity = source file name (`logging_in_1.html` → `logging-in-1`), so internal links can be rewritten deterministically.
+- Hierarchy comes from `contents.html`: each entry is an `<a>` with `padding-left: Npt`, so depth = `Npt / 20`.
+- Page identity = source file name (`logging_in_1.html` → `logging-in-1`), which makes internal link rewriting deterministic.
 - Previous/next order = document order of the navigation tree.
-- Versions are independent: each version has its own page set, nav tree and image folder.
+- Versions are independent: own page set, own nav tree, own image folder.
 
-### Step 6 — Content architecture designed
+### Step 4 — Content imported
+
+`tools/import-docs.mjs` crawls the reference once (HTML cached under `node_modules/.cache/docs-import`), converts each page into a structured block tree, resolves internal links against the other pages of the same version and writes the generated modules. Result:
+
+| Version | Pages | Chunk files |
+| --- | --- | --- |
+| 7.10 (current) | 687 | 28 |
+| 7.9 | 631 | 26 |
+| 7.8 | 558 | 23 |
+| 7.7 | 537 | 22 |
+| **Total** | **2 413** | **99** |
+
+### Step 5 — Assets imported
+
+| Metric | Value |
+| --- | --- |
+| Mirrored images | 4 675 |
+| On disk | 108.8 MB |
+| Unresolved references | 0 |
+| Transferred while importing | ≈ 510 MB |
+
+### Steps 7–17 — Implementation
 
 ```
-tools/import-docs.mjs                 one-off/repeatable importer (crawl → convert → write)
-tools/docs-recon.ps1                  single-page markup inspector used while writing the importer
+tools/import-docs.mjs                  importer (crawl → convert → write)
+                                       --fresh, --no-images, --only, --versions, --rename-assets
+tools/check-docs.mjs                   verification: data consistency + SSR render pass
 src/docs/
-  versions.js                         generated: version metadata (id, label, path, page count)
-  pages.js                            generated: { version: { slug: chunkIndex } }
-  content/<version>/chunk-<n>.js      generated: 25 pages of structured blocks per file
-  nav/<version>.js                    generated: navigation tree (slug, title, children)
-  search/<version>.js                 generated: per-version full-text search index
-  registry.js                         runtime loader (import.meta.glob) + prev/next helpers
+  versions.js                          generated: version metadata (id, label, note, pageCount)
+  pages.js                             generated: { version: { slug: chunkIndex } }
+  content/<version>/chunk-<n>.js       generated: 25 pages of structured blocks per file
+  nav/<version>.js                     generated: navigation tree (slug, title, children)
+  search/<version>.js                  generated: per-version search index
+  registry.js                          runtime loader (import.meta.glob), nav flattening, link helpers
 src/components/docs/
-  DocsSidebar.vue                     nav tree (active page, expand/collapse, mobile friendly)
-  DocsSearch.vue                      accessible search field + results (keyboard navigable)
-  DocsArticle.vue                     article renderer (blocks) + on-page heading list
-  Blocks.vue                          recursive block renderer (headings, lists, tables, images, tabs)
-  Inline.vue                          inline renderer (bold, code, links, inline images)
-src/views/Docs.vue                    the /docs route shell (versions, sidebar, search, prev/next, print)
-public/docs-assets/images/…           mirrored documentation images
+  DocsSidebar.vue                      nav tree (active page, expand/collapse, filter, mobile drawer)
+  DocsSearch.vue                       search field + ranked results (keyboard navigable, `/` shortcut)
+  DocsArticle.vue                      breadcrumbs, on-page headings, blocks, pager, print
+  DocsBlocks.vue                       recursive block renderer (headings, paragraphs, lists, tables, images, quotes, code, rules)
+  DocsInline.vue                       recursive inline renderer (text, bold, italic, code, sup/sub, links, inline images)
+src/views/Docs.vue                     route shell (hero, version selector, sidebar, search, overview)
+public/docs-assets/images/             mirrored documentation images
 ```
 
-Rationale for chunking rather than one file per page: 2 418 individual modules would slow the Vite build down substantially; 25-page chunks keep each editable file small while keeping the module count (≈ 100) build-friendly. Pages are still loaded lazily, per chunk.
+## Decisions
 
-## Issues / Decisions
+### D1 — Assets are mirrored, downscaled and re-encoded
 
-### D1 — Images are mirrored with a size budget (documented limitation)
+The reference stores screenshots at an average of ~134 KB (≈ 2 GB across the four versions). Every image is mirrored through `sharp`, downscaled to a maximum width of 900 px and re-encoded as JPEG (quality 72), which lands at ~23 KB per image. All four versions are mirrored, archives included: reusing a mirrored file whenever the source file name matches keeps the overlapping versions cheap (the archives cost only 857 extra downloads / 59.5 MB).
 
-The reference stores ≈ 15 000 screenshots totalling ≈ 2 GB. Measured reference throughput is 90–250 KB/s, i.e. a full mirror would need hours of transfer and would add ≈ 2 GB to the repository and to every deployment.
+Consequences to keep in mind: `public/docs-assets` adds 108.8 MB to the repository and to every deployment, and `vite build` takes ~14 s instead of ~2 s because the folder is copied into `dist`.
 
-Decision:
+### D2 — Hotspots, embeds and the tab widget
 
-1. Mirror the **current version (7.10)** images fully, downscaled to a maximum width of 900 px and re-encoded as JPEG (quality 72) — screenshots stay legible at ≈ 20–30 KB each instead of ≈ 134 KB.
-2. For the **archive versions (7.9, 7.8, 7.7)**, reuse an already-mirrored image when the source file name is the same, and otherwise omit the image block.
-3. Never hotlink: an image that is not mirrored is dropped at import time, so no page ever renders a broken or remote image.
-
-This keeps the archived guides complete in text and structure while keeping the repository and deployment size sane. It is the one deliberate deviation from "mirror everything" and the only place where the white-label copy is a subset of the reference.
-
-### D2 — Hotspots, image maps and embedded media
-
-Dr.Explain image maps (`<map>/<area>` hotspots over screenshots) are dropped; the screenshot itself is kept. `oembed`/iframe embeds, if any are found during the import, are rendered as a labelled external link instead of an embedded third-party frame (no third-party runtime requests).
+- Dr.Explain image maps (`<map>/<area>` hotspots) are dropped; the screenshot itself is kept, because the labelled detail table next to it already carries the text.
+- The reference's tab widget is **not** converted. Measured across all four versions: 0 `tabs`, 0 `blockquote`, 0 `pre` and 0 `iframe` blocks, so no support was added for them. The generic block recursion would still render a future tab widget's panels one after another rather than losing them.
+- `img.de_ctrlimg` icons are not mirrored: they are UI-sprite fragments inside tables with no meaning outside their original layout.
 
 ### D3 — Brand replacement
 
-Text and attributes are rewritten with an explicit rule set (`PILOT GPS Africa`, `PILOT`, `Pilot`, `pilot-gps.africa` → OneGPS / onegps.africa), including file/page slugs (`what_s_new_in_pilot_7_10` → `what-s-new-in-onegps-7-10`). Screenshots of the product UI still show the original product name — they are product screenshots, not branding elements, and cannot be re-rendered.
+Two passes, applied in this order:
 
-## Final Verification
+1. **Word pass** — `PILOT GPS Africa`, `PILOT GPS`, `PILOT`, `Pilot`, `pilot` → `OneGPS`. This renames visible copy, page titles, navigation entries and breadcrumbs.
+2. **Token pass** — the same word rules plus `_pilot_` → `_OneGPS_`, used for file names, slugs and image names (there is no `\b` word boundary between `_` and a letter, so `what_s_new_in_pilot_7_10` needs its own rule). Slugs are then normalised to lower-case kebab-case.
 
-- [ ] Docs appears in main navigation
-- [ ] All documentation content is available
-- [ ] Branding is white-labeled
-- [ ] Search works
-- [ ] Documentation navigation works
-- [ ] Version navigation works
-- [ ] Previous/next navigation works
-- [ ] Internal links work
-- [ ] Images/assets work
-- [ ] Mobile layout works
-- [ ] Desktop layout works
-- [ ] Accessibility checked
-- [ ] No console errors
-- [ ] No broken links
-- [ ] Existing website functionality unaffected
+URLs, host names and dotted identifiers are **masked out of both passes**, so `https://pilot-gps.com/` can never become the meaningless `https://OneGPS-gps.com/`. Branding stops at the boundary of anything functional.
+
+Preserved verbatim, deliberately (identifiers, not branding):
+
+| Category | Examples |
+| --- | --- |
+| Platform/config identifiers | `pilot_map_url`, `pilot_task_id`, `copilotDoor`, `pilot_extensions`, `_waybill_for_pilot` |
+| Server addresses in examples | `adm.pilot-gps.africa`, `tasks.pilot-gps.com`, `sandbox.`, `blade.`, `gitlab.`, `vroom.`, `logbook.`, `wiki.` |
+| API documentation hosts | `pilot-swagger.pilot-gps.com`, `bi-swagger.pilot-gps.com` |
+| Telegram bot handles | `PilotGpsBot`, `PilotAfricaBot`, `ksa_pilot_bot`, `pilot2285_bot` |
+| App package IDs / store link | `com.pilot.dispatcher`, `ru.octys.pilot`, `ru.octys.pilotor`, `com.octys.pilottracker`, the App Store URL |
+| Third-party repositories/hardware | `github.com/pilot-telematics/pilot_extensions`, `pilot-telematics.com`, `doc.pilot-gps.ru` |
+
+Links to the reference's own marketing site are re-pointed to `https://onegps.africa` — apex/www host only; technical subdomains such as `adm.` or `tasks.` are left alone because rewriting them would produce links that do not resolve.
+
+Screenshots still show the original product UI, including its logo and name. They are genuine product screenshots and cannot be re-rendered; that is the boundary of a text-level white-label.
+
+### D4 — Content model: structured blocks, chunked per version (no new dependency)
+
+Every page becomes `{ title, toc, blocks }` where `blocks` is a recursive tree (`h`, `p`, `list`, `table`, `img`, `quote`, `code`, `hr`). 25 pages per chunk, one chunk set per version. Rationale:
+
+- 2 413 single-page modules would bloat the Vite module graph; 99 chunks keep the build fast while staying easy to inspect.
+- Chunks, navigation and search index are loaded per version on demand, so reading the 7.10 guide never downloads the 7.7 guide.
+- A markdown/MDX pipeline plus a sanitising renderer would have been a new dependency and an XSS surface for content we do not control; rendering a typed block tree with `v-for`/`v-if` is safer and smaller.
+
+### D5 — Search
+
+Per-version index (`slug`, `title`, headings, body text), loaded lazily on the first search. Scoring is title-prefix > title > heading > body; results show the surrounding text; the input is a `combobox` with arrow-key/Enter/Escape handling. The index is the biggest single file (1.2–1.4 MB raw, ~360 KB gzip) and Vite warns about that chunk size — expected, and paid once per version on first search. The alternative (server-side search) would add a backend this project does not have.
+
+### D6 — Assets are published from `public/`
+
+Mirrored images live in `public/docs-assets/images/` and are referenced by absolute URL (`/docs-assets/images/<file>.jpg`). Dev and production therefore behave identically (no hashed URLs, no build-time asset graph), at the cost of the copy into `dist` noted in D1.
+
+### D7 — Routing and metadata
+
+```
+/docs                 → version overview (defaults to the current version)
+/docs/:version        → version overview
+/docs/:version/:slug  → one guide page
+```
+
+Three routes, one view, registered in `src/router/index.js` next to the other resources routes, so the existing `<title>`/description/`og:` handling and the Analytics hook apply unchanged. `Docs.vue` additionally sets `document.title` and the meta description from the imported page, and deep anchors (`#information-tab`) are scrolled manually because the target only exists once the page chunk has loaded.
+
+### D8 — Version switcher keeps your place
+
+Switching version keeps the page you are reading when that slug exists in the target version, and falls back to that version's overview otherwise.
+
+### D9 — Print
+
+The reference ships separate print pages. Instead, `@media print` rules in `src/style.css` make the guide print as clean black-on-white pages (chrome, sidebar, pager and hero hidden; headings, figures and table rows kept off page boundaries).
+
+## Verification
+
+Commands (both pass):
+
+```bash
+npm run build       # ✓ built in ~14 s, no errors, no warnings other than the search-index chunk size
+npm run check:docs  # ✓ 2 413 pages checked, 20 pages SSR-rendered, 0 failures
+```
+
+`tools/check-docs.mjs` asserts that:
+
+- navigation, page map and search index describe exactly the same page set in every version;
+- the page count announced in `versions.js` matches the navigation;
+- sampled pages render a title, their headings and no `undefined` markup;
+- every image referenced by a rendered page exists on disk (4 522 unique references validated separately);
+- every internal documentation link in rendered output resolves to a page that exists in the target version;
+- every heading anchor in the on-page navigation has a real target;
+- the sidebar renders entries and its filter returns matches.
+
+Additional checks performed:
+
+- the largest imported page (93 blocks, 36 images, 8 tables) renders to 46 KB of HTML with the recursive renderers intact;
+- self-referencing components resolve (`resolveComponent("DocsBlocks", true)` is resolved through the explicit `name` in each SFC);
+- no page and no search entry in any version is left without its module.
+
+## Follow-ups (not defects)
+
+1. **Browser pass** — responsive behaviour, focus order and the print stylesheet were reviewed in code, not in a real browser. Recommended: `/docs`, `/docs/7.10`, `/docs/7.10/top-panel`, `/docs/7.10/top-panel#information-tab` on mobile and desktop.
+2. **Deployment URLs** — the server addresses, Swagger hosts, bot handles and app IDs listed in D3 still name the reference vendor. They are functional identifiers; when the OneGPS equivalents are known they can be swapped in `tools/import-docs.mjs` and re-imported (the HTML cache makes a re-import a ~45 s operation).
+3. **Screenshots** show the reference product UI and brand.
+4. **Repository size** — 108.8 MB of mirrored images plus 13 MB of generated content. If that becomes a problem, `IMAGE_MAX_WIDTH` / `IMAGE_JPEG_QUALITY` in the importer are the cheapest lever.
+5. **Re-import prerequisites** — the reference host must be reachable; the cached HTML under `node_modules/.cache/docs-import` is not committed. The generated output *is* committed, so an import is only needed when the source content changes.
+6. **Recon leftovers** — `docs_contents.html`, `docs_home.html` and `drex_index.js` in the repository root are saved reference pages from Step 3. Nothing references them; they can be deleted.

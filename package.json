@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "import:docs": "node tools/import-docs.mjs",
+    "check:docs": "vite build --ssr tools/check-docs.mjs --outDir node_modules/.cache/docs-check --emptyOutDir --logLevel error && node node_modules/.cache/docs-check/check-docs.js"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.8",

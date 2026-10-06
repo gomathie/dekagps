@@ -42,6 +42,36 @@ Vite only exposes `VITE_`-prefixed variables to the browser bundle, so this file
 contain secrets. When `VITE_CONTACT_ENDPOINT` is empty or the request fails, the form offers a
 pre-filled `mailto:` fallback to `info@onegps.africa` rather than reporting a false success.
 
+## User Guide (`/docs`)
+
+The product documentation is part of the site: `/docs` (version overview),
+`/docs/:version` and `/docs/:version/:slug`. It covers four guide versions (7.10, 7.9, 7.8, 7.7 —
+2 413 pages) with search, a navigation tree, previous/next paging and printing.
+
+All of it is generated and committed:
+
+| Path | Contents |
+| --- | --- |
+| `tools/import-docs.mjs` | Importer: crawls the reference documentation, converts pages to structured blocks, rewrites internal links, white-labels the copy, mirrors and re-encodes images. |
+| `src/docs/**` | Generated content: `versions.js`, `pages.js`, `content/<version>/chunk-*.js`, `nav/`, `search/`. Never edit by hand. |
+| `src/docs/registry.js` | Hand-written runtime loader used by the docs view. |
+| `public/docs-assets/images/**` | Mirrored screenshots (4 675 files, ~109 MB). |
+| `tools/check-docs.mjs` | Verification: data consistency + SSR render pass. |
+
+```bash
+# Re-import the guide (reference host must be reachable; HTML is cached, ~45 s on a repeat run)
+npm run import:docs
+
+# Verify the imported guide (navigation/map/index consistency, rendering, images, links)
+npm run check:docs
+```
+
+Reference HTML is cached under `node_modules/.cache/docs-import` (not committed); the generated
+output is committed, so an import is only needed when the source documentation changes.
+See [`IMPLEMENTATION_PLAN.md`](IMPLEMENTATION_PLAN.md) for the content model, the white-label rule
+set and the known limitations (screenshots and functional identifiers still name the reference
+product).
+
 ## Analytics & Tracking (Google Tag)
 
 Every HTML page and template in this project must include the official Google Tag (`gtag.js` - ID: `G-F5BVYX6K72`) placed immediately after the opening `<head>` tag.
