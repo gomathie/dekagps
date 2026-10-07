@@ -764,8 +764,12 @@ class PageConverter {
   }
 
   inlineText(nodes) {
-    return this.inline(nodes)
-      .map((node) => (node.t === 'text' || node.t === 'code' ? node.v : node.t === 'br' ? ' ' : ''))
+    return (nodes || [])
+      .map((node) => {
+        if (node.t === 'text' || node.t === 'code') return node.v
+        if (node.t === 'br') return ' '
+        return node.in ? this.inlineText(node.in) : ''
+      })
       .join('')
       .trim()
   }
@@ -797,11 +801,12 @@ class PageConverter {
     this.recordAnchors(node, out.length)
 
     if (/^h[1-6]$/.test(node.tag)) {
-      const text = this.inlineText(node.children)
+      const inner = this.inline(node.children)
+      const text = this.inlineText(inner)
       if (!text) return
       const level = Math.min(4, Math.max(2, Number(node.tag[1]) + 1))
       const id = this.uniqueHeadingId(text)
-      out.push({ t: 'h', lvl: level, id, in: this.inline(node.children) })
+      out.push({ t: 'h', lvl: level, id, in: inner })
       this.headings.push({ level, id, text })
       return
     }
@@ -876,6 +881,18 @@ class PageConverter {
 
     if (hasClass(node, 'list-marker')) return
 
+    if (node.tag === 'a' && hasBlockDescendant(node)) {
+      const linkedBlocks = this.blocksFrom(node.children)
+      for (const block of linkedBlocks) {
+        if (block.t === 'h' || block.t === 'p') {
+          const link = this.makeLink(node.attrs, block.in)
+          if (!link.drop) block.in = [link]
+        }
+        out.push(block)
+      }
+      return
+    }
+
     if (hasBlockDescendant(node)) {
       for (const child of node.children || []) this.block(child, out)
       return
@@ -883,7 +900,7 @@ class PageConverter {
 
     const inner = this.inline(node.children)
     if (!inner.length) return
-    const text = inner.map((item) => (item.t === 'text' ? item.v : '')).join('').trim()
+    const text = this.inlineText(inner)
     if (!text) {
       for (const item of inner) if (item.t === 'img') out.push(item)
       return
@@ -1084,7 +1101,7 @@ function resolveLinks(pages, pageSlugs) {
   }
 
   const unresolved = new Set()
-  const walkInline = (nodes) => {
+  const walkInline = (nodes, page) => {
     for (let i = (nodes || []).length - 1; i >= 0; i--) {
       const node = nodes[i]
       if (node.t === 'a') {
@@ -1094,28 +1111,33 @@ function resolveLinks(pages, pageSlugs) {
             nodes.splice(i, 1, ...(node.in || []))
             continue
           }
+          if (node.anchor) node.anchor = anchorIndex.get(node.slug)?.get(node.anchor) || ''
           node.page = node.slug
           delete node.slug
           delete node.res
         } else if (node.res === 'anchor') {
-          const headingId = anchorIndex.get(node.v)?.get(node.anchor) || ''
-          if (headingId) node.anchor = headingId
-          else delete node.anchor
+          const headingId = anchorIndex.get(page.slug)?.get(node.anchor)
+          if (!headingId && node.anchor && node.anchor !== 'top') {
+            nodes.splice(i, 1, ...(node.in || []))
+            continue
+          }
+          node.page = page.slug
+          node.anchor = headingId || page.toc[0]?.id || ''
           delete node.res
         }
       }
-      if (node.in) walkInline(node.in)
+      if (node.in) walkInline(node.in, page)
     }
   }
-  const walkBlocks = (blocks) => {
+  const walkBlocks = (blocks, page) => {
     for (const block of blocks) {
-      if (block.t === 'p' || block.t === 'h') walkInline(block.in)
-      else if (block.t === 'list') for (const item of block.items) walkBlocks(item)
-      else if (block.t === 'table') for (const row of block.rows) for (const cell of row) walkBlocks(cell)
-      else if (block.t === 'quote') walkBlocks(block.blocks)
+      if (block.t === 'p' || block.t === 'h') walkInline(block.in, page)
+      else if (block.t === 'list') for (const item of block.items) walkBlocks(item, page)
+      else if (block.t === 'table') for (const row of block.rows) for (const cell of row) walkBlocks(cell, page)
+      else if (block.t === 'quote') walkBlocks(block.blocks, page)
     }
   }
-  for (const page of pages) walkBlocks(page.blocks)
+  for (const page of pages) walkBlocks(page.blocks, page)
 
   return unresolved
 }
