@@ -244,6 +244,89 @@ A corrupted `README.md` is the first file a contributor or reviewer opens, and G
 
 ---
 
+**Date:** 2026-10-06 (Docs work — Sessions 6–9 of the same effort)
+
+**Agent Action:** Imported the reference product documentation into the site as a white-labeled, searchable User Guide at `/docs`, and committed the generator plus a verification tool.
+
+**What was done:**
+
+1. **Content pipeline (`tools/import-docs.mjs`, new).** Crawls the upstream Dr.Explain export (current guide + `/7.9/`, `/7.8/`, `/7.7/`), converts each page's body into a recursive, typed block tree (`h`, `p`, `list`, `table`, `img`, `quote`, `code`, `hr`), rewrites internal links to SPA routes, resolves previous/next from the navigation order, and writes generated ES modules:
+   - `src/docs/versions.js`, `src/docs/pages.js`, `src/docs/content/<version>/chunk-*.js` (25 pages per chunk), `src/docs/nav/<version>.js`, `src/docs/search/<version>.js`.
+   - Result: 2 413 pages / 99 chunks (7.10: 687, 7.9: 631, 7.8: 558, 7.7: 537).
+   - Images are mirrored and resized through `tools/resize-images.ps1` (max width 900 px, JPEG q72) into `public/docs-assets/images/**`: 4 675 files, 108.8 MB, **0 unresolved references**; archives reuse mirrored files by source file name. HTML and staged images are cached under `node_modules/.cache/docs-import`, so a repeat import takes ~45 s with no downloads.
+   - Flags: `--fresh`, `--no-images`, `--only=<slug>`, `--versions=7.9,7.8`, `--rename-assets`.
+2. **White-label rule set.** Two passes (word rules for visible copy; token rules incl. `_pilot_` for slugs, file names and image names), followed by explicit source-vendor URL/identifier replacements. External HTTP(S) docs links are unwrapped so the visible text remains without sending users away from the OneGPS guide.
+3. **Docs UI (SPA, no new dependency).**
+   - `src/views/Docs.vue` (new) — route shell: hero with version selector, search, sticky sidebar, overview of sections/versions, article area, drawer navigation under 992 px, `document.title` + meta description from the imported page, manual deep-anchor scrolling.
+   - `src/components/docs/DocsSidebar.vue` (new) — tree rendering of the flattened 687-entry navigation, expand/collapse only where needed, active page highlighted, branch auto-expanded, text filter that walks collapsed branches.
+   - `src/components/docs/DocsSearch.vue` (new) — lazily loaded per-version index, ranked results (title-prefix > title > heading > body) with match context, `combobox` semantics, arrow/Enter/Escape keys, `/` shortcut, closes on outside click.
+   - `src/components/docs/DocsArticle.vue` (new) — breadcrumbs, on-page heading list, block tree, previous/next pager, print button.
+   - `src/components/docs/DocsBlocks.vue` / `DocsInline.vue` (new) — recursive renderers for block trees and inline runs (recursion via SFC self-reference).
+   - `src/docs/registry.js` (new) — `import.meta.glob` lazy loading, `flattenNav`, `docsPath`, `hasPage`.
+4. **Integration.** Three routes added to `src/router/index.js` (`/docs`, `/docs/:version`, `/docs/:version/:slug`) next to the existing resources routes, so the existing meta handling and Analytics hook apply. Links added to the navbar *Resources* dropdown and the footer *Company* column.
+5. **Print support.** `@media print` rules appended to `src/style.css` (hide chrome/sidebar/pager/hero, black-on-white, keep figures and table rows off page boundaries) instead of the reference's separate print pages.
+6. **Verification tooling.** `tools/check-docs.mjs` (new) + npm scripts `import:docs` and `check:docs`.
+7. **Documentation.** `IMPLEMENTATION_PLAN.md` rewritten to the delivered state (steps, content model, decisions D1–D9, verification, follow-ups); README gained a *User Guide* section; CHANGELOG updated.
+
+**Files changed:**
+- `tools/import-docs.mjs` (new), `tools/check-docs.mjs` (new)
+- `src/docs/**` (new: `registry.js`, `versions.js`, `pages.js`, `content/**`, `nav/**`, `search/**`)
+- `src/components/docs/**` (new: `DocsSidebar.vue`, `DocsSearch.vue`, `DocsArticle.vue`, `DocsBlocks.vue`, `DocsInline.vue`)
+- `src/views/Docs.vue` (new)
+- `src/router/index.js`, `src/components/Navbar.vue`, `src/components/Footer.vue`, `src/style.css`, `package.json`
+- `public/docs-assets/images/**` (4 675 mirrored images)
+- `README.md`, `CHANGELOG.md`, `IMPLEMENTATION_PLAN.md`, `agents.md`
+
+**Why:**
+The reference guide is the product's real documentation and was only reachable on an external vendor site. Importing it makes `/docs` part of the SPA (site chrome, styling, analytics, SEO) with search and version history, instead of an iframe or an outbound link. The import is repeatable rather than hand-copied so content can be refreshed, and the verification tool exists because a 2 413-page generated corpus cannot be reviewed by hand.
+
+**Method:**
+- HTML parsed with the importer and cached to disk; images fetched through `https` with bounded concurrency, resized with the local PowerShell/GDI+ helper.
+- Rendering uses the project's existing patterns: `import.meta.glob` for lazy modules, `container`/`btn-primary`/design tokens for styling, scoped CSS per component, `v-reveal`-era card aesthetics kept for the version cards.
+- Self-referencing recursive components resolve through the explicit `name` set by `defineOptions` (verified in the built output as `resolveComponent("DocsBlocks", true)`).
+
+**Verification:**
+- `npm run build` → `✓ built in 14.02s`, 0 errors (only the expected >500 kB warning for the lazy search-index chunk).
+- `npm run check:docs` → `✓ 2 413 pages checked, 20 pages SSR-rendered, 0 failures` — navigation/page map/search index agree in all four versions, sampled pages render titles/headings, all 4 522 unique image references exist on disk, every rendered internal link and heading anchor resolves.
+- SSR render of the largest page (`top-panel`: 93 blocks, 36 images, 8 tables) produces 46 KB of correct markup, tables and image paths included.
+- Brand audit of the generated output: no outbound HTTP(S) docs links and no source-vendor host references remain in `src/docs/**`.
+- Not verified: real-browser responsive behaviour, focus order and the print stylesheet (code-reviewed only) — listed as follow-up 1 in the plan.
+
+---
+
+**Date:** 2026-10-07
+
+**Agent Action:** Verified the docs implementation plan and hardened the white-label docs output so it no longer links back to external/source-vendor destinations.
+
+**What was done:**
+- Updated `tools/import-docs.mjs` so imported docs unwrap external HTTP(S) links, neutralize source-vendor hostnames and identifiers in visible text, and keep source documentation links as internal SPA docs links when the page exists.
+- Fixed the importer table/quote image patching path that was exposed during regeneration.
+- Regenerated all 2 413 docs pages with `npm.cmd run import:docs -- --no-images`; the run used cached HTML, made 0 network requests and reused all 4 675 mirrored images.
+- Extended `tools/check-docs.mjs` so `npm run check:docs` now fails if generated docs contain outbound HTTP(S) hrefs or source-vendor host references.
+- Updated `IMPLEMENTATION_PLAN.md` and `CHANGELOG.md` to describe the stricter white-label policy and remove a stale external changelog link.
+
+**Files changed:**
+- `tools/import-docs.mjs`
+- `tools/check-docs.mjs`
+- `src/docs/**`
+- `IMPLEMENTATION_PLAN.md`
+- `CHANGELOG.md`
+- `agents.md`
+
+**Why:**
+The User Guide is white-labeled, so generated documentation must not send visitors back to the source vendor or expose source-vendor hostnames as links or visible service addresses.
+
+**Method:**
+The fix was made at the generator layer instead of hand-editing generated chunks. After updating the importer replacement/link policy, the generated docs were refreshed from cache and the verification tool was expanded to lock in the rule.
+
+**Verification:**
+- `npm.cmd run import:docs -- --no-images` → 2 413 pages regenerated, 0 network requests, 4 675 images reused.
+- Custom audit of `src/docs/**` → 0 outbound HTTP(S) hrefs, 0 source-vendor host references.
+- `npm.cmd run check:docs` → 2 413 pages checked, 20 pages SSR-rendered, 0 failures.
+- `npm.cmd run build` → built successfully in 44.19s, with only the existing large docs/search chunk warnings.
+
+---
+
 ## Standing Instructions for ALL Future Agents
 
 > **READ THIS BEFORE MAKING ANY CHANGES.**

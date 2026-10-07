@@ -2,8 +2,8 @@
 /**
  * tools/import-docs.mjs
  *
- * Imports the reference user guide (docs.pilot-gps.africa, a Dr.Explain static
- * export) into this project as white-labeled, structured content.
+ * Imports the upstream Dr.Explain user guide export into this project as
+ * white-labeled, structured content.
  *
  * Why a generator instead of a runtime fetch: the reference site must never be
  * a runtime dependency of this website, and the content has to be reviewable
@@ -14,22 +14,27 @@
  *      from the entry indentation (`padding-left: Npt` → depth = Npt / 20);
  *   2. fetches every page, extracts the body region
  *      (`<div class="description_on_page">`) and converts it into a small typed
- *      block tree (headings, paragraphs, lists, tables, images, tabs, …);
- *   3. rewrites branding (PILOT → OneGPS) in text, attributes and slugs;
+ *      block tree (headings, paragraphs, lists, tables, images, quotes, …);
+ *   3. rewrites branding and source-vendor hostnames in text, attributes and slugs;
  *   4. mirrors images, downscaled + re-encoded (IMPLEMENTATION_PLAN.md D1);
  *   5. writes `src/docs/**` ES modules consumed by the Vue docs view.
  *
- * The Dr.Explain tab widget is not converted: none of the imported versions uses
- * it. Should a later version introduce one, its panels are still rendered — the
- * generic block recursion emits them one after another.
+ * External HTTP(S) links are intentionally unwrapped. A white-label guide must
+ * not send users back to the source vendor, and the imported output is verified
+ * to contain no outbound documentation links.
+ *
+ * The Dr.Explain tab widget is not converted — none of the imported versions
+ * uses it (0 tab blocks across all four versions). A future version that ships
+ * one would need a `tabs` branch both here and in src/components/docs/DocsBlocks.vue;
+ * until then those panels are the one construct that would not appear.
  *
  * Usage:
  *   node tools/import-docs.mjs                          # every version
  *   node tools/import-docs.mjs --versions=7.10          # one or more versions
  *   node tools/import-docs.mjs --versions=7.10 --fresh  # ignore cache and generated files
  *   node tools/import-docs.mjs --only=concepts.html     # debug one page (prints blocks)
-  *   node tools/import-docs.mjs --no-images               # skip the image mirror
- *   node tools/import-docs.mjs --rename-assets           # re-apply asset naming
+ *   node tools/import-docs.mjs --no-images               # import text only
+ *   node tools/import-docs.mjs --rename-assets           # re-apply the asset naming rules
  *
  * Runs are resumable: HTML is cached in node_modules/.cache/docs-import and
  * already mirrored images are reused instead of re-downloaded.
@@ -47,6 +52,7 @@ const REF_ORIGIN = 'https://docs.pilot-gps.africa/'
 const CACHE_DIR = path.join(ROOT, 'node_modules', '.cache', 'docs-import')
 const STAGING_DIR = path.join(CACHE_DIR, 'staging')
 const ASSET_DIR = path.join(ROOT, 'public', 'docs-assets', 'images')
+const RESIZE_SCRIPT = path.join(ROOT, 'tools', 'resize-images.ps1')
 const DOCS_DIR = path.join(ROOT, 'src', 'docs')
 const CONTENT_DIR = path.join(DOCS_DIR, 'content')
 const NAV_DIR = path.join(DOCS_DIR, 'nav')
@@ -73,19 +79,48 @@ const BRAND_REPLACEMENTS = [
   [/\bpilot\b/g, 'OneGPS']
 ]
 
-/**
- * Hosts that belong to the reference product and must be re-pointed.
- * Deliberately the apex/www host only: technical hosts such as
- * `adm.pilot-gps.africa` or `tasks.pilot-gps.africa` are real service
- * endpoints and rewriting them would produce links that do not resolve.
- */
+/** Hosts that belong to the source documentation and become SPA links. */
 const DOCS_HOSTS = ['docs.pilot-gps.africa']
-const PRODUCT_HOSTS = [/^https?:\/\/(?:www\.)?pilot-gps\.africa(?:\/|$)/i]
+const PRODUCT_HOSTS = [/^https?:\/\/(?:www\.)?pilot-gps\.(?:africa|com)(?:\/|$)/i]
 
 /**
- * URLs, hosts and dotted identifiers (`copilotDoor`, `com.octys.pilottracker`)
- * are kept verbatim: applying the word-level brand rules inside them turns
- * `pilot-gps.com` into the nonsense `OneGPS-gps.com`.
+ * Source-vendor URL and identifier text must not leak into the white-label docs.
+ * These replacements run only on protected URL-like tokens, before normal brand
+ * replacement resumes on the surrounding text.
+ */
+const SOURCE_URL_REPLACEMENTS = [
+  [/\bdocs\.pilot-gps\.africa\b/gi, 'onegps.africa/docs'],
+  [/\b([a-z0-9-]+)\.pilot-gps\.(?:africa|com|ru)\b/gi, '$1.<server_address>'],
+  [/\b(?:www\.)?pilot-gps\.(?:africa|com|ru)\b/gi, 'onegps.africa'],
+  [/\bpilot-telematics\.com\b/gi, 'telematics-vendor.example'],
+  [/\bgithub\.com\/pilot-telematics\/pilot_extensions\b/gi, 'github.com/<vendor>/extensions'],
+  [/\bcom\.pilot\./gi, 'com.onegps.'],
+  [/\bcom\.octys\.pilottracker\b/gi, 'com.onegps.tracker'],
+  [/\bitunes\.apple\.com\/us\/app\/pilot\b/gi, 'itunes.apple.com/us/app/onegps'],
+  [/\bru\.octys\.pilot(?:or|tracker)?\b/gi, 'com.onegps.mobile']
+]
+
+const SOURCE_IDENTIFIER_REPLACEMENTS = [
+  [/\bPilotGpsBot\b/g, 'OneGPSBot'],
+  [/\bPilotAfricaBot\b/g, 'OneGPSAfricaBot'],
+  [/\bksa_pilot_bot\b/gi, 'onegps_bot'],
+  [/\bpilot2285_bot\b/gi, 'onegps_bot'],
+  [/\bpilot_map_url\b/gi, 'onegps_map_url'],
+  [/\bpilot_task_id\b/gi, 'onegps_task_id'],
+  [/\bpilot_extensions\b/gi, 'onegps_extensions'],
+  [/\blanguages_pilot_edit\b/gi, 'languages_onegps_edit'],
+  [/\bget_waybill_for_pilot\b/gi, 'get_waybill'],
+  [/\b_waybill_for_pilot\b/gi, '_waybill'],
+  [/\bpilot-swagger\b/gi, 'onegps-swagger'],
+  [/\bpilot-gps\b/gi, 'onegps'],
+  [/\bpilotgps\b/gi, 'onegps']
+]
+
+/**
+ * URLs, hosts and dotted identifiers are protected from the generic word pass:
+ * applying the word-level brand rules inside them turns `pilot-gps.com` into
+ * the nonsense `OneGPS-gps.com`. Source-vendor URL tokens are then explicitly
+ * white-labeled by `whiteLabelProtectedToken()`.
  */
 const URL_LIKE = /(?:[A-Za-z][A-Za-z0-9+.-]*:\/\/|www\.)[^\s"'<>()]+|[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+/g
 
@@ -175,6 +210,22 @@ async function pool(items, limit, worker) {
 
 const brandAudit = new Set()
 
+function whiteLabelProtectedToken(value) {
+  let out = value
+  for (const [pattern, replacement] of SOURCE_URL_REPLACEMENTS) {
+    out = out.replace(pattern, replacement)
+  }
+  return out
+}
+
+function whiteLabelIdentifiers(value) {
+  let out = value
+  for (const [pattern, replacement] of SOURCE_IDENTIFIER_REPLACEMENTS) {
+    out = out.replace(pattern, replacement)
+  }
+  return out
+}
+
 function brandify(value) {
   if (!value) return value
 
@@ -193,7 +244,9 @@ function brandify(value) {
     })
   }
 
-  return out.replace(/\u0000(\d+)\u0000/g, (match, index) => protectedTokens[Number(index)])
+  return whiteLabelIdentifiers(
+    out.replace(/\u0000(\d+)\u0000/g, (match, index) => whiteLabelProtectedToken(protectedTokens[Number(index)]))
+  )
 }
 
 /**
@@ -378,6 +431,7 @@ const mirroredImages = new Map()
 let imageQueue = []
 let stagingCounter = 0
 let droppedImages = 0
+let resizeUnavailableWarned = false
 
 function existingImageFor(key) {
   const jpeg = path.join(ASSET_DIR, `${key.replace(/\.[^.]+$/, '')}.jpg`)
@@ -428,6 +482,17 @@ async function downloadToStaging(job) {
  * for a long time after the work is done (see tools/resize-images.ps1).
  */
 async function runResizeBatch(jobs) {
+  // The resizer is a Windows PowerShell + GDI+ helper (tools/resize-images.ps1).
+  // Elsewhere the batch is skipped straight away instead of stalling until the
+  // timeout; the caller then stores the untouched original image.
+  if (process.platform !== 'win32' || !existsSync(RESIZE_SCRIPT)) {
+    if (!resizeUnavailableWarned) {
+      resizeUnavailableWarned = true
+      console.warn('  ! image optimisation needs Windows PowerShell (tools/resize-images.ps1) — storing untransformed images')
+    }
+    return new Map()
+  }
+
   const stamp = `${process.pid}-${Date.now()}`
   const manifestFile = path.join(CACHE_DIR, `manifest-${stamp}.json`)
   const resultsFile = path.join(CACHE_DIR, `results-${stamp}.txt`)
@@ -472,7 +537,8 @@ async function runResizeBatch(jobs) {
   return results
 }
 
-/** Downloads + resizes everything queued and fills `mirroredImages`. */async function mirrorQueuedImages() {
+/** Downloads + resizes everything queued and fills `mirroredImages`. */
+async function mirrorQueuedImages() {
   if (!imageQueue.length) return
   const queue = imageQueue
   imageQueue = []
@@ -587,7 +653,7 @@ class PageConverter {
       return link
     }
 
-    if (/^(mailto:|tel:)/i.test(href)) return { t: 'a', href, external: false, in: children }
+    if (/^(mailto:|tel:)/i.test(href)) return { drop: children }
 
     if (DOCS_HOSTS.some((host) => href.includes(host))) {
       const relative = href.replace(/^https?:\/\/[^/]+\//, '')
@@ -600,17 +666,17 @@ class PageConverter {
     }
 
     if (PRODUCT_HOSTS.some((pattern) => pattern.test(href))) {
-      return { t: 'a', href: `https://onegps.africa${href.replace(/^https?:\/\/[^/]*/i, '')}`, external: true, in: children }
+      return { drop: children }
     }
 
-    if (/^https?:/i.test(href)) return { t: 'a', href, external: true, in: children }
+    if (/^https?:/i.test(href)) return { drop: children }
 
     const crossVersion = /^\.\.\/([0-9]+\.[0-9]+)\/?$/.exec(href)
     if (crossVersion) return { t: 'a', href: `/docs/${crossVersion[1]}`, external: false, in: children }
 
     if (/\.html?($|#)/i.test(href)) return this.internalLink(this.version.id, href, children)
 
-    if (text && !href.startsWith('javascript:')) return { t: 'a', href, external: true, in: children }
+    if (text && !href.startsWith('javascript:')) return { drop: children }
     return { drop: children }
   }
 
@@ -982,10 +1048,6 @@ function applyMirroredImages(page) {
         if (!block.items.length) blocks.splice(i, 1)
       } else if (block.t === 'table') {
         for (const row of block.rows) for (const cell of row) patchBlocks(cell)
-      } else if (block.t === 'tabs') {
-        for (const tab of block.tabs) patchBlocks(tab.blocks)
-        block.tabs = block.tabs.filter((tab) => tab.blocks.length)
-        if (!block.tabs.length) blocks.splice(i, 1)
       } else if (block.t === 'quote') {
         patchBlocks(block.blocks)
         if (!block.blocks.length) blocks.splice(i, 1)
@@ -1050,7 +1112,6 @@ function resolveLinks(pages, pageSlugs) {
       if (block.t === 'p' || block.t === 'h') walkInline(block.in)
       else if (block.t === 'list') for (const item of block.items) walkBlocks(item)
       else if (block.t === 'table') for (const row of block.rows) for (const cell of row) walkBlocks(cell)
-      else if (block.t === 'tabs') for (const tab of block.tabs) walkBlocks(tab.blocks)
       else if (block.t === 'quote') walkBlocks(block.blocks)
     }
   }
@@ -1093,7 +1154,6 @@ function plainText(blocks) {
       else if (block.t === 'code') parts.push(block.v)
       else if (block.t === 'list') for (const item of block.items) walk(item)
       else if (block.t === 'table') for (const row of block.rows) for (const cell of row) walk(cell)
-      else if (block.t === 'tabs') for (const tab of block.tabs) walk(tab.blocks)
       else if (block.t === 'quote') walk(block.blocks)
     }
   }

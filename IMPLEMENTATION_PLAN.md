@@ -2,7 +2,7 @@
 
 ## Objective
 
-Add a fully white-labeled Docs section to the existing website, using https://docs.pilot-gps.africa/ as the reference and content source.
+Add a fully white-labeled Docs section to the existing website, using the upstream Dr.Explain export as the private import source.
 
 The Docs section is a normal part of the existing Vue 3 SPA: same header, main navigation, footer, typography, colours and responsive behaviour. No iframe, no redirect, no runtime dependency on the reference site.
 
@@ -24,7 +24,7 @@ The Docs section is a normal part of the existing Vue 3 SPA: same header, main n
 - [x] 10. Implement documentation search (per-version index, ranked, keyboard navigable)
 - [x] 11. Implement version navigation (selector + version index page)
 - [x] 12. Implement previous/next navigation (reading order of the navigation tree)
-- [x] 13. White-label branding (text, titles, slugs, file names; limits in D3)
+- [x] 13. White-label branding (text, titles, slugs, file names, source-vendor hosts and outbound docs links; D3)
 - [x] 14. Fix internal documentation links (rewritten to SPA routes at import time)
 - [x] 15. Implement responsive behavior (sidebar becomes a drawer under 992 px)
 - [x] 16. Accessibility review (landmarks, labels, roles, focus, keyboard, alt text)
@@ -60,7 +60,7 @@ The Docs section is a normal part of the existing Vue 3 SPA: same header, main n
 
 ### Step 4 — Content imported
 
-`tools/import-docs.mjs` crawls the reference once (HTML cached under `node_modules/.cache/docs-import`), converts each page into a structured block tree, resolves internal links against the other pages of the same version and writes the generated modules. Result:
+`tools/import-docs.mjs` crawls the upstream export once (HTML cached under `node_modules/.cache/docs-import`), converts each page into a structured block tree, resolves internal links against the other pages of the same version and writes the generated modules. Result:
 
 | Version | Pages | Chunk files |
 | --- | --- | --- |
@@ -84,7 +84,9 @@ The Docs section is a normal part of the existing Vue 3 SPA: same header, main n
 ```
 tools/import-docs.mjs                  importer (crawl → convert → write)
                                        --fresh, --no-images, --only, --versions, --rename-assets
+tools/resize-images.ps1                image downscale/re-encode helper (Windows PowerShell + System.Drawing)
 tools/check-docs.mjs                   verification: data consistency + SSR render pass
+tools/docs-recon.ps1                   single-page markup inspector used while writing the importer
 src/docs/
   versions.js                          generated: version metadata (id, label, note, pageCount)
   pages.js                             generated: { version: { slug: chunkIndex } }
@@ -106,37 +108,35 @@ public/docs-assets/images/             mirrored documentation images
 
 ### D1 — Assets are mirrored, downscaled and re-encoded
 
-The reference stores screenshots at an average of ~134 KB (≈ 2 GB across the four versions). Every image is mirrored through `sharp`, downscaled to a maximum width of 900 px and re-encoded as JPEG (quality 72), which lands at ~23 KB per image. All four versions are mirrored, archives included: reusing a mirrored file whenever the source file name matches keeps the overlapping versions cheap (the archives cost only 857 extra downloads / 59.5 MB).
+The reference stores screenshots at an average of ~134 KB (≈ 2 GB across the four versions). Every mirrored image is downscaled to a maximum width of 900 px and re-encoded as JPEG (quality 72) — verified on disk: the widest files are exactly 900 px, at ~23 KB each. The work is done by `tools/resize-images.ps1` (Windows PowerShell + `System.Drawing`, called in batches by the importer), so the import needs **no npm dependency at all**. All four versions are mirrored, archives included: reusing a mirrored file whenever the source file name matches keeps the overlapping versions cheap (the archives cost only 857 extra downloads / 59.5 MB).
 
-Consequences to keep in mind: `public/docs-assets` adds 108.8 MB to the repository and to every deployment, and `vite build` takes ~14 s instead of ~2 s because the folder is copied into `dist`.
+Consequences to keep in mind:
+
+- `public/docs-assets` adds 108.8 MB to the repository and to every deployment, and `vite build` takes ~14 s instead of ~2 s because the folder is copied into `dist`.
+- Image optimisation is Windows-only. On other platforms the importer warns and stores the untouched original, or `--no-images` skips image work entirely.
 
 ### D2 — Hotspots, embeds and the tab widget
 
 - Dr.Explain image maps (`<map>/<area>` hotspots) are dropped; the screenshot itself is kept, because the labelled detail table next to it already carries the text.
-- The reference's tab widget is **not** converted. Measured across all four versions: 0 `tabs`, 0 `blockquote`, 0 `pre` and 0 `iframe` blocks, so no support was added for them. The generic block recursion would still render a future tab widget's panels one after another rather than losing them.
+- The reference's tab widget is **not** converted. Measured across all four versions: 0 `tabs`, 0 `blockquote`, 0 `pre` and 0 `iframe` blocks, so no support was added for them. A future version that ships a tab widget would need a `tabs` branch in the converter and in `DocsBlocks.vue`; that is the one construct that would not appear until then.
 - `img.de_ctrlimg` icons are not mirrored: they are UI-sprite fragments inside tables with no meaning outside their original layout.
 
-### D3 — Brand replacement
+### D3 — White-label replacement and outbound-link policy
 
 Two passes, applied in this order:
 
 1. **Word pass** — `PILOT GPS Africa`, `PILOT GPS`, `PILOT`, `Pilot`, `pilot` → `OneGPS`. This renames visible copy, page titles, navigation entries and breadcrumbs.
 2. **Token pass** — the same word rules plus `_pilot_` → `_OneGPS_`, used for file names, slugs and image names (there is no `\b` word boundary between `_` and a letter, so `what_s_new_in_pilot_7_10` needs its own rule). Slugs are then normalised to lower-case kebab-case.
 
-URLs, host names and dotted identifiers are **masked out of both passes**, so `https://pilot-gps.com/` can never become the meaningless `https://OneGPS-gps.com/`. Branding stops at the boundary of anything functional.
+URL-like tokens are still protected from the generic word pass, because applying word replacement inside a host name creates broken strings. After masking, the importer applies an explicit white-label URL/identifier table:
 
-Preserved verbatim, deliberately (identifiers, not branding):
+- source-vendor apex hosts become OneGPS hosts;
+- source-vendor technical subdomains become neutral placeholders such as `<server_address>` or OneGPS service names;
+- source-vendor package IDs, bot handles, Swagger hosts and extension identifiers are replaced with OneGPS or generic equivalents;
+- external HTTP(S) anchors are unwrapped so the text remains but the page does not link visitors away from the OneGPS guide;
+- source documentation links are rewritten to internal SPA docs routes when they target an imported page.
 
-| Category | Examples |
-| --- | --- |
-| Platform/config identifiers | `pilot_map_url`, `pilot_task_id`, `copilotDoor`, `pilot_extensions`, `_waybill_for_pilot` |
-| Server addresses in examples | `adm.pilot-gps.africa`, `tasks.pilot-gps.com`, `sandbox.`, `blade.`, `gitlab.`, `vroom.`, `logbook.`, `wiki.` |
-| API documentation hosts | `pilot-swagger.pilot-gps.com`, `bi-swagger.pilot-gps.com` |
-| Telegram bot handles | `PilotGpsBot`, `PilotAfricaBot`, `ksa_pilot_bot`, `pilot2285_bot` |
-| App package IDs / store link | `com.pilot.dispatcher`, `ru.octys.pilot`, `ru.octys.pilotor`, `com.octys.pilottracker`, the App Store URL |
-| Third-party repositories/hardware | `github.com/pilot-telematics/pilot_extensions`, `pilot-telematics.com`, `doc.pilot-gps.ru` |
-
-Links to the reference's own marketing site are re-pointed to `https://onegps.africa` — apex/www host only; technical subdomains such as `adm.` or `tasks.` are left alone because rewriting them would produce links that do not resolve.
+`tools/check-docs.mjs` now enforces this rule by failing when generated docs contain outbound HTTP(S) `href` fields or source-vendor host references. The latest audit reports `0` outbound HTTP links and `0` source-vendor host references in `src/docs/**`.
 
 Screenshots still show the original product UI, including its logo and name. They are genuine product screenshots and cannot be re-rendered; that is the boundary of a text-level white-label.
 
@@ -191,19 +191,20 @@ npm run check:docs  # ✓ 2 413 pages checked, 20 pages SSR-rendered, 0 failures
 - every image referenced by a rendered page exists on disk (4 522 unique references validated separately);
 - every internal documentation link in rendered output resolves to a page that exists in the target version;
 - every heading anchor in the on-page navigation has a real target;
-- the sidebar renders entries and its filter returns matches.
+- the sidebar renders entries and its filter returns matches;
+- generated docs contain no outbound HTTP(S) `href` fields and no source-vendor host references.
 
 Additional checks performed:
 
 - the largest imported page (93 blocks, 36 images, 8 tables) renders to 46 KB of HTML with the recursive renderers intact;
 - self-referencing components resolve (`resolveComponent("DocsBlocks", true)` is resolved through the explicit `name` in each SFC);
-- no page and no search entry in any version is left without its module.
+- no page and no search entry in any version is left without its module;
+- `npm run import:docs -- --no-images` refreshed all 2 413 generated pages from the local cache with `0` network requests and reused all 4 675 mirrored images.
 
 ## Follow-ups (not defects)
 
 1. **Browser pass** — responsive behaviour, focus order and the print stylesheet were reviewed in code, not in a real browser. Recommended: `/docs`, `/docs/7.10`, `/docs/7.10/top-panel`, `/docs/7.10/top-panel#information-tab` on mobile and desktop.
-2. **Deployment URLs** — the server addresses, Swagger hosts, bot handles and app IDs listed in D3 still name the reference vendor. They are functional identifiers; when the OneGPS equivalents are known they can be swapped in `tools/import-docs.mjs` and re-imported (the HTML cache makes a re-import a ~45 s operation).
-3. **Screenshots** show the reference product UI and brand.
-4. **Repository size** — 108.8 MB of mirrored images plus 13 MB of generated content. If that becomes a problem, `IMAGE_MAX_WIDTH` / `IMAGE_JPEG_QUALITY` in the importer are the cheapest lever.
-5. **Re-import prerequisites** — the reference host must be reachable; the cached HTML under `node_modules/.cache/docs-import` is not committed. The generated output *is* committed, so an import is only needed when the source content changes.
-6. **Recon leftovers** — `docs_contents.html`, `docs_home.html` and `drex_index.js` in the repository root are saved reference pages from Step 3. Nothing references them; they can be deleted.
+2. **Screenshots** show the reference product UI and brand.
+3. **Repository size** — 108.8 MB of mirrored images plus 13 MB of generated content. If that becomes a problem, `IMAGE_MAX_WIDTH` / `IMAGE_JPEG_QUALITY` in the importer are the cheapest lever.
+4. **Re-import prerequisites** — the upstream export must be reachable; the cached HTML under `node_modules/.cache/docs-import` is not committed. The generated output *is* committed, so an import is only needed when the source content changes. Image optimisation additionally requires Windows PowerShell (D1).
+5. **Recon leftovers** — `docs_contents.html`, `docs_home.html` and `drex_index.js` in the repository root are saved reference pages from Step 3. Nothing references them; they can be deleted.

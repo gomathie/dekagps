@@ -13,7 +13,8 @@
  *
  * Exits non-zero when anything is wrong, so it can gate a build.
  */
-import { existsSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync } from 'node:fs'
+import path from 'node:path'
 import { createSSRApp, h } from 'vue'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import { renderToString } from 'vue/server-renderer'
@@ -48,6 +49,30 @@ globalThis.window = {
 
 const failures = []
 const fail = (message) => failures.push(message)
+const ROOT = process.cwd()
+const GENERATED_DOCS_DIR = path.join(ROOT, 'src', 'docs')
+const FORBIDDEN_SOURCE_REFS =
+  /\b(?:docs\.)?pilot-gps\.(?:africa|com|ru)\b|\bpilot-telematics\.com\b|\bgithub\.com\/pilot-telematics\b/i
+
+function generatedFiles(dir = GENERATED_DOCS_DIR, out = []) {
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const file = path.join(dir, entry.name)
+    if (entry.isDirectory()) generatedFiles(file, out)
+    else if (entry.name.endsWith('.js')) out.push(file)
+  }
+  return out
+}
+
+function checkWhiteLabelOutput() {
+  for (const file of generatedFiles()) {
+    const source = readFileSync(file, 'utf8')
+    const relative = path.relative(ROOT, file)
+    const outbound = source.match(/"href":"https?:\/\//)
+    if (outbound) fail(`${relative}: generated docs must not contain outbound HTTP links`)
+    const sourceRef = source.match(FORBIDDEN_SOURCE_REFS)
+    if (sourceRef) fail(`${relative}: source-vendor reference remains (${sourceRef[0]})`)
+  }
+}
 
 const router = createRouter({
   history: createMemoryHistory(),
@@ -148,6 +173,7 @@ async function checkRender(version, entries) {
 }
 
 let rendered = 0
+checkWhiteLabelOutput()
 for (const version of versions) {
   const entries = await checkData(version)
   if (entries.length) rendered += await checkRender(version, entries)
