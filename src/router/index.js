@@ -203,6 +203,15 @@ const routes = [
     }
   },
   {
+    path: '/docs/api',
+    name: 'DocsApi',
+    component: () => import('../views/Docs.vue'),
+    meta: {
+      title: 'API Reference',
+      description: 'OneGPS API reference with authentication, request formats, endpoints and examples.'
+    }
+  },
+  {
     path: '/docs/:version',
     name: 'DocsVersion',
     component: () => import('../views/Docs.vue'),

@@ -327,6 +327,42 @@ The fix was made at the generator layer instead of hand-editing generated chunks
 
 ---
 
+**Date:** 2026-10-08
+
+**Agent Action:** Finished restoring internal guide references and retained only documentation version 7.10.
+
+**What was done:**
+- Corrected conversion of references next to Dr.Explain bullet markers and standalone anchor elements. The converter retains linked headings and paragraphs made entirely of links.
+- Resolved source section anchors against the original block positions before paragraph regrouping, preventing links from landing on later headings. Corrected the obsolete Round Trips report target to the existing timetable-adherence report page.
+- Restricted the importer and generated metadata/page map to 7.10. Removed archive versions 7.9, 7.8 and 7.7, their content/navigation/search modules and cached HTML, and the historical release-note branch inside the current export. The current 7.10 release summary remains.
+- Replaced archive selectors/cards with a 7.10 version label. Unsupported-version URLs redirect to the same page in 7.10 when available, otherwise to its overview.
+- Removed 1 593 images unreferenced by retained content. The published guide now contains 682 pages, 28 chunks, 14 sections, 693 local article links and 3 082 screenshots (~72.5 MB).
+- Extended docs verification to check every article reference, section target and image file, supported-version output, and rendered navigation examples.
+- Updated the implementation plan, README and changelog to reflect the current guide.
+
+**Files changed:**
+- `tools/import-docs.mjs`, `tools/check-docs.mjs`
+- `src/views/Docs.vue`
+- `src/docs/pages.js`, `src/docs/versions.js`, `src/docs/content/**`, `src/docs/nav/**`, `src/docs/search/**`
+- `public/docs-assets/images/**`
+- `IMPLEMENTATION_PLAN.md`, `README.md`, `CHANGELOG.md`, `agents.md`
+
+**Why:**
+White-label documentation must preserve useful navigation locally. Only 7.10 was requested, so archived guides, historical navigation entries and unused assets were removed together.
+
+**Method:**
+Fixed the existing importer and reader, regenerated retained pages from the local HTML cache, and removed archive files and unused image files after checking their paths and references. Expanded the existing verification tool without adding dependencies. Used an isolated headless Chrome profile for desktop/mobile navigation checks.
+
+**Verification:**
+- Cached import regenerated 682 pages with 0 network requests.
+- Source comparison found 693 in-article cross-references and 693 generated local links.
+- `npm.cmd run check:docs` passed: 682 pages, 693 article links, 9 SSR-rendered pages; all referenced images and heading targets exist; no outbound HTTP(S) links or source-vendor host references.
+- `npm.cmd run build` passed in 15.37s; existing search-index size and asset-copy timing warnings remain.
+- Chrome at 1440x1000 and 390x844: overview, archive URL redirects, section jumps, linked headings, screenshot loading and mobile sidebar navigation passed, with no runtime exceptions or horizontal overflow in checked views.
+- Local Vite preview: `http://127.0.0.1:5173/docs`.
+
+---
+
 ## Standing Instructions for ALL Future Agents
 
 > **READ THIS BEFORE MAKING ANY CHANGES.**

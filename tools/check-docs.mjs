@@ -24,12 +24,14 @@ import DocsArticle from '../src/components/docs/DocsArticle.vue'
 import DocsSidebar from '../src/components/docs/DocsSidebar.vue'
 import pageMap from '../src/docs/pages.js'
 import {
+  API_ROOT_SLUG,
   flattenNav,
   getVersion,
   hasPage,
   loadNav,
   loadPage,
   loadSearchIndex,
+  splitDocsNav,
   versions
 } from '../src/docs/registry.js'
 
@@ -55,6 +57,8 @@ const ROOT = process.cwd()
 const GENERATED_DOCS_DIR = path.join(ROOT, 'src', 'docs')
 const FORBIDDEN_SOURCE_REFS =
   /\b(?:docs\.)?pilot-gps\.(?:africa|com|ru)\b|\bpilot-telematics\.com\b|\bgithub\.com\/pilot-telematics\b/i
+const FORBIDDEN_BRAND_TEXT = /pilot/i
+const FORBIDDEN_SERVER_PLACEHOLDER = /<?server_address>?/i
 
 function generatedFiles(dir = GENERATED_DOCS_DIR, out = []) {
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
@@ -83,6 +87,10 @@ function checkWhiteLabelOutput() {
     if (outbound) fail(`${relative}: generated docs must not contain outbound HTTP links`)
     const sourceRef = source.match(FORBIDDEN_SOURCE_REFS)
     if (sourceRef) fail(`${relative}: source-vendor reference remains (${sourceRef[0]})`)
+    const brandText = source.match(FORBIDDEN_BRAND_TEXT)
+    if (brandText) fail(`${relative}: source-brand text remains (${brandText[0]})`)
+    const placeholder = source.match(FORBIDDEN_SERVER_PLACEHOLDER)
+    if (placeholder) fail(`${relative}: server address placeholder remains (${placeholder[0]})`)
   }
 }
 
@@ -107,6 +115,9 @@ function samplePages(entries, count = 5) {
 async function checkData(version) {
   const nav = await loadNav(version.id)
   const entries = flattenNav(nav)
+  const sections = splitDocsNav(nav)
+  const guideEntries = flattenNav(sections.guide)
+  const apiEntries = flattenNav(sections.api)
   const index = await loadSearchIndex(version.id)
 
   const slugs = new Set(entries.map((entry) => entry.slug))
@@ -114,6 +125,15 @@ async function checkData(version) {
   const indexed = new Set(index.map((page) => page.s))
 
   if (hasPage(version.id, 'release-notes')) fail(`${version.id}: archived release-note pages remain`)
+  if (!apiEntries.length || apiEntries[0].slug !== API_ROOT_SLUG) {
+    fail(`${version.id}: API reference root is missing from its documentation tab`)
+  }
+  const guideSlugs = new Set(guideEntries.map((entry) => entry.slug))
+  const overlap = apiEntries.find((entry) => guideSlugs.has(entry.slug))
+  if (overlap) fail(`${version.id}: ${overlap.slug} appears in both documentation tabs`)
+  if (guideEntries.length + apiEntries.length !== entries.length) {
+    fail(`${version.id}: guide and API tab page counts do not cover the full navigation`)
+  }
 
   if (entries.length !== version.pageCount) {
     fail(`${version.id}: versions.js announces ${version.pageCount} pages, navigation has ${entries.length}`)

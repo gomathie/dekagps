@@ -11,6 +11,8 @@ defineOptions({ name: 'DocsArticle' })
 const props = defineProps({
   page: { type: Object, required: true },
   version: { type: Object, required: true },
+  sectionLabel: { type: String, default: 'User Guide' },
+  sectionPath: { type: String, default: '/docs' },
   previous: { type: Object, default: null },
   next: { type: Object, default: null }
 })
@@ -25,7 +27,7 @@ const target = (slug) => `/docs/${props.version.id}/${slug}`
 <template>
   <article class="docs-article">
     <nav class="breadcrumbs" aria-label="Breadcrumb">
-      <router-link to="/docs">User Guide</router-link>
+      <router-link :to="sectionPath">{{ sectionLabel }}</router-link>
       <span aria-hidden="true">/</span>
       <router-link :to="`/docs/${version.id}`">{{ version.label }}</router-link>
       <span aria-hidden="true">/</span>
@@ -50,7 +52,7 @@ const target = (slug) => `/docs/${props.version.id}/${slug}`
 
     <DocsBlocks :blocks="page.blocks" />
 
-    <nav class="docs-pager" aria-label="Guide pages">
+    <nav class="docs-pager" :aria-label="`${sectionLabel} pages`">
       <router-link v-if="previous" :to="target(previous.slug)" class="docs-pager__link">
         <span class="docs-pager__label">Previous</span>
         <span class="docs-pager__title">{{ previous.title }}</span>

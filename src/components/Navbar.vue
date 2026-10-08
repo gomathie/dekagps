@@ -67,7 +67,8 @@ onUnmounted(() => {
           Resources <i class="fas fa-chevron-down"></i>
         </button>
         <ul class="dropdown-menu">
-          <li><router-link to="/docs" @click="closeMobileMenu">User Guide</router-link></li>
+           <li><router-link to="/docs" @click="closeMobileMenu">User Guide</router-link></li>
+           <li><router-link to="/docs/api" @click="closeMobileMenu">API Reference</router-link></li>
           <li><router-link to="/blog" @click="closeMobileMenu">Blog</router-link></li>
           <li><router-link to="/faq" @click="closeMobileMenu">FAQ</router-link></li>
           <li><router-link to="/technical-support" @click="closeMobileMenu">Technical Support</router-link></li>

@@ -92,11 +92,11 @@ const PAGE_ALIASES = new Map([['report-on-round-trip', 'report-on-timetable-adhe
  * replacement resumes on the surrounding text.
  */
 const SOURCE_URL_REPLACEMENTS = [
-  [/\bdocs\.pilot-gps\.africa\b/gi, 'onegps.africa/docs'],
-  [/\b([a-z0-9-]+)\.pilot-gps\.(?:africa|com|ru)\b/gi, '$1.<server_address>'],
+  [/\bdocs\.pilot-gps\.africa\b/gi, 'onegps.africa'],
+  [/\b([a-z0-9-]+)\.pilot-gps\.(?:africa|com|ru)\b/gi, 'onegps.africa'],
   [/\b(?:www\.)?pilot-gps\.(?:africa|com|ru)\b/gi, 'onegps.africa'],
-  [/\bpilot-telematics\.com\b/gi, 'telematics-vendor.example'],
-  [/\bgithub\.com\/pilot-telematics\/pilot_extensions\b/gi, 'github.com/<vendor>/extensions'],
+  [/\bpilot-telematics\.com\b/gi, 'onegps.africa'],
+  [/\bgithub\.com\/pilot-telematics\/pilot_extensions\b/gi, 'onegps.africa'],
   [/\bcom\.pilot\./gi, 'com.onegps.'],
   [/\bcom\.octys\.pilottracker\b/gi, 'com.onegps.tracker'],
   [/\bitunes\.apple\.com\/us\/app\/pilot\b/gi, 'itunes.apple.com/us/app/onegps'],
@@ -104,6 +104,9 @@ const SOURCE_URL_REPLACEMENTS = [
 ]
 
 const SOURCE_IDENTIFIER_REPLACEMENTS = [
+  [/\bcopilotDoor\b/gi, 'doorControl'],
+  [/\busername_from_PILOT\b/gi, 'username_from_ONEGPS'],
+  [/\bpassword_from_PILOT\b/gi, 'password_from_ONEGPS'],
   [/\bPilotGpsBot\b/g, 'OneGPSBot'],
   [/\bPilotAfricaBot\b/g, 'OneGPSAfricaBot'],
   [/\bksa_pilot_bot\b/gi, 'onegps_bot'],
@@ -224,6 +227,8 @@ function whiteLabelIdentifiers(value) {
     out = out.replace(pattern, replacement)
   }
   return out
+    .replace(/(?:[a-z0-9-]+\.)?<server_address>/gi, 'onegps.africa')
+    .replace(/\bserver_address\b/gi, 'onegps.africa')
 }
 
 function brandify(value) {
@@ -254,9 +259,8 @@ function brandify(value) {
  * letter, so identifiers such as `pilot_tracker` or `what_s_new_in_pilot_7_10`
  * (file names, link targets, image names) need their own pass.
  *
- * Compound identifiers that are not the product name are deliberately left
- * alone (see IMPLEMENTATION_PLAN.md, decision D3):
- *   copilotDoor, pilotgps.com, PilotGpsBot, pilot_map_url …
+ * Compound identifiers are normalized by the explicit identifier rules above
+ * so source-brand text cannot survive inside code examples or configuration.
  */
 function brandifyToken(value) {
   return brandify(value.replace(/(^|[^A-Za-z0-9])(pilot)(?=[^A-Za-z0-9]|$)/gi, (match, prefix) => prefix + 'OneGPS'))

@@ -9,13 +9,15 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
+  API_ROOT_SLUG,
   defaultVersion,
   docsPath,
   flattenNav,
   getVersion,
   hasPage,
   loadNav,
-  loadPage
+  loadPage,
+  splitDocsNav
 } from '../docs/registry.js'
 import DocsArticle from '../components/docs/DocsArticle.vue'
 import DocsSearch from '../components/docs/DocsSearch.vue'
@@ -38,9 +40,18 @@ const versionId = computed(() => {
 
 const version = computed(() => getVersion(versionId.value))
 
-const slug = computed(() => route.params.slug || '')
+const slug = computed(() => route.name === 'DocsApi' ? API_ROOT_SLUG : route.params.slug || '')
 
-const entries = computed(() => flattenNav(nav.value))
+const navSections = computed(() => splitDocsNav(nav.value))
+const apiSlugs = computed(() => new Set(flattenNav(navSections.value.api).map((entry) => entry.slug)))
+const activeSection = computed(() =>
+  route.name === 'DocsApi' || apiSlugs.value.has(slug.value) ? 'api' : 'guide'
+)
+const scopedNav = computed(() => navSections.value[activeSection.value])
+const entries = computed(() => flattenNav(scopedNav.value))
+const entrySlugs = computed(() => entries.value.map((entry) => entry.slug))
+const sectionLabel = computed(() => activeSection.value === 'api' ? 'API Reference' : 'User Guide')
+const sectionPath = computed(() => activeSection.value === 'api' ? '/docs/api' : '/docs')
 
 const currentIndex = computed(() => entries.value.findIndex((entry) => entry.slug === slug.value))
 const previous = computed(() => (currentIndex.value > 0 ? entries.value[currentIndex.value - 1] : null))
@@ -80,12 +91,12 @@ const loadContent = async () => {
 
   if (!loaded) {
     page.value = null
-    document.title = `Page not found | ${version.value.label} user guide | OneGPS`
+    document.title = `Page not found | ${sectionLabel.value} | OneGPS`
     return
   }
 
   page.value = loaded
-  document.title = `${loaded.title} | OneGPS ${version.value.label} user guide`
+  document.title = `${loaded.title} | OneGPS ${sectionLabel.value}`
 
   const description = loaded.blocks
     .filter((block) => block.t === 'p')
@@ -177,12 +188,15 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
         <nav class="breadcrumbs" aria-label="Breadcrumb">
           <router-link to="/">Home</router-link>
           <span aria-hidden="true">/</span>
-          <span>User guide</span>
+          <span>{{ sectionLabel }}</span>
         </nav>
-        <h1>OneGPS user guide</h1>
-        <p class="lead">
+        <h1>OneGPS {{ activeSection === 'api' ? 'API reference' : 'user guide' }}</h1>
+        <p v-if="activeSection === 'api'" class="lead">
+          Authentication, request formats, endpoints and practical examples for integrating with OneGPS.
+        </p>
+        <p v-else class="lead">
           The complete product documentation: every screen, module and integration of the OneGPS
-          platform, from first login to API commands.
+          platform, from first login to advanced configuration.
         </p>
 
         <div class="docs-hero__controls">
@@ -190,8 +204,24 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
             <span>Version</span>
             <strong>{{ version.label }}</strong>
           </div>
-          <DocsSearch :version-id="versionId" @navigate="goToResult" />
+          <DocsSearch
+            :version-id="versionId"
+            :allowed-slugs="entrySlugs"
+            :scope-label="activeSection === 'api' ? 'API reference' : 'user guide'"
+            @navigate="goToResult"
+          />
         </div>
+
+        <nav class="docs-tabs" aria-label="Documentation sections">
+          <router-link to="/docs" :class="{ 'is-active': activeSection === 'guide' }">
+            <i class="fas fa-book" aria-hidden="true"></i>
+            User Guide
+          </router-link>
+          <router-link to="/docs/api" :class="{ 'is-active': activeSection === 'api' }">
+            <i class="fas fa-code" aria-hidden="true"></i>
+            API Reference
+          </router-link>
+        </nav>
       </div>
     </section>
 
@@ -202,8 +232,8 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
             v-model="sidebarFilter"
             type="search"
             class="form-control docs-aside__filter"
-            placeholder="Filter pages…"
-            aria-label="Filter guide pages"
+            :placeholder="`Filter ${activeSection === 'api' ? 'API' : 'guide'} pages…`"
+            :aria-label="`Filter ${sectionLabel} pages`"
           />
           <DocsSidebar
             :version-id="versionId"
@@ -223,7 +253,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
           @click="isSidebarOpen = !isSidebarOpen"
         >
           <i class="fas fa-list" aria-hidden="true"></i>
-          {{ isSidebarOpen ? 'Close navigation' : 'Browse the guide' }}
+          {{ isSidebarOpen ? 'Close navigation' : `Browse the ${activeSection === 'api' ? 'API' : 'guide'}` }}
         </button>
 
         <p v-if="isLoading" class="docs-state">Loading…</p>
@@ -232,6 +262,8 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
           v-else-if="page"
           :page="page"
           :version="version"
+          :section-label="sectionLabel"
+          :section-path="sectionPath"
           :previous="previous"
           :next="next"
           @print="print"
@@ -248,9 +280,9 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
         </div>
 
         <div v-else class="docs-overview">
-          <h2 class="section-title">Browse the guide</h2>
+          <h2 class="section-title">Browse the user guide</h2>
           <p class="lead">
-            Version {{ version.label }} documents {{ version.pageCount }} pages across
+            Version {{ version.label }} documents {{ entries.length }} guide pages across
             {{ sections.length }} sections. Pick a section below or use the navigation on the left.
           </p>
 
@@ -303,6 +335,30 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
   grid-template-columns: 240px minmax(0, 1fr);
   gap: 1.5rem;
   align-items: end;
+}
+
+.docs-tabs {
+  display: flex;
+  gap: 1.75rem;
+  margin-top: 2.25rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.docs-tabs a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.8rem 0;
+  border-bottom: 2px solid transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-heading);
+  font-size: 0.88rem;
+}
+
+.docs-tabs a:hover,
+.docs-tabs a.is-active {
+  border-bottom-color: var(--accent-gold);
+  color: var(--accent-gold);
 }
 
 .docs-version span {

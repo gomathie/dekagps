@@ -12,7 +12,9 @@ import { loadSearchIndex } from '../../docs/registry.js'
 defineOptions({ name: 'DocsSearch' })
 
 const props = defineProps({
-  versionId: { type: String, required: true }
+  versionId: { type: String, required: true },
+  allowedSlugs: { type: Array, default: () => [] },
+  scopeLabel: { type: String, default: 'guide' }
 })
 
 const emit = defineEmits(['navigate'])
@@ -38,7 +40,9 @@ const results = computed(() => {
   if (needle.length < 2 || !index.value) return []
 
   const scored = []
+  const allowed = new Set(props.allowedSlugs)
   for (const page of index.value) {
+    if (allowed.size && !allowed.has(page.s)) continue
     const title = page.t.toLowerCase()
     const heading = page.h.find((text) => text.toLowerCase().includes(needle))
     const body = page.x.toLowerCase().indexOf(needle)
@@ -109,7 +113,7 @@ onBeforeUnmount(() => document.removeEventListener('click', onDocumentClick))
 
 <template>
   <div class="docs-search">
-    <label class="docs-search__label" for="docs-search-input">Search the guide</label>
+    <label class="docs-search__label" for="docs-search-input">Search the {{ scopeLabel }}</label>
     <div class="docs-search__field">
       <i class="fas fa-search" aria-hidden="true"></i>
       <input
@@ -117,7 +121,7 @@ onBeforeUnmount(() => document.removeEventListener('click', onDocumentClick))
         v-model="query"
         type="search"
         class="form-control"
-        placeholder="Search 600+ pages…"
+        :placeholder="`Search the ${scopeLabel}…`"
         autocomplete="off"
         role="combobox"
         aria-controls="docs-search-results"

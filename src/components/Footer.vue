@@ -34,7 +34,8 @@
           <h4>Company</h4>
           <router-link to="/iot-smart-homes">IoT and Smart Homes</router-link>
           <router-link to="/web-services">Web Services</router-link>
-          <router-link to="/docs">User Guide</router-link>
+            <router-link to="/docs">User Guide</router-link>
+            <router-link to="/docs/api">API Reference</router-link>
           <router-link to="/blog">Blog</router-link>
           <router-link to="/technical-support">Technical Support</router-link>
           <router-link to="/contact">Contact Us</router-link>

@@ -8,7 +8,7 @@ The Docs section is a normal part of the existing Vue 3 SPA: same header, main n
 
 ## Status
 
-**Implemented** — 7.10 is the only published guide: 682 pages, 28 content chunks, 14 sections and 693 local article references. Archive guides and their release-note branch have been removed.
+**Implemented and verified** — 7.10 is the only published guide: 682 pages, 28 content chunks, 14 sections and 693 local article references. Archive guides and their release-note branch have been removed. Docs checks, the production build and desktop/mobile Chrome navigation checks pass.
 
 ## Steps
 

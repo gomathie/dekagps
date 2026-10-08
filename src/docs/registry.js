@@ -24,6 +24,8 @@ export const defaultVersion = (versions.find((version) => version.current) || ve
 
 export const getVersion = (id) => versions.find((version) => version.id === id) || null
 
+export const API_ROOT_SLUG = 'working-with-api-requests'
+
 export const docsPath = (versionId, slug = '', anchor = '') =>
   `/docs/${versionId}${slug ? `/${slug}` : ''}${anchor ? `#${anchor}` : ''}`
 
@@ -55,6 +57,15 @@ export function flattenNav(tree, depth = 0, ancestors = []) {
     if (node.children?.length) out.push(...flattenNav(node.children, depth + 1, [...ancestors, node.slug]))
   }
   return out
+}
+
+/** Splits the imported navigation into the product guide and API reference tabs. */
+export function splitDocsNav(tree) {
+  const apiRoot = tree.find((node) => node.slug === API_ROOT_SLUG)
+  return {
+    guide: tree.filter((node) => node.slug !== API_ROOT_SLUG),
+    api: apiRoot ? [apiRoot] : []
+  }
 }
 
 /** Whether a version contains a given page (used when switching versions). */

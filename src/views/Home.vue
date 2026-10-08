@@ -15,7 +15,6 @@ import industrialLogoFallback from '../../images/industrial-logo_logo2.webp';
         <p class="trusted-label">TRUSTED BY INDUSTRY LEADERS & HARDWARE PROVIDERS</p>
         <div class="logo-carousel">
           <img src="../../images/telto-e1724330667289-1-300x69.png" alt="Teltonika">
-          <img src="../../images/pilot-logo-new-1-e1773316299924.png" alt="Pilot">
           <img src="../../images/xbr1-1-e1773316267570.png" alt="XBR">
           <img src="../../images/industrial-logo_logo2-1-e1773316282668.webp" alt="Industrial" @error="(e) => e.target.src = industrialLogoFallback">
         </div>
