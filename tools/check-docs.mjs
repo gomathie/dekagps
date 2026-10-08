@@ -21,6 +21,7 @@ import { renderToString } from 'vue/server-renderer'
 
 import DocsArticle from '../src/components/docs/DocsArticle.vue'
 import DocsSidebar from '../src/components/docs/DocsSidebar.vue'
+import pageMap from '../src/docs/pages.js'
 import {
   flattenNav,
   getVersion,
@@ -64,6 +65,16 @@ function generatedFiles(dir = GENERATED_DOCS_DIR, out = []) {
 }
 
 function checkWhiteLabelOutput() {
+  if (versions.length !== 1 || versions[0].id !== '7.10') fail('Only guide version 7.10 should be published')
+  for (const id of Object.keys(pageMap)) {
+    if (!getVersion(id)) fail(`Page map still contains removed version ${id}`)
+  }
+  for (const dir of ['content', 'nav', 'search']) {
+    for (const entry of readdirSync(path.join(GENERATED_DOCS_DIR, dir))) {
+      const id = dir === 'content' ? entry : entry.replace(/\.js$/, '')
+      if (!getVersion(id)) fail(`${dir}: files for removed version ${id} remain`)
+    }
+  }
   for (const file of generatedFiles()) {
     const source = readFileSync(file, 'utf8')
     const relative = path.relative(ROOT, file)
@@ -111,8 +122,59 @@ async function checkData(version) {
   return entries
 }
 
+function visitContent(value, visit) {
+  if (Array.isArray(value)) value.forEach((child) => visitContent(child, visit))
+  else if (value && typeof value === 'object') {
+    visit(value)
+    for (const child of Object.values(value)) visitContent(child, visit)
+  }
+}
+
+async function checkReferences(version, entries) {
+  let checked = 0
+  for (const entry of entries) {
+    const page = await loadPage(version.id, entry.slug)
+    if (!page) {
+      fail(`${version.id}/${entry.slug}: page could not be loaded`)
+      continue
+    }
+    const links = []
+    visitContent(page.blocks, (node) => {
+      if (node.t === 'a') links.push(node)
+      if (node.t === 'img' && (!node.src || !existsSync(path.join(ROOT, 'public', node.src.slice(1))))) {
+        fail(`${version.id}/${entry.slug}: missing image ${node.src}`)
+      }
+    })
+    for (const link of links) {
+      checked++
+      if (link.page) {
+        const target = await loadPage(link.v, link.page)
+        if (!getVersion(link.v) || !target) {
+          fail(`${version.id}/${entry.slug}: broken link to ${link.v}/${link.page}`)
+        } else if (link.anchor && !target.toc.some((heading) => heading.id === link.anchor)) {
+          fail(`${version.id}/${entry.slug}: missing target ${link.v}/${link.page}#${link.anchor}`)
+        }
+      } else if (!link.href || !/^\/docs\/7\.10\/?$/.test(link.href)) {
+        fail(`${version.id}/${entry.slug}: unresolved link`)
+      }
+    }
+  }
+  return checked
+}
+
+const NAVIGATION_EXAMPLES = {
+  'what-s-new-in-onegps-7-10': '/docs/7.10/top-panel#ai-assistant',
+  'top-panel': '/docs/7.10/top-panel#navigation-menu',
+  'user-card': '/docs/7.10/settings-1',
+  'timetable-': '/docs/7.10/report-on-timetable-adherence-'
+}
+
 async function checkRender(version, entries) {
   const sample = samplePages(entries)
+  for (const slug of Object.keys(NAVIGATION_EXAMPLES)) {
+    const entry = entries.find((entry) => entry.slug === slug)
+    if (entry && !sample.some((item) => item.slug === slug)) sample.push(entry)
+  }
   const meta = getVersion(version.id)
 
   for (const entry of sample) {
@@ -134,6 +196,10 @@ async function checkRender(version, entries) {
       fail(`${version.id}/${entry.slug}: headings did not render`)
     }
     if (html.includes('undefined')) fail(`${version.id}/${entry.slug}: rendered markup contains "undefined"`)
+    const expectedLink = NAVIGATION_EXAMPLES[entry.slug]
+    if (expectedLink && !html.includes(`href="${expectedLink}"`)) {
+      fail(`${version.id}/${entry.slug}: article navigation link ${expectedLink} did not render`)
+    }
 
     for (const match of html.matchAll(/src="(\/docs-assets\/images\/[^"]+)"/g)) {
       if (!existsSync(`public${match[1]}`)) fail(`${version.id}/${entry.slug}: missing image ${match[1]}`)
@@ -176,8 +242,10 @@ let rendered = 0
 checkWhiteLabelOutput()
 for (const version of versions) {
   const entries = await checkData(version)
-  if (entries.length) rendered += await checkRender(version, entries)
-  console.log(`${version.id}: checked ${entries.length} pages and ${Math.min(entries.length, 5)} rendered pages`)
+  const links = await checkReferences(version, entries)
+  const renderedPages = entries.length ? await checkRender(version, entries) : 0
+  rendered += renderedPages
+  console.log(`${version.id}: checked ${entries.length} pages, ${links} article links and ${renderedPages} rendered pages`)
 }
 
 console.log(`\nrendered ${rendered} pages across ${versions.length} versions`)

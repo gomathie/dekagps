@@ -3,7 +3,7 @@
  * User guide (/docs, /docs/:version, /docs/:version/:slug).
  *
  * The guide content is generated from the reference documentation export by
- * tools/import-docs.mjs; this view is the reader around it: version selection,
+ * tools/import-docs.mjs; this view is the reader around it:
  * the navigation tree, search and the article.
  */
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
@@ -15,8 +15,7 @@ import {
   getVersion,
   hasPage,
   loadNav,
-  loadPage,
-  versions
+  loadPage
 } from '../docs/registry.js'
 import DocsArticle from '../components/docs/DocsArticle.vue'
 import DocsSearch from '../components/docs/DocsSearch.vue'
@@ -69,11 +68,6 @@ const loadVersion = async () => {
   nav.value = await loadNav(versionId.value)
 }
 
-/** Switching version keeps the page you are reading when it exists there too. */
-const switchVersion = (id) => {
-  router.push(hasPage(id, slug.value) ? docsPath(id, slug.value) : docsPath(id))
-}
-
 const loadContent = async () => {
   if (!slug.value) {
     page.value = null
@@ -122,6 +116,15 @@ const scrollToHash = async () => {
 watch(
   () => route.fullPath,
   async () => {
+    if (route.params.version && !getVersion(route.params.version)) {
+      await router.replace({
+        path: docsPath(defaultVersion, hasPage(defaultVersion, slug.value) ? slug.value : ''),
+        hash: route.hash,
+        query: route.query
+      })
+      return
+    }
+
     if (versionId.value !== loadedVersion) {
       loadedVersion = versionId.value
       sidebarFilter.value = ''
@@ -184,17 +187,8 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
 
         <div class="docs-hero__controls">
           <div class="docs-version">
-            <label for="docs-version-select">Version</label>
-            <select
-              id="docs-version-select"
-              class="form-control"
-              :value="versionId"
-              @change="switchVersion($event.target.value)"
-            >
-              <option v-for="item in versions" :key="item.id" :value="item.id">
-                {{ item.label }}{{ item.current ? ' — current' : '' }} ({{ item.pageCount }} pages)
-              </option>
-            </select>
+            <span>Version</span>
+            <strong>{{ version.label }}</strong>
           </div>
           <DocsSearch :version-id="versionId" @navigate="goToResult" />
         </div>
@@ -246,7 +240,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
         <div v-else-if="slug" class="docs-state">
           <h2>This page is not part of version {{ version.label }}</h2>
           <p>
-            It may have been renamed or it only exists in another version of the guide.
+            It may have been renamed or removed from the guide.
           </p>
           <router-link v-if="firstPage" :to="docsPath(versionId, firstPage.slug)" class="btn-primary">
             Start reading the {{ version.label }} guide
@@ -259,20 +253,6 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
             Version {{ version.label }} documents {{ version.pageCount }} pages across
             {{ sections.length }} sections. Pick a section below or use the navigation on the left.
           </p>
-
-          <div class="docs-overview__versions">
-            <router-link
-              v-for="item in versions"
-              :key="item.id"
-              :to="docsPath(item.id)"
-              class="docs-version-card"
-              :class="{ 'is-current': item.id === versionId }"
-            >
-              <span class="docs-version-card__label">{{ item.label }}</span>
-              <span class="docs-version-card__note">{{ item.note }}</span>
-              <span class="docs-version-card__count">{{ item.pageCount }} pages</span>
-            </router-link>
-          </div>
 
           <h3 class="docs-overview__heading">Sections</h3>
           <ul class="docs-overview__sections">
@@ -325,7 +305,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
   align-items: end;
 }
 
-.docs-version label {
+.docs-version span {
   display: block;
   font-family: var(--font-heading);
   font-size: 0.7rem;
@@ -335,9 +315,11 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
   margin-bottom: 0.5rem;
 }
 
-.docs-version select {
-  appearance: none;
-  cursor: pointer;
+.docs-version strong {
+  display: block;
+  color: var(--accent-gold);
+  font-size: 1.1rem;
+  padding: 0.6rem 0;
 }
 
 .docs-layout {
@@ -399,41 +381,6 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
 
 .docs-state p {
   margin-bottom: 1.5rem;
-}
-
-.docs-overview__versions {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 1rem;
-  margin: 2rem 0 2.5rem;
-}
-
-.docs-version-card {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-  padding: 1.1rem 1.25rem;
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-md);
-  background: var(--glass-bg);
-  transition: var(--transition-fast);
-}
-
-.docs-version-card:hover,
-.docs-version-card.is-current {
-  border-color: var(--border-gold);
-}
-
-.docs-version-card__label {
-  font-family: var(--font-heading);
-  font-size: 1.1rem;
-  color: var(--accent-gold);
-}
-
-.docs-version-card__note,
-.docs-version-card__count {
-  font-size: 0.8rem;
-  color: var(--text-muted);
 }
 
 .docs-overview__heading {

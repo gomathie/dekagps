@@ -30,7 +30,7 @@
  *
  * Usage:
  *   node tools/import-docs.mjs                          # every version
- *   node tools/import-docs.mjs --versions=7.10          # one or more versions
+ *   node tools/import-docs.mjs --versions=7.10          # the supported version
  *   node tools/import-docs.mjs --versions=7.10 --fresh  # ignore cache and generated files
  *   node tools/import-docs.mjs --only=concepts.html     # debug one page (prints blocks)
  *   node tools/import-docs.mjs --no-images               # import text only
@@ -82,6 +82,9 @@ const BRAND_REPLACEMENTS = [
 /** Hosts that belong to the source documentation and become SPA links. */
 const DOCS_HOSTS = ['docs.pilot-gps.africa']
 const PRODUCT_HOSTS = [/^https?:\/\/(?:www\.)?pilot-gps\.(?:africa|com)(?:\/|$)/i]
+
+// The source timetable page still uses the report's former file name.
+const PAGE_ALIASES = new Map([['report-on-round-trip', 'report-on-timetable-adherence-']])
 
 /**
  * Source-vendor URL and identifier text must not leak into the white-label docs.
@@ -143,10 +146,7 @@ const ONLY_VERSIONS = (() => {
 })()
 
 const VERSIONS = [
-  { id: '7.10', label: '7.10', base: REF_ORIGIN, current: true, note: 'Current version' },
-  { id: '7.9', label: '7.9', base: `${REF_ORIGIN}7.9/`, note: 'Previous version' },
-  { id: '7.8', label: '7.8', base: `${REF_ORIGIN}7.8/`, note: 'Previous version' },
-  { id: '7.7', label: '7.7', base: `${REF_ORIGIN}7.7/`, note: 'Previous version' }
+  { id: '7.10', label: '7.10', base: REF_ORIGIN, current: true, note: 'Current version' }
 ]
 
 /* ─────────────────────────────── network ─────────────────────────────── */
@@ -604,7 +604,7 @@ const BLOCK_TAGS = new Set([
 
 function hasBlockDescendant(node) {
   for (const child of node.children || []) {
-    if (child.tag === '#text') continue
+    if (child.tag === '#text' || hasClass(child, 'list-marker')) continue
     if (BLOCK_TAGS.has(child.tag)) return true
     if (hasBlockDescendant(child)) return true
   }
@@ -672,7 +672,9 @@ class PageConverter {
     if (/^https?:/i.test(href)) return { drop: children }
 
     const crossVersion = /^\.\.\/([0-9]+\.[0-9]+)\/?$/.exec(href)
-    if (crossVersion) return { t: 'a', href: `/docs/${crossVersion[1]}`, external: false, in: children }
+    if (crossVersion && VERSIONS.some((version) => version.id === crossVersion[1])) {
+      return { t: 'a', href: `/docs/${crossVersion[1]}`, external: false, in: children }
+    }
 
     if (/\.html?($|#)/i.test(href)) return this.internalLink(this.version.id, href, children)
 
@@ -681,12 +683,13 @@ class PageConverter {
   }
 
   internalLink(versionId, href, children) {
+    if (versionId !== this.version.id) return { drop: children }
     const [rawPath, anchor] = href.split('#')
     const link = {
       t: 'a',
       res: 'page',
       v: versionId,
-      slug: pageSlugFromHref(rawPath),
+      slug: PAGE_ALIASES.get(pageSlugFromHref(rawPath)) || pageSlugFromHref(rawPath),
       anchor: anchor || '',
       in: children
     }
@@ -898,7 +901,7 @@ class PageConverter {
       return
     }
 
-    const inner = this.inline(node.children)
+    const inner = this.inline(node.tag === 'a' ? [node] : node.children)
     if (!inner.length) return
     const text = this.inlineText(inner)
     if (!text) {
@@ -1081,7 +1084,7 @@ function applyMirroredImages(page) {
 /**
  * Rewrites internal links:
  *   - `page.html#anchor` becomes { page, anchor }, where the anchor is the id of
- *     the heading that follows the source anchor in the target page;
+ *     the generated heading associated with the source anchor in the target page;
  *   - links to a page that does not exist in that version are unwrapped (the
  *     text is kept) so no broken link is ever produced.
  */
@@ -1326,13 +1329,6 @@ async function writeVersionIndex(summaries) {
   const pagesFile = path.join(DOCS_DIR, 'pages.js')
 
   const pagesMap = {}
-  if (existsSync(pagesFile) && !FRESH) {
-    try {
-      Object.assign(pagesMap, JSON.parse(/export default ([\s\S]*?)\n?$/.exec(await readFile(pagesFile, 'utf8'))[1]))
-    } catch {
-      /* unreadable previous file: it is rebuilt below */
-    }
-  }
   for (const summary of summaries) pagesMap[summary.id] = summary.pages
 
   const previousCounts = {}
@@ -1363,6 +1359,9 @@ async function writeVersionIndex(summaries) {
 }
 
 async function main() {
+  if (ONLY_VERSIONS && [...ONLY_VERSIONS].some((id) => !VERSIONS.some((version) => version.id === id))) {
+    throw new Error('Only documentation version 7.10 is supported')
+  }
   await mkdir(CACHE_DIR, { recursive: true })
 
   if (RENAME_ASSETS) {
