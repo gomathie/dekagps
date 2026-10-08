@@ -1,0 +1,3683 @@
+[
+  {
+    "category": "Auth",
+    "endpoints": [
+      {
+        "id": "v3-post-auth-token",
+        "title": "Get access token",
+        "method": "POST",
+        "url": "https://onegps.africa/api/v3/auth/token",
+        "description": "Authenticates by login and password and returns a token, which must be sent in the `Authorization: Bearer {token}` header. The response also returns `node_id`, which must be sent in the `X-Node-Id` header in all subsequent API v3 requests.",
+        "auth": false,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "contentType": "application/json",
+          "parameters": [
+            {
+              "name": "username",
+              "type": "string",
+              "description": "User login",
+              "required": true
+            },
+            {
+              "name": "password",
+              "type": "string",
+              "description": "User password",
+              "required": true
+            }
+          ]
+        },
+        "responseExample": "{\n  \"token\": \"string\",\n  \"expires_in\": 0,\n  \"node_id\": 2\n}"
+      },
+      {
+        "id": "v3-delete-auth-token",
+        "title": "Logout (revoke token)",
+        "method": "DELETE",
+        "url": "https://onegps.africa/api/v3/auth/token",
+        "description": "Destroys the current session and invalidates the access token.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"process_time\": 0.001\n}"
+      },
+      {
+        "id": "v3-get-auth-me",
+        "title": "Get current authenticated user",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/auth/me",
+        "description": "Returns information about the currently authenticated user. Requires an active session and/or a valid token used as session_id.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"process_time\": 0.001,\n  \"user\": {\n    \"usr_id\": 123,\n    \"account_id\": 10,\n    \"partner_id\": 5,\n    \"node_id\": 2,\n    \"role_id\": 1,\n    \"username\": \"demo\",\n    \"name\": \"John Smith\",\n    \"email\": \"user@example.com\",\n    \"ips_on\": 0,\n    \"ips\": \"1.2.3.4,5.6.7.8\"\n  }\n}"
+      },
+      {
+        "id": "v3-get-ping",
+        "title": "Health check",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/ping",
+        "description": "Returns pong. Can be used to verify that the API is reachable.",
+        "auth": false,
+        "parameters": [],
+        "requestBody": null,
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"pong\"\n}"
+      }
+    ]
+  },
+  {
+    "category": "Vehicles",
+    "endpoints": [
+      {
+        "id": "v3-get-vehicles",
+        "title": "Vehicles list",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/vehicles",
+        "description": "Returns the list of vehicles for the current account.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      },
+      {
+        "id": "v3-get-vehicles-by-plate",
+        "title": "Get IMEI by license plate",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/vehicles/by-plate",
+        "description": "Returns the IMEI by the vehicle license plate.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "vehnum",
+            "type": "string",
+            "description": "Vehicle license plate number (as stored in OneGPS)",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      },
+      {
+        "id": "v3-post-vehicles-track-and-trace",
+        "title": "Get the current vehicle position by name",
+        "method": "POST",
+        "url": "https://onegps.africa/api/v3/vehicles/track-and-trace",
+        "description": "Accepts a WIMT track-and-trace request and returns the latest cached vehicle position. The vehicle is looked up by its exact OneGPS name (`vehiclenumber`) among vehicles available to the authenticated user. `shipmentNo` and `trackingFlag` are accepted but are not stored and do not affect processing.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "contentType": "application/json",
+          "parameters": [
+            {
+              "name": "shipmentNo",
+              "type": "string",
+              "description": "",
+              "required": true,
+              "example": "SHIPMENT-123"
+            },
+            {
+              "name": "truckNo",
+              "type": "string",
+              "description": "",
+              "required": true,
+              "example": "KS51YPGP_F"
+            },
+            {
+              "name": "countryID",
+              "type": "string",
+              "description": "",
+              "required": true,
+              "example": "ZA"
+            },
+            {
+              "name": "trackingFlag",
+              "type": "string",
+              "description": "",
+              "required": true,
+              "example": "START"
+            }
+          ]
+        },
+        "responseExample": ""
+      },
+      {
+        "id": "v3-get-vehicles-status",
+        "title": "Current vehicle status",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/vehicles/status",
+        "description": "Returns the current status of vehicles: coordinates, speed, direction, sensor states, and so on.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "imei",
+            "type": "string",
+            "description": "Comma-separated list of vehicle IMEIs. Takes precedence over agent_id if both parameters are specified.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "agent_id",
+            "type": "string",
+            "description": "Comma-separated list of Agent IDs",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      },
+      {
+        "id": "v3-get-vehicles-last24h",
+        "title": "Vehicle status for the last 24 hours",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/vehicles/last24h",
+        "description": "Vehicle data for the last 24 hours.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "imei",
+            "type": "string",
+            "description": "Vehicle IMEI. Takes precedence over agent_id if both parameters are specified.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "agent_id",
+            "type": "integer",
+            "description": "Vehicle agent_id.",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      },
+      {
+        "id": "v3-get-vehicles-instant-status",
+        "title": "Mileage and fuel at a point in time",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/vehicles/instant-status",
+        "description": "Returns the odometer and fuel level at a specific point in time.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "imei",
+            "type": "string",
+            "description": "Vehicle IMEI. Takes precedence over agent_id if both parameters are specified.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "agent_id",
+            "type": "integer",
+            "description": "Vehicle agent_id.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "ts",
+            "type": "integer",
+            "description": "Start time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      },
+      {
+        "id": "v3-get-vehicles-share-link",
+        "title": "Create temporary tracking link",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/vehicles/share-link",
+        "description": "Creates a temporary link for tracking a vehicle.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "imei",
+            "type": "string",
+            "description": "Vehicle IMEI. Takes precedence over agent_id if both parameters are specified.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "agent_id",
+            "type": "integer",
+            "description": "Vehicle agent_id.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "startgeo",
+            "type": "string",
+            "description": "Geofence for link activation",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "stopgeo",
+            "type": "string",
+            "description": "Geofence for link deactivation",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "max_duration",
+            "type": "integer",
+            "description": "Duration in minutes during which the logic remains active regardless of geofence visits. Default is 24 hours.",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      },
+      {
+        "id": "v3-post-vehicles-commands",
+        "title": "Send command to vehicle",
+        "method": "POST",
+        "url": "https://onegps.africa/api/v3/vehicles/commands",
+        "description": "Sends a command to the vehicle by template name.  Maps to legacy cmd=send_command.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "imei",
+            "type": "string",
+            "description": "Vehicle IMEI. Takes precedence over agent_id if both parameters are specified.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "agent_id",
+            "type": "integer",
+            "description": "Vehicle agent_id.",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "requestBody": {
+          "contentType": "application/json",
+          "parameters": [
+            {
+              "name": "template_name",
+              "type": "string",
+              "description": "",
+              "required": true,
+              "example": "engine_block"
+            },
+            {
+              "name": "params",
+              "type": "object",
+              "description": "",
+              "required": false
+            }
+          ]
+        },
+        "responseExample": ""
+      },
+      {
+        "id": "v3-get-vehicles-commands-status",
+        "title": "Get command status",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/vehicles/commands/status",
+        "description": "Returns the status of a previously sent command.  Maps to legacy cmd=get_command_status.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "imei",
+            "type": "string",
+            "description": "Vehicle IMEI. Takes precedence over agent_id if both parameters are specified.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "agent_id",
+            "type": "integer",
+            "description": "Vehicle agent_id.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "command_id",
+            "type": "integer",
+            "description": "",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      },
+      {
+        "id": "v3-post-vehicles-block-by-admin",
+        "title": "Block vehicle (admin level)",
+        "method": "POST",
+        "url": "https://onegps.africa/api/v3/vehicles/block-by-admin",
+        "description": "Blocks the vehicle at the operator level (sets field `on = 0`). Use `unblock-by-admin` to restore.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "imei",
+            "type": "string",
+            "description": "Vehicle IMEI. Takes precedence over agent_id if both parameters are specified.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "agent_id",
+            "type": "integer",
+            "description": "Vehicle agent_id.",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"process_time\": 0.001\n}"
+      },
+      {
+        "id": "v3-post-vehicles-unblock-by-admin",
+        "title": "Unblock vehicle (admin level)",
+        "method": "POST",
+        "url": "https://onegps.africa/api/v3/vehicles/unblock-by-admin",
+        "description": "Unblocks the vehicle at the operator level (sets field `on = 1`).",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "imei",
+            "type": "string",
+            "description": "Vehicle IMEI. Takes precedence over agent_id if both parameters are specified.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "agent_id",
+            "type": "integer",
+            "description": "Vehicle agent_id.",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"process_time\": 0.001\n}"
+      },
+      {
+        "id": "v3-post-vehicles-block-by-self",
+        "title": "Block vehicle (owner level)",
+        "method": "POST",
+        "url": "https://onegps.africa/api/v3/vehicles/block-by-self",
+        "description": "Blocks the vehicle at the owner level (sets field `active = 0`). Use `unblock-by-self` to restore.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "imei",
+            "type": "string",
+            "description": "Vehicle IMEI. Takes precedence over agent_id if both parameters are specified.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "agent_id",
+            "type": "integer",
+            "description": "Vehicle agent_id.",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"process_time\": 0.001\n}"
+      },
+      {
+        "id": "v3-post-vehicles-unblock-by-self",
+        "title": "Unblock vehicle (owner level)",
+        "method": "POST",
+        "url": "https://onegps.africa/api/v3/vehicles/unblock-by-self",
+        "description": "Unblocks the vehicle at the owner level (sets field `active = 1`).",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "imei",
+            "type": "string",
+            "description": "Vehicle IMEI. Takes precedence over agent_id if both parameters are specified.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "agent_id",
+            "type": "integer",
+            "description": "Vehicle agent_id.",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"process_time\": 0.001\n}"
+      },
+      {
+        "id": "v3-get-vehicles-services",
+        "title": "Vehicle service records",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/vehicles/services",
+        "description": "Returns the service history records for the specified vehicle.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "imei",
+            "type": "string",
+            "description": "Vehicle IMEI. Takes precedence over agent_id if both parameters are specified.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "agent_id",
+            "type": "integer",
+            "description": "Vehicle agent_id.",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      },
+      {
+        "id": "v3-post-vehicles-services",
+        "title": "Add vehicle service record",
+        "method": "POST",
+        "url": "https://onegps.africa/api/v3/vehicles/services",
+        "description": "Adds a new service record for the specified vehicle.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "imei",
+            "type": "string",
+            "description": "Vehicle IMEI. Takes precedence over agent_id if both parameters are specified.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "agent_id",
+            "type": "integer",
+            "description": "Vehicle agent_id.",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "requestBody": {
+          "contentType": "application/json",
+          "parameters": [
+            {
+              "name": "moment",
+              "type": "string",
+              "description": "Service date/time",
+              "required": true,
+              "example": "2026-03-15T10:00:00"
+            },
+            {
+              "name": "description",
+              "type": "string",
+              "description": "Service description",
+              "required": true,
+              "example": "Oil change"
+            },
+            {
+              "name": "person",
+              "type": "string",
+              "description": "Person responsible",
+              "required": true,
+              "example": "John Smith"
+            }
+          ]
+        },
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"process_time\": 0.001\n}"
+      },
+      {
+        "id": "v3-get-vehicles-status-by-time",
+        "title": "Vehicle status at a historical timestamp",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/vehicles/status-by-time",
+        "description": "Returns the position, speed, movement status, and sensor snapshot for a vehicle at a given unix timestamp.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "agent_id",
+            "type": "integer",
+            "description": "Vehicle agent ID",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "ts",
+            "type": "integer",
+            "description": "Unix timestamp to query",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"agent_id\": 1001,\n  \"ts\": 1700000000,\n  \"status\": \"parked\",\n  \"lat\": 55.7558,\n  \"lon\": 37.6176,\n  \"speed\": 0,\n  \"parked_for_seconds\": 3600,\n  \"sensors\": []\n}"
+      },
+      {
+        "id": "v3-get-vehicles-idle",
+        "title": "Idle time report",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/vehicles/idle",
+        "description": "Returns idle periods for a vehicle in the given time range. Maximum range: 3 months. Requires vehicle access via m2m_usr_veh.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "agent_id",
+            "type": "integer",
+            "description": "Vehicle agent ID",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "ts",
+            "type": "integer",
+            "description": "Period start (unix timestamp)",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "te",
+            "type": "integer",
+            "description": "Period end (unix timestamp)",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"agent_id\": 1001,\n  \"ts\": 1700000000,\n  \"te\": 1700086400,\n  \"idles\": [\n    {\n      \"idle_start\": 1700010000,\n      \"idle_end\": 1700013600,\n      \"duration_seconds\": 3600\n    }\n  ]\n}"
+      },
+      {
+        "id": "v3-get-vehicles-motor-hours",
+        "title": "CAN motor hours",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/vehicles/motor-hours",
+        "description": "Returns total CAN motor hours for a vehicle in a given period (in seconds).",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "agent_id",
+            "type": "integer",
+            "description": "Vehicle agent ID",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "sensor_id",
+            "type": "integer",
+            "description": "Sensor ID. If omitted, auto-detects the CAN motor hours sensor (semanticid=20).",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "ts",
+            "type": "integer",
+            "description": "Period start (unix timestamp)",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "te",
+            "type": "integer",
+            "description": "Period end (unix timestamp)",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"agent_id\": 1001,\n  \"sensor_id\": null,\n  \"ts\": 1700000000,\n  \"te\": 1700086400,\n  \"motor_hours_in_seconds\": 25200\n}"
+      },
+      {
+        "id": "v3-get-vehicles-distance",
+        "title": "Vehicle odometer distance",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/vehicles/distance",
+        "description": "Calculates mileage for a vehicle over a time period (max 31 days).",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "agent_id",
+            "type": "integer",
+            "description": "",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "ts",
+            "type": "integer",
+            "description": "Period start (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "te",
+            "type": "integer",
+            "description": "Period end (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\"\n}"
+      },
+      {
+        "id": "v3-get-vehicles-nearest",
+        "title": "Nearest vehicles",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/vehicles/nearest",
+        "description": "Returns vehicles within a radius of a location, sorted by travel distance (OSRM routing).",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "group_id",
+            "type": "integer",
+            "description": "Vehicle group ID (orgdep.id)",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "lat",
+            "type": "number",
+            "description": "Target latitude",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "lon",
+            "type": "number",
+            "description": "Target longitude",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "radius",
+            "type": "integer",
+            "description": "Search radius in meters",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"group_id\": 0,\n  \"group_name\": \"string\",\n  \"location\": {\n    \"latitude\": 0,\n    \"longitude\": 0\n  },\n  \"radius_meters\": 0,\n  \"vehicles_found\": 0,\n  \"vehicles\": []\n}"
+      },
+      {
+        "id": "v3-get-vehicles-points",
+        "title": "Raw GPS points",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/vehicles/points",
+        "description": "Returns raw GPS points from the telemetry server for a vehicle (max 3-day range).",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "vehnum",
+            "type": "string",
+            "description": "Vehicle plate number",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "ts",
+            "type": "integer",
+            "description": "",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "te",
+            "type": "integer",
+            "description": "",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"imei\": \"string\",\n  \"points\": []\n}"
+      },
+      {
+        "id": "v3-get-vehicles-events-ag",
+        "title": "Raw vehicle events (ag_event)",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/vehicles/events/ag",
+        "description": "Returns raw GPS events from the ag_event table for a vehicle by IMEI.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "imei",
+            "type": "string",
+            "description": "",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "ts",
+            "type": "integer",
+            "description": "Period start (Unix timestamp, max 90 days ago)",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "te",
+            "type": "integer",
+            "description": "",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"events\": [\n    {\n      \"ts\": 0,\n      \"lat\": 0,\n      \"lon\": 0,\n      \"speed\": 0,\n      \"sat\": 0,\n      \"alt\": 0\n    }\n  ]\n}"
+      },
+      {
+        "id": "v3-get-vehicles-events-latest",
+        "title": "Latest cached events for a vehicle",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/vehicles/events/latest",
+        "description": "Returns the latest cached event history for a vehicle by vehnum.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "vehnum",
+            "type": "string",
+            "description": "Vehicle number",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"process_time\": 0.001\n}"
+      },
+      {
+        "id": "v3-delete-vehicles-events",
+        "title": "Clear vehicle events cache",
+        "method": "DELETE",
+        "url": "https://onegps.africa/api/v3/vehicles/events",
+        "description": "Clears cached events for a specific vehicle or all account vehicles.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "vehnum",
+            "type": "string",
+            "description": "Vehicle number (omit to clear all)",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"process_time\": 0.001\n}"
+      },
+      {
+        "id": "v3-get-vehicles-approved-tracks",
+        "title": "Get approved/non-approved track periods",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/vehicles/approved-tracks",
+        "description": "Returns track periods split into approved and non-approved for a vehicle.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "veh",
+            "type": "string",
+            "description": "Vehicle plate number",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "ts",
+            "type": "integer",
+            "description": "",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "te",
+            "type": "integer",
+            "description": "",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"data\": {\n    \"approved\": [],\n    \"notapproved\": []\n  }\n}"
+      },
+      {
+        "id": "v3-post-vehicles-approved-tracks",
+        "title": "Approve a track period",
+        "method": "POST",
+        "url": "https://onegps.africa/api/v3/vehicles/approved-tracks",
+        "description": "Marks a time period as approved for a vehicle.",
+        "auth": true,
+        "parameters": [],
+        "requestBody": {
+          "contentType": "application/json",
+          "parameters": [
+            {
+              "name": "veh",
+              "type": "string",
+              "description": "Vehicle plate number",
+              "required": true,
+              "example": "A001AA77"
+            },
+            {
+              "name": "ts",
+              "type": "integer",
+              "description": "Period start (Unix timestamp)",
+              "required": true
+            },
+            {
+              "name": "te",
+              "type": "integer",
+              "description": "Period end (Unix timestamp)",
+              "required": true
+            }
+          ]
+        },
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"process_time\": 0.001\n}"
+      },
+      {
+        "id": "v3-put-vehicles-custom-fields",
+        "title": "Update vehicle custom fields",
+        "method": "PUT",
+        "url": "https://onegps.africa/api/v3/vehicles/custom-fields",
+        "description": "Updates custom (extra) fields for a vehicle.",
+        "auth": true,
+        "parameters": [],
+        "requestBody": {
+          "contentType": "application/json",
+          "parameters": [
+            {
+              "name": "agent_id",
+              "type": "integer",
+              "description": "",
+              "required": false
+            },
+            {
+              "name": "imei",
+              "type": "string",
+              "description": "",
+              "required": false
+            },
+            {
+              "name": "custom_fields",
+              "type": "object",
+              "description": "",
+              "required": true,
+              "example": {
+                "color": "red",
+                "department": "logistics"
+              }
+            }
+          ]
+        },
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"process_time\": 0.001\n}"
+      },
+      {
+        "id": "v3-get-vehicles-media",
+        "title": "Vehicle camera media",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/vehicles/media",
+        "description": "Returns media records (images/video) from vehicle cameras.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "agent_id",
+            "type": "string",
+            "description": "Comma-separated agent IDs",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "ts",
+            "type": "integer",
+            "description": "",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "te",
+            "type": "integer",
+            "description": "",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"data\": [\n    {\n      \"agent_id\": 0,\n      \"type_id\": 0,\n      \"name\": \"string\",\n      \"unixtimestamp\": 0,\n      \"descr\": \"string\"\n    }\n  ]\n}"
+      },
+      {
+        "id": "v3-get-vehicles-fines",
+        "title": "Vehicle traffic fines",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/vehicles/fines",
+        "description": "Returns traffic fines for vehicles by agent_id or IMEI.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "agent_id",
+            "type": "string",
+            "description": "Comma-separated agent IDs",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "imei",
+            "type": "string",
+            "description": "Comma-separated IMEI values",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "ts",
+            "type": "integer",
+            "description": "Period start (Unix timestamp)",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "te",
+            "type": "integer",
+            "description": "Period end (Unix timestamp)",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"data\": []\n}"
+      },
+      {
+        "id": "v3-get-rentcar-contracts",
+        "title": "Rental contracts",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/rentcar/contracts",
+        "description": "Returns rental contracts for the current user context.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "status",
+            "type": "string",
+            "description": "Comma-separated contract statuses.",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"process_time\": 0.001\n}"
+      },
+      {
+        "id": "v3-post-rentcar-contracts-link",
+        "title": "Link vehicle to rental contract",
+        "method": "POST",
+        "url": "https://onegps.africa/api/v3/rentcar/contracts/link",
+        "description": "Associates a vehicle with a rental contract.",
+        "auth": true,
+        "parameters": [],
+        "requestBody": {
+          "contentType": "application/json",
+          "parameters": [
+            {
+              "name": "plate_num",
+              "type": "string",
+              "description": "Vehicle plate number",
+              "required": true,
+              "example": "A001AA77"
+            },
+            {
+              "name": "date",
+              "type": "string",
+              "description": "Contract start date (Y-m-d)",
+              "required": true,
+              "example": "2024-01-15"
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "description": "Contract ID/name",
+              "required": true,
+              "example": "CONTRACT-2024-001"
+            },
+            {
+              "name": "distance",
+              "type": "integer",
+              "description": "Mileage limit in km",
+              "required": true,
+              "example": 10000
+            }
+          ]
+        },
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"process_time\": 0.001\n}"
+      },
+      {
+        "id": "v3-post-rentcar-contracts-unlink",
+        "title": "Unlink vehicle from rental contract",
+        "method": "POST",
+        "url": "https://onegps.africa/api/v3/rentcar/contracts/unlink",
+        "description": "Closes the active rental contract for a vehicle.",
+        "auth": true,
+        "parameters": [],
+        "requestBody": {
+          "contentType": "application/json",
+          "parameters": [
+            {
+              "name": "plate_num",
+              "type": "string",
+              "description": "Vehicle plate number",
+              "required": true,
+              "example": "A001AA77"
+            },
+            {
+              "name": "date",
+              "type": "string",
+              "description": "Contract end date (Y-m-d, defaults to now)",
+              "required": false,
+              "example": "2024-01-31"
+            }
+          ]
+        },
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"process_time\": 0.001\n}"
+      }
+    ]
+  },
+  {
+    "category": "Fuel",
+    "endpoints": [
+      {
+        "id": "v3-get-fuel-stations",
+        "title": "Fuel stations list",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/fuel/stations",
+        "description": "Returns the list of fuel stations.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      },
+      {
+        "id": "v3-post-fuel-transactions",
+        "title": "Add fuel card transaction",
+        "method": "POST",
+        "url": "https://onegps.africa/api/v3/fuel/transactions",
+        "description": "Adds a fuel card transaction.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "contentType": "application/json",
+          "parameters": [
+            {
+              "name": "card_num",
+              "type": "string",
+              "description": "",
+              "required": true
+            },
+            {
+              "name": "operation",
+              "type": "string",
+              "description": "",
+              "required": true
+            },
+            {
+              "name": "unixtimestamp",
+              "type": "integer",
+              "description": "",
+              "required": true
+            },
+            {
+              "name": "place",
+              "type": "string",
+              "description": "",
+              "required": true
+            },
+            {
+              "name": "azs",
+              "type": "string",
+              "description": "",
+              "required": true
+            },
+            {
+              "name": "liters",
+              "type": "number",
+              "description": "",
+              "required": true
+            },
+            {
+              "name": "fuel",
+              "type": "string",
+              "description": "",
+              "required": true
+            },
+            {
+              "name": "price",
+              "type": "number",
+              "description": "",
+              "required": true
+            },
+            {
+              "name": "sum",
+              "type": "number",
+              "description": "",
+              "required": true
+            },
+            {
+              "name": "priceg",
+              "type": "number",
+              "description": "",
+              "required": false
+            },
+            {
+              "name": "sumg",
+              "type": "number",
+              "description": "",
+              "required": false
+            },
+            {
+              "name": "driver",
+              "type": "string",
+              "description": "",
+              "required": false
+            },
+            {
+              "name": "lat",
+              "type": "number",
+              "description": "",
+              "required": false
+            },
+            {
+              "name": "lon",
+              "type": "number",
+              "description": "",
+              "required": false
+            },
+            {
+              "name": "info",
+              "type": "string",
+              "description": "",
+              "required": false
+            },
+            {
+              "name": "internal_id",
+              "type": "string",
+              "description": "",
+              "required": false
+            }
+          ]
+        },
+        "responseExample": ""
+      },
+      {
+        "id": "v3-get-vehicles-fuel",
+        "title": "Detailed fuel data",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/vehicles/fuel",
+        "description": "Detailed fuel report: refuels, drains, daily balances, and and related aggregates.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "imei",
+            "type": "string",
+            "description": "Vehicle IMEI. Takes precedence over agent_id if both parameters are specified.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "agent_id",
+            "type": "integer",
+            "description": "Vehicle agent_id.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "ts",
+            "type": "integer",
+            "description": "Start time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "te",
+            "type": "integer",
+            "description": "End time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      },
+      {
+        "id": "v3-get-vehicles-fuel-consumption",
+        "title": "Fuel consumption and idle time",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/vehicles/fuel/consumption",
+        "description": "Returns consumed fuel and idle time.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "imei",
+            "type": "string",
+            "description": "Vehicle IMEI. Takes precedence over agent_id if both parameters are specified.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "agent_id",
+            "type": "integer",
+            "description": "Vehicle agent_id.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "ts",
+            "type": "integer",
+            "description": "Start time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "te",
+            "type": "integer",
+            "description": "End time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      },
+      {
+        "id": "v3-get-vehicles-odo-fuel",
+        "title": "Odometer and fuel for a period",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/vehicles/odo-fuel",
+        "description": "Returns mileage and fuel for the selected period.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "imei",
+            "type": "string",
+            "description": "Vehicle IMEI. Takes precedence over agent_id if both parameters are specified.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "agent_id",
+            "type": "integer",
+            "description": "Vehicle agent_id.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "ts",
+            "type": "integer",
+            "description": "Start time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "te",
+            "type": "integer",
+            "description": "End time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      }
+    ]
+  },
+  {
+    "category": "Drivers",
+    "endpoints": [
+      {
+        "id": "v3-get-ibuttons",
+        "title": "Global iButton list",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/ibuttons",
+        "description": "iButton usage history across all vehicles.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "ts",
+            "type": "integer",
+            "description": "Start time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "te",
+            "type": "integer",
+            "description": "End time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      },
+      {
+        "id": "v3-get-vehicles-ibuttons",
+        "title": "iButton history for a vehicle",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/vehicles/ibuttons",
+        "description": "iButton usage history for a specific vehicle.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "imei",
+            "type": "string",
+            "description": "Vehicle IMEI. Takes precedence over agent_id if both parameters are specified.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "agent_id",
+            "type": "integer",
+            "description": "Vehicle agent_id.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "ts",
+            "type": "integer",
+            "description": "Start time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "te",
+            "type": "integer",
+            "description": "End time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      },
+      {
+        "id": "v3-get-drivers",
+        "title": "Drivers list",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/drivers",
+        "description": "Returns the list of drivers.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      },
+      {
+        "id": "v3-post-drivers",
+        "title": "Create or update driver",
+        "method": "POST",
+        "url": "https://onegps.africa/api/v3/drivers",
+        "description": "Creates or updates a driver record.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "contentType": "application/json",
+          "parameters": [
+            {
+              "name": "name",
+              "type": "string",
+              "description": "",
+              "required": false
+            },
+            {
+              "name": "code",
+              "type": "string",
+              "description": "",
+              "required": false
+            },
+            {
+              "name": "description",
+              "type": "string",
+              "description": "",
+              "required": false
+            },
+            {
+              "name": "phone",
+              "type": "string",
+              "description": "",
+              "required": false
+            },
+            {
+              "name": "license",
+              "type": "string",
+              "description": "",
+              "required": false
+            },
+            {
+              "name": "email",
+              "type": "string",
+              "description": "",
+              "required": false
+            },
+            {
+              "name": "access",
+              "type": "array",
+              "description": "",
+              "required": false
+            }
+          ]
+        },
+        "responseExample": ""
+      },
+      {
+        "id": "v3-get-drivers-activity",
+        "title": "Driver activity",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/drivers/activity",
+        "description": "Returns driver activity data for the selected period.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "driver_id",
+            "type": "integer",
+            "description": "",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "ts",
+            "type": "integer",
+            "description": "Start time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "te",
+            "type": "integer",
+            "description": "End time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      },
+      {
+        "id": "v3-post-vehicles-driver-bind",
+        "title": "Bind driver to vehicle",
+        "method": "POST",
+        "url": "https://onegps.africa/api/v3/vehicles/driver-bind",
+        "description": "Binds a driver (by name or code) to a vehicle.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "imei",
+            "type": "string",
+            "description": "Vehicle IMEI. Takes precedence over agent_id if both parameters are specified.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "agent_id",
+            "type": "integer",
+            "description": "Vehicle agent_id.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "driver_id",
+            "type": "integer",
+            "description": "",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "ibutton",
+            "type": "string",
+            "description": "",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"process_time\": 0.001\n}"
+      },
+      {
+        "id": "v3-get-drivers-search",
+        "title": "Search drivers by name",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/drivers/search",
+        "description": "Case-insensitive partial name search within the current account. Returns up to 50 results.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "q",
+            "type": "string",
+            "description": "Search query string (partial driver name)",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"drivers\": [\n    {\n      \"id\": 77,\n      \"name\": \"John Doe\",\n      \"code\": \"DRV-001\",\n      \"description\": \"Senior driver\",\n      \"phone\": \"+79001234567\",\n      \"license\": \"AB 123456\",\n      \"email\": \"john.doe@example.com\"\n    }\n  ]\n}"
+      }
+    ]
+  },
+  {
+    "category": "Geo",
+    "endpoints": [
+      {
+        "id": "v3-get-geofences",
+        "title": "Geofence list",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/geofences",
+        "description": "Returns the list of geofences.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      },
+      {
+        "id": "v3-post-geofences",
+        "title": "Create geofence",
+        "method": "POST",
+        "url": "https://onegps.africa/api/v3/geofences",
+        "description": "Creates a new geofence in the current account.  You can describe the geofence in either of two formats: - Simple format: root-level `type`, `points`, and optional `width`. - GeoJSON-style format: root-level `geometry`.  Simple format coordinates use `[latitude, longitude]`. GeoJSON-style `geometry` coordinates use `[longitude, latitude]` and accept only `Polygon`, `Line`, and `Circle` geometry types. - GeoJSON `Polygon`: `coordinates` is one closed outer ring: `[[[lon, lat], ...]]`.   The first and last coordinates must be equal; holes are not supported. - GeoJSON `Line`: `coordinates` is an array of at least 2 `[lon, lat]` pairs and   `width` is the corridor width in meters. - GeoJSON `Circle`: `coordinates` is the center `[lon, lat]` and `radius` is in meters.  `group_name` is required. If the group does not exist, it is created under the account root group. `color` is optional and defaults to `#00FF00`; pass it as a HEX color such as `#FF0000`. `external_id` is optional and must be unique inside the account. Set `for_all` to `1` to grant all account users access to the created geofence and its group.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "contentType": "application/json",
+          "parameters": [
+            {
+              "name": "type",
+              "type": "string",
+              "description": "Simple-format geofence type. Use with `points`; values are case-insensitive.",
+              "required": false,
+              "enum": [
+                "polygon",
+                "circle",
+                "line"
+              ]
+            },
+            {
+              "name": "points",
+              "type": "object",
+              "description": "Simple-format coordinates in `[latitude, longitude]` order.\nPolygon: array of at least 3 points.\nCircle: `[latitude, longitude, radiusMeters]`.\nLine: array of at least 2 points.\n",
+              "required": false
+            },
+            {
+              "name": "width",
+              "type": "integer",
+              "description": "Simple-format line width in meters. Used only when `type` is `line`.",
+              "required": false
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "description": "Zone name. It must be unique inside the selected group unless `external_id` is used.",
+              "required": true,
+              "example": "Zone 1"
+            },
+            {
+              "name": "color",
+              "type": "string",
+              "description": "Geofence display color in HEX format. Defaults to `#00FF00`.",
+              "required": false,
+              "example": "#FF0000"
+            },
+            {
+              "name": "info",
+              "type": "string",
+              "description": "Optional free-form geofence description.",
+              "required": false,
+              "example": "Zone 1 information"
+            },
+            {
+              "name": "group_name",
+              "type": "string",
+              "description": "Geofence group name. The group is created automatically if it does not exist.",
+              "required": true,
+              "example": "Group 1"
+            },
+            {
+              "name": "external_id",
+              "type": "string",
+              "description": "Optional external geofence identifier. Must be unique inside the account.",
+              "required": false,
+              "example": "warehouse-zone-001"
+            },
+            {
+              "name": "for_all",
+              "type": "integer",
+              "description": "Set to `1` to grant all users in the account access to the new geofence and its group.",
+              "required": false,
+              "enum": [
+                0,
+                1
+              ]
+            },
+            {
+              "name": "geometry",
+              "type": "object",
+              "description": "GeoJSON-style geofence geometry. The API accepts only `Polygon`, `Line`, and `Circle`.\nCoordinates are always `[longitude, latitude]`.\n",
+              "required": false
+            }
+          ]
+        },
+        "responseExample": ""
+      },
+      {
+        "id": "v3-delete-geofences",
+        "title": "Delete geofence",
+        "method": "DELETE",
+        "url": "https://onegps.africa/api/v3/geofences",
+        "description": "Deletes a geofence by ID.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "id",
+            "type": "integer",
+            "description": "",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "external_id",
+            "type": "string",
+            "description": "",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"process_time\": 0.001\n}"
+      },
+      {
+        "id": "v3-put-geofences",
+        "title": "Update geofence",
+        "method": "PUT",
+        "url": "https://onegps.africa/api/v3/geofences",
+        "description": "Updates the geometry and/or name of an existing geofence. All fields except `zone_id` are optional. The API updates only fields that are present in the request and leaves omitted fields unchanged, so you can update only `name`, only `color`, `name` and `color`, or geometry alone. Use either the simple `type`/`points` format or the GeoJSON-style `geometry` object from create. Do not mix both geometry formats in one request.",
+        "auth": true,
+        "parameters": [],
+        "requestBody": {
+          "contentType": "application/json",
+          "parameters": [
+            {
+              "name": "zone_id",
+              "type": "integer",
+              "description": "Geofence ID",
+              "required": true,
+              "example": 5001
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "description": "New name for the geofence (optional)",
+              "required": false,
+              "example": "Warehouse Zone"
+            },
+            {
+              "name": "color",
+              "type": "string",
+              "description": "New geofence color in HEX format",
+              "required": false,
+              "example": "#00AAFF"
+            },
+            {
+              "name": "type",
+              "type": "string",
+              "description": "Simple-format geofence type. Use with `points`; values are case-insensitive.",
+              "required": false,
+              "enum": [
+                "polygon",
+                "circle",
+                "line"
+              ]
+            },
+            {
+              "name": "points",
+              "type": "object",
+              "description": "Simple-format coordinates in `[latitude, longitude]` order.\nPolygon: array of at least 3 points.\nCircle: `[latitude, longitude, radiusMeters]`.\nLine: array of at least 2 points.\n",
+              "required": false
+            },
+            {
+              "name": "width",
+              "type": "integer",
+              "description": "Simple-format line width in meters. Used only when `type` is `line`.",
+              "required": false
+            },
+            {
+              "name": "geometry",
+              "type": "object",
+              "description": "Optional new geofence geometry. Use this to change type, coordinates, radius, or line width.",
+              "required": false
+            }
+          ]
+        },
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"process_time\": 0.001\n}"
+      },
+      {
+        "id": "v3-get-geofences-visits",
+        "title": "Geofence visit history",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/geofences/visits",
+        "description": "History of entries to and exits from geofences.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "ts",
+            "type": "integer",
+            "description": "Start time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "te",
+            "type": "integer",
+            "description": "End time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "imei",
+            "type": "string",
+            "description": "Vehicle IMEI. Takes precedence over agent_id if both parameters are specified.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "agent_id",
+            "type": "integer",
+            "description": "Vehicle agent_id.",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      },
+      {
+        "id": "v3-get-geofences-mileage",
+        "title": "Mileage in geofences",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/geofences/mileage",
+        "description": "Returns mileage by geofences for the selected period.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "ts",
+            "type": "integer",
+            "description": "Start time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "te",
+            "type": "integer",
+            "description": "End time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "imei",
+            "type": "string",
+            "description": "Vehicle IMEI. Takes precedence over agent_id if both parameters are specified.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "agent_id",
+            "type": "integer",
+            "description": "Vehicle agent_id.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "fences",
+            "type": "string",
+            "description": "Comma-separated list of geofence names",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      }
+    ]
+  },
+  {
+    "category": "Notifications",
+    "endpoints": [
+      {
+        "id": "v3-get-notifications",
+        "title": "Notification module events",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/notifications",
+        "description": "Returns Notification module events for the selected period.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "ts",
+            "type": "integer",
+            "description": "Start time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "te",
+            "type": "integer",
+            "description": "End time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "notification",
+            "type": "string",
+            "description": "Notification name",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      },
+      {
+        "id": "v3-get-events-live",
+        "title": "Live events",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/events/live",
+        "description": "Stream of current events.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      },
+      {
+        "id": "v3-get-stations-forecast",
+        "title": "Get station arrival forecast",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/stations/forecast",
+        "description": "Returns the arrival forecast for the specified station.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "stop_id",
+            "type": "integer",
+            "description": "",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      }
+    ]
+  },
+  {
+    "category": "Tracks",
+    "endpoints": [
+      {
+        "id": "v3-get-vehicles-track",
+        "title": "Movement track for a period",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/vehicles/track",
+        "description": "Returns the sequence of movement points.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "imei",
+            "type": "string",
+            "description": "Vehicle IMEI. Takes precedence over agent_id if both parameters are specified.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "agent_id",
+            "type": "integer",
+            "description": "Vehicle agent_id.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "ts",
+            "type": "integer",
+            "description": "Start time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "te",
+            "type": "integer",
+            "description": "End time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "fences",
+            "type": "integer",
+            "description": "Whether to include geofence information",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "eco",
+            "type": "integer",
+            "description": "Whether to include eco-driving metrics",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      },
+      {
+        "id": "v3-get-vehicles-track-geo",
+        "title": "Trips and parking report",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/vehicles/track/geo",
+        "description": "Returns the structure of trips and parking intervals for the selected period.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "imei",
+            "type": "string",
+            "description": "Vehicle IMEI. Takes precedence over agent_id if both parameters are specified.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "agent_id",
+            "type": "integer",
+            "description": "Vehicle agent_id.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "ts",
+            "type": "integer",
+            "description": "Start time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "te",
+            "type": "integer",
+            "description": "End time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      },
+      {
+        "id": "v3-get-vehicles-track-stops",
+        "title": "Stops report",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/vehicles/track/stops",
+        "description": "Returns the list of stops / parking intervals for the selected period.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "imei",
+            "type": "string",
+            "description": "Vehicle IMEI. Takes precedence over agent_id if both parameters are specified.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "agent_id",
+            "type": "integer",
+            "description": "Vehicle agent_id.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "ts",
+            "type": "integer",
+            "description": "Start time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "te",
+            "type": "integer",
+            "description": "End time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      },
+      {
+        "id": "v3-get-vehicles-forecast_here",
+        "title": "Route arrival forecast using the HERE service",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/vehicles/forecast_here",
+        "description": "Route arrival forecast using the HERE service. A HERE service key must be configured in the contract settings to use this endpoint.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "mode",
+            "type": "string",
+            "description": "Transport type, one of bicycle - bicycle bus - bus car - car pedestrian - pedestrian scooter - scooter taxi - taxi truck - truck default is car",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "origin",
+            "type": "string",
+            "description": "Start point coordinates in `lat,lon` format",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "destination",
+            "type": "string",
+            "description": "Destination point coordinates in `lat,lon` format",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      },
+      {
+        "id": "v3-get-vehicles-trips",
+        "title": "Summary of trips, parking, speed, and parking intervals",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/vehicles/trips",
+        "description": "Returns total mileage, travel time, average and maximum speed and other aggregated information.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "imei",
+            "type": "string",
+            "description": "Vehicle IMEI. Takes precedence over agent_id if both parameters are specified.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "agent_id",
+            "type": "integer",
+            "description": "Vehicle agent_id.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "ts",
+            "type": "integer",
+            "description": "Start time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "te",
+            "type": "integer",
+            "description": "End time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      },
+      {
+        "id": "v3-get-vehicles-events-raw",
+        "title": "Raw points by vehicle",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/vehicles/events/raw",
+        "description": "Returns raw data points for the vehicle over the selected period.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "imei",
+            "type": "string",
+            "description": "Vehicle IMEI. Takes precedence over agent_id if both parameters are specified.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "agent_id",
+            "type": "integer",
+            "description": "Vehicle agent_id.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "ts",
+            "type": "integer",
+            "description": "Start time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "te",
+            "type": "integer",
+            "description": "End time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      },
+      {
+        "id": "v3-get-vehicles-data-quality",
+        "title": "Vehicle data quality",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/vehicles/data-quality",
+        "description": "Returns precomputed data quality statistics for one or more vehicles. The source is ag_data_quality, not ag_event.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "imei",
+            "type": "string",
+            "description": "Comma-separated list of vehicle IMEIs. Takes precedence over agent_id if both parameters are specified.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "agent_id",
+            "type": "string",
+            "description": "Comma-separated list of Agent IDs",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "ts",
+            "type": "integer",
+            "description": "Start time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "te",
+            "type": "integer",
+            "description": "End time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      },
+      {
+        "id": "v3-get-vehicles-passengers",
+        "title": "Passenger flow data",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/vehicles/passengers",
+        "description": "Returns passenger counter data.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "imei",
+            "type": "string",
+            "description": "Vehicle IMEI. Takes precedence over agent_id if both parameters are specified.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "agent_id",
+            "type": "integer",
+            "description": "Vehicle agent_id.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "ts",
+            "type": "integer",
+            "description": "Start time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "te",
+            "type": "integer",
+            "description": "End time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      }
+    ]
+  },
+  {
+    "category": "Sensors",
+    "endpoints": [
+      {
+        "id": "v3-get-vehicles-sensors-dip",
+        "title": "History of dip sensor readings",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/vehicles/sensors/dip",
+        "description": "Returns the history of readings for all connected sensors over the selected period.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "imei",
+            "type": "string",
+            "description": "Vehicle IMEI. Takes precedence over agent_id if both parameters are specified.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "agent_id",
+            "type": "integer",
+            "description": "Vehicle agent_id.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "ts",
+            "type": "integer",
+            "description": "Start time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "te",
+            "type": "integer",
+            "description": "End time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "tag_id",
+            "type": "string",
+            "description": "Comma-separated sensor tags (tag_id)",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      },
+      {
+        "id": "v3-get-vehicles-sensors-discrete",
+        "title": "Discrete sensor history",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/vehicles/sensors/discrete",
+        "description": "History of discrete sensor states.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "imei",
+            "type": "string",
+            "description": "Vehicle IMEI. Takes precedence over agent_id if both parameters are specified.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "agent_id",
+            "type": "integer",
+            "description": "Vehicle agent_id.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "ts",
+            "type": "integer",
+            "description": "Start time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "te",
+            "type": "integer",
+            "description": "End time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "tag_id",
+            "type": "string",
+            "description": "Comma-separated sensor tags (tag_id)",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      },
+      {
+        "id": "v3-get-vehicles-sensors-eco",
+        "title": "Eco-driving and equipment operation",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/vehicles/sensors/eco",
+        "description": "Returns eco-driving metrics and equipment operation data.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "imei",
+            "type": "string",
+            "description": "Vehicle IMEI. Takes precedence over agent_id if both parameters are specified.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "agent_id",
+            "type": "integer",
+            "description": "Vehicle agent_id.",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "ts",
+            "type": "integer",
+            "description": "Start time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "te",
+            "type": "integer",
+            "description": "End time (UTC) of the period (Unix timestamp)",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      }
+    ]
+  },
+  {
+    "category": "Accounts",
+    "endpoints": [
+      {
+        "id": "v3-get-accounts",
+        "title": "Partner accounts list",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/accounts",
+        "description": "Returns the list of accounts belonging to the authenticated partner.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      },
+      {
+        "id": "v3-get-accounts-users",
+        "title": "Account users list",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/accounts/users",
+        "description": "Returns the list of users for the specified account. Partner must have access to the account.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "account_id",
+            "type": "integer",
+            "description": "",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      }
+    ]
+  },
+  {
+    "category": "References",
+    "endpoints": [
+      {
+        "id": "v3-get-references-prices",
+        "title": "Price list",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/references/prices",
+        "description": "Returns the billing price list. Optionally filtered by currency code.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "name": "coden",
+            "type": "string",
+            "description": "Numeric currency code (e.g. 840 for USD)",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "codea",
+            "type": "string",
+            "description": "Alphabetic currency code (e.g. USD)",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      },
+      {
+        "id": "v3-get-references-modules",
+        "title": "Modules list",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/references/modules",
+        "description": "Returns the list of available service modules.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      },
+      {
+        "id": "v3-get-references-vehicle-types",
+        "title": "Vehicle types list",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/references/vehicle-types",
+        "description": "Returns the list of vehicle types.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      },
+      {
+        "id": "v3-get-references-vehicle-models",
+        "title": "Vehicle models list",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/references/vehicle-models",
+        "description": "Returns the list of GPS device models (agent types).",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "X-Node",
+            "type": "integer",
+            "description": "User node used to route the request to the correct backend",
+            "required": false,
+            "in": "header"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": ""
+      },
+      {
+        "id": "v3-get-references-timezones",
+        "title": "Get timezones list",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/references/timezones",
+        "description": "Returns the list of all available timezones with UTC offsets.",
+        "auth": true,
+        "parameters": [],
+        "requestBody": null,
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"timezones\": [\n    {\n      \"id\": 1,\n      \"name\": \"Europe/Moscow\",\n      \"offset\": 180\n    }\n  ]\n}"
+      },
+      {
+        "id": "v3-get-route",
+        "title": "Calculate route (HERE Maps)",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/route",
+        "description": "Calculates a driving route between two points using HERE Maps API.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "origin",
+            "type": "string",
+            "description": "Origin coordinates (lat,lon)",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "destination",
+            "type": "string",
+            "description": "Destination coordinates (lat,lon)",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "mode",
+            "type": "string",
+            "description": "",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\"\n}"
+      }
+    ]
+  },
+  {
+    "category": "Tags",
+    "endpoints": [
+      {
+        "id": "v3-get-tags",
+        "title": "Get tags list",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/tags",
+        "description": "Returns all tags for the current account.",
+        "auth": true,
+        "parameters": [],
+        "requestBody": null,
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"tags\": [\n    {\n      \"id\": 42,\n      \"tag_name\": \"Fleet A\",\n      \"descr\": \"Main fleet group\",\n      \"color\": \"#FF6600\"\n    }\n  ]\n}"
+      },
+      {
+        "id": "v3-post-tags",
+        "title": "Create tag",
+        "method": "POST",
+        "url": "https://onegps.africa/api/v3/tags",
+        "description": "Creates a new tag for the current account.",
+        "auth": true,
+        "parameters": [],
+        "requestBody": {
+          "contentType": "application/json",
+          "parameters": [
+            {
+              "name": "tag_name",
+              "type": "string",
+              "description": "",
+              "required": true,
+              "example": "Fleet A"
+            },
+            {
+              "name": "color",
+              "type": "string",
+              "description": "HEX color code",
+              "required": false,
+              "example": "#FF6600"
+            },
+            {
+              "name": "descr",
+              "type": "string",
+              "description": "",
+              "required": false,
+              "example": "Main fleet group"
+            }
+          ]
+        },
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"Tag created\",\n  \"tag\": {\n    \"id\": 42,\n    \"tag_name\": \"Fleet A\",\n    \"descr\": \"Main fleet group\",\n    \"color\": \"#FF6600\"\n  }\n}"
+      },
+      {
+        "id": "v3-put-tags",
+        "title": "Update tag",
+        "method": "PUT",
+        "url": "https://onegps.africa/api/v3/tags",
+        "description": "Updates name, description, and/or color of an existing tag.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "id",
+            "type": "integer",
+            "description": "Tag ID",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": {
+          "contentType": "application/json",
+          "parameters": [
+            {
+              "name": "tag_name",
+              "type": "string",
+              "description": "",
+              "required": false,
+              "example": "Fleet A Updated"
+            },
+            {
+              "name": "color",
+              "type": "string",
+              "description": "",
+              "required": false,
+              "example": "#00AAFF"
+            },
+            {
+              "name": "descr",
+              "type": "string",
+              "description": "",
+              "required": false,
+              "example": "Updated description"
+            }
+          ]
+        },
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"process_time\": 0.001\n}"
+      },
+      {
+        "id": "v3-delete-tags",
+        "title": "Delete tag",
+        "method": "DELETE",
+        "url": "https://onegps.africa/api/v3/tags",
+        "description": "Permanently deletes a tag and all its vehicle mappings.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "id",
+            "type": "integer",
+            "description": "Tag ID",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"process_time\": 0.001\n}"
+      },
+      {
+        "id": "v3-post-tags-map-vehicle",
+        "title": "Link / unlink tag to vehicles",
+        "method": "POST",
+        "url": "https://onegps.africa/api/v3/tags/map-vehicle",
+        "description": "Links or unlinks a tag to one or more vehicles. Pass `unlink: true` to remove the mapping.",
+        "auth": true,
+        "parameters": [],
+        "requestBody": {
+          "contentType": "application/json",
+          "parameters": [
+            {
+              "name": "tag_id",
+              "type": "integer",
+              "description": "",
+              "required": true,
+              "example": 42
+            },
+            {
+              "name": "agent_ids",
+              "type": "array",
+              "description": "",
+              "required": true,
+              "example": [
+                1001,
+                1002
+              ]
+            },
+            {
+              "name": "unlink",
+              "type": "boolean",
+              "description": "Set to true to remove the mapping instead of adding",
+              "required": false,
+              "example": false
+            }
+          ]
+        },
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"process_time\": 0.001\n}"
+      }
+    ]
+  },
+  {
+    "category": "Waybills",
+    "endpoints": [
+      {
+        "id": "v3-get-waybills",
+        "title": "Get waybills",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/waybills",
+        "description": "Returns waybills for a vehicle starting from the specified timestamp.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "agent_id",
+            "type": "integer",
+            "description": "Vehicle agent ID (required if vehnum is not provided)",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "vehnum",
+            "type": "string",
+            "description": "Vehicle plate number (required if agent_id is not provided)",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "ts",
+            "type": "integer",
+            "description": "Start timestamp (unix)",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"data\": [\n    {\n      \"id\": 100,\n      \"ts\": 1700000000,\n      \"te\": 1700086400,\n      \"agent_id\": 1001,\n      \"account_id\": 200,\n      \"waybill\": {\n        \"name\": \"Waybill\"\n      }\n    }\n  ]\n}"
+      },
+      {
+        "id": "v3-post-waybills",
+        "title": "Create waybill",
+        "method": "POST",
+        "url": "https://onegps.africa/api/v3/waybills",
+        "description": "Creates or updates (upserts) a waybill for a vehicle.",
+        "auth": true,
+        "parameters": [],
+        "requestBody": {
+          "contentType": "application/json",
+          "parameters": [
+            {
+              "name": "ts",
+              "type": "integer",
+              "description": "Start timestamp (unix)",
+              "required": true,
+              "example": 1700000000
+            },
+            {
+              "name": "te",
+              "type": "integer",
+              "description": "End timestamp (unix)",
+              "required": true,
+              "example": 1700086400
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "description": "Waybill name",
+              "required": true,
+              "example": "Waybill"
+            },
+            {
+              "name": "agent_id",
+              "type": "integer",
+              "description": "Vehicle agent ID (required if vehnum not provided)",
+              "required": false,
+              "example": 1001
+            },
+            {
+              "name": "vehnum",
+              "type": "string",
+              "description": "Vehicle plate number (required if agent_id not provided)",
+              "required": false,
+              "example": "A123BC"
+            }
+          ]
+        },
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"Waybill created\",\n  \"data\": {\n    \"id\": 100,\n    \"ts\": 1700000000,\n    \"te\": 1700086400,\n    \"agent_id\": 1001,\n    \"account_id\": 200,\n    \"waybill\": {\n      \"name\": \"Waybill\"\n    }\n  }\n}"
+      },
+      {
+        "id": "v3-delete-waybills",
+        "title": "Delete waybill",
+        "method": "DELETE",
+        "url": "https://onegps.africa/api/v3/waybills",
+        "description": "Deletes a waybill identified by ts, te and vehicle.",
+        "auth": true,
+        "parameters": [],
+        "requestBody": {
+          "contentType": "application/json",
+          "parameters": [
+            {
+              "name": "ts",
+              "type": "integer",
+              "description": "Start timestamp (unix)",
+              "required": true,
+              "example": 1700000000
+            },
+            {
+              "name": "te",
+              "type": "integer",
+              "description": "End timestamp (unix)",
+              "required": true,
+              "example": 1700086400
+            },
+            {
+              "name": "agent_id",
+              "type": "integer",
+              "description": "Vehicle agent ID (required if vehnum not provided)",
+              "required": false,
+              "example": 1001
+            },
+            {
+              "name": "vehnum",
+              "type": "string",
+              "description": "Vehicle plate number (required if agent_id not provided)",
+              "required": false,
+              "example": "A123BC"
+            }
+          ]
+        },
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"process_time\": 0.001\n}"
+      }
+    ]
+  },
+  {
+    "category": "Users",
+    "endpoints": [
+      {
+        "id": "v3-post-users",
+        "title": "Create user",
+        "method": "POST",
+        "url": "https://onegps.africa/api/v3/users",
+        "description": "Creates a new user under the current account.",
+        "auth": true,
+        "parameters": [],
+        "requestBody": {
+          "contentType": "application/json",
+          "parameters": [
+            {
+              "name": "login",
+              "type": "string",
+              "description": "",
+              "required": true,
+              "example": "john.doe"
+            },
+            {
+              "name": "password",
+              "type": "string",
+              "description": "",
+              "required": true,
+              "example": "Secret123!"
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "description": "",
+              "required": true,
+              "example": "John Doe"
+            },
+            {
+              "name": "phone",
+              "type": "string",
+              "description": "",
+              "required": true,
+              "example": "+79001234567"
+            },
+            {
+              "name": "email",
+              "type": "string",
+              "description": "",
+              "required": true,
+              "example": "john@example.com"
+            },
+            {
+              "name": "role_id",
+              "type": "integer",
+              "description": "0 = Administrator, 1 = User, 2 = Logistic",
+              "required": true,
+              "example": 1
+            },
+            {
+              "name": "description",
+              "type": "string",
+              "description": "",
+              "required": false,
+              "example": "Fleet manager"
+            },
+            {
+              "name": "history_days",
+              "type": "integer",
+              "description": "Number of track history days available to the user",
+              "required": false,
+              "example": 30
+            },
+            {
+              "name": "vehicle_ids",
+              "type": "array",
+              "description": "Array of veh.id values (NOT agentid)",
+              "required": false,
+              "example": [
+                10,
+                20
+              ]
+            }
+          ]
+        },
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"User created\",\n  \"user_id\": 555\n}"
+      },
+      {
+        "id": "v3-get-users",
+        "title": "Get user",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/users",
+        "description": "Returns details of a user belonging to the current account.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "id",
+            "type": "integer",
+            "description": "User ID",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"user\": {\n    \"id\": 555,\n    \"roleid\": 1,\n    \"name\": \"John Doe\",\n    \"email\": \"john@example.com\",\n    \"msisdn\": \"+79001234567\",\n    \"account_id\": 200,\n    \"lang\": \"en\"\n  }\n}"
+      },
+      {
+        "id": "v3-delete-users",
+        "title": "Delete user",
+        "method": "DELETE",
+        "url": "https://onegps.africa/api/v3/users",
+        "description": "Permanently deletes a user and all their access rights.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "id",
+            "type": "integer",
+            "description": "User ID",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"process_time\": 0.001\n}"
+      },
+      {
+        "id": "v3-put-users-auth",
+        "title": "Update user login and password",
+        "method": "PUT",
+        "url": "https://onegps.africa/api/v3/users/auth",
+        "description": "Changes the login and/or password of a user in the current account.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "id",
+            "type": "integer",
+            "description": "User ID",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": {
+          "contentType": "application/json",
+          "parameters": [
+            {
+              "name": "login",
+              "type": "string",
+              "description": "",
+              "required": true,
+              "example": "john.doe.new"
+            },
+            {
+              "name": "password",
+              "type": "string",
+              "description": "",
+              "required": true,
+              "example": "NewSecret456!"
+            }
+          ]
+        },
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"process_time\": 0.001\n}"
+      },
+      {
+        "id": "v3-put-users-vehicles",
+        "title": "Update user vehicle access",
+        "method": "PUT",
+        "url": "https://onegps.africa/api/v3/users/vehicles",
+        "description": "Replaces the full set of vehicles the user has access to.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "id",
+            "type": "integer",
+            "description": "User ID",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": {
+          "contentType": "application/json",
+          "parameters": [
+            {
+              "name": "vehicle_ids",
+              "type": "array",
+              "description": "Array of veh.id values (NOT agentid). Replaces the full access list.",
+              "required": true,
+              "example": [
+                10,
+                20,
+                30
+              ]
+            }
+          ]
+        },
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"process_time\": 0.001\n}"
+      },
+      {
+        "id": "v3-get-users-folders",
+        "title": "Get user folders",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/users/folders",
+        "description": "Returns folders accessible to a user. If id is omitted, returns folders of the current user.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "id",
+            "type": "integer",
+            "description": "User ID (optional, defaults to current user)",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"folders\": []\n}"
+      },
+      {
+        "id": "v3-put-users-folders",
+        "title": "Update user folder access",
+        "method": "PUT",
+        "url": "https://onegps.africa/api/v3/users/folders",
+        "description": "Replaces the full set of folders the user has access to.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "id",
+            "type": "integer",
+            "description": "User ID",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": {
+          "contentType": "application/json",
+          "parameters": [
+            {
+              "name": "folder_ids",
+              "type": "array",
+              "description": "",
+              "required": true,
+              "example": [
+                1,
+                2
+              ]
+            }
+          ]
+        },
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"process_time\": 0.001\n}"
+      }
+    ]
+  },
+  {
+    "category": "Geofences",
+    "endpoints": [
+      {
+        "id": "v3-post-geofences-link-vehicle",
+        "title": "Link geofence to vehicle",
+        "method": "POST",
+        "url": "https://onegps.africa/api/v3/geofences/link-vehicle",
+        "description": "Associates a geofence with a vehicle, setting idle and speed-limit alert parameters.",
+        "auth": true,
+        "parameters": [],
+        "requestBody": {
+          "contentType": "application/json",
+          "parameters": [
+            {
+              "name": "zone_id",
+              "type": "integer",
+              "description": "Zone ID (required if external_id not set)",
+              "required": false
+            },
+            {
+              "name": "external_id",
+              "type": "string",
+              "description": "External zone ID (alternative to zone_id)",
+              "required": false
+            },
+            {
+              "name": "agent_id",
+              "type": "integer",
+              "description": "Vehicle agent ID",
+              "required": true
+            },
+            {
+              "name": "idle",
+              "type": "integer",
+              "description": "Idle alert threshold in minutes",
+              "required": false
+            },
+            {
+              "name": "speedlimit",
+              "type": "integer",
+              "description": "Speed limit alert in km/h",
+              "required": false
+            },
+            {
+              "name": "alert",
+              "type": "integer",
+              "description": "Alert type (0=none, 1=idle, 2=crossing, 3=both)",
+              "required": false,
+              "enum": [
+                0,
+                1,
+                2,
+                3
+              ]
+            }
+          ]
+        },
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"process_time\": 0.001\n}"
+      },
+      {
+        "id": "v3-post-geofences-unlink-vehicle",
+        "title": "Unlink geofence from vehicle",
+        "method": "POST",
+        "url": "https://onegps.africa/api/v3/geofences/unlink-vehicle",
+        "description": "Removes the association between a geofence and a vehicle.",
+        "auth": true,
+        "parameters": [],
+        "requestBody": {
+          "contentType": "application/json",
+          "parameters": [
+            {
+              "name": "zone_id",
+              "type": "integer",
+              "description": "",
+              "required": false
+            },
+            {
+              "name": "external_id",
+              "type": "string",
+              "description": "",
+              "required": false
+            },
+            {
+              "name": "agent_id",
+              "type": "integer",
+              "description": "",
+              "required": true
+            }
+          ]
+        },
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"process_time\": 0.001\n}"
+      },
+      {
+        "id": "v3-get-geofences-process",
+        "title": "Process geofence zone events",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/geofences/process",
+        "description": "Returns geofence entry/exit events and sensor data for a vehicle.",
+        "auth": true,
+        "parameters": [
+          {
+            "name": "agent_id",
+            "type": "integer",
+            "description": "",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "imei",
+            "type": "string",
+            "description": "",
+            "required": false,
+            "in": "query"
+          },
+          {
+            "name": "start",
+            "type": "integer",
+            "description": "Period start (Unix timestamp, max 90 days ago)",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "stop",
+            "type": "integer",
+            "description": "Period end (Unix timestamp, max 7 days range)",
+            "required": true,
+            "in": "query"
+          },
+          {
+            "name": "zones",
+            "type": "string",
+            "description": "Comma-separated zone IDs",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "requestBody": null,
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"process_time\": 0.001\n}"
+      }
+    ]
+  },
+  {
+    "category": "Reports",
+    "endpoints": [
+      {
+        "id": "v3-get-reports",
+        "title": "List available reports",
+        "method": "GET",
+        "url": "https://onegps.africa/api/v3/reports",
+        "description": "Returns the list of report types available for the current account.",
+        "auth": true,
+        "parameters": [],
+        "requestBody": null,
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"data\": [\n    {\n      \"id\": 0,\n      \"name\": \"string\",\n      \"grp\": \"string\"\n    }\n  ]\n}"
+      },
+      {
+        "id": "v3-post-reports-run",
+        "title": "Run a report",
+        "method": "POST",
+        "url": "https://onegps.africa/api/v3/reports/run",
+        "description": "Runs a report and returns the result in JSON format.",
+        "auth": true,
+        "parameters": [],
+        "requestBody": {
+          "contentType": "application/json",
+          "parameters": [
+            {
+              "name": "report_type",
+              "type": "integer",
+              "description": "Report type ID",
+              "required": true,
+              "example": 1
+            },
+            {
+              "name": "start",
+              "type": "integer",
+              "description": "Period start (Unix timestamp)",
+              "required": true
+            },
+            {
+              "name": "stop",
+              "type": "integer",
+              "description": "Period end (Unix timestamp)",
+              "required": true
+            },
+            {
+              "name": "veh_id",
+              "type": "string",
+              "description": "Comma-separated vehicle IDs",
+              "required": true,
+              "example": "42,43"
+            },
+            {
+              "name": "explode",
+              "type": "integer",
+              "description": "Split by vehicle (1=yes)",
+              "required": false
+            },
+            {
+              "name": "group",
+              "type": "integer",
+              "description": "Group by day (1=yes)",
+              "required": false
+            },
+            {
+              "name": "tz",
+              "type": "string",
+              "description": "Timezone name",
+              "required": true,
+              "example": "Europe/Moscow"
+            },
+            {
+              "name": "drivers_id",
+              "type": "string",
+              "description": "",
+              "required": false
+            },
+            {
+              "name": "zones_id",
+              "type": "string",
+              "description": "",
+              "required": false
+            },
+            {
+              "name": "tags",
+              "type": "string",
+              "description": "",
+              "required": false
+            }
+          ]
+        },
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"process_time\": 0.001\n}"
+      }
+    ]
+  }
+]

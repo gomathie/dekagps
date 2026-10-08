@@ -34,6 +34,9 @@ const target = (node) => `/docs/${node.v}/${node.page}${node.anchor ? `#${node.a
     <router-link v-else-if="node.page" class="docs-link" :to="target(node)">
       <DocsInline :nodes="node.in" />
     </router-link>
+    <router-link v-else-if="node.href && !node.external" class="docs-link" :to="node.href">
+      <DocsInline :nodes="node.in" />
+    </router-link>
     <a
       v-else-if="node.href"
       class="docs-link"

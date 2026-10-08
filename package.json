@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "import:api": "node tools/import-api-reference.mjs",
+    "check:api": "node tools/check-api-reference.mjs",
     "import:docs": "node tools/import-docs.mjs",
     "check:docs": "vite build --ssr tools/check-docs.mjs --outDir node_modules/.cache/docs-check --emptyOutDir --logLevel error && node node_modules/.cache/docs-check/check-docs.js"
   },
@@ -15,6 +17,7 @@
     "vite": "^8.2.2"
   },
   "dependencies": {
+    "@lucide/vue": "^1.53.0",
     "vue": "^3.5.42",
     "vue-router": "^5.2.0"
   }

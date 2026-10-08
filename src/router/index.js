@@ -204,11 +204,26 @@ const routes = [
   },
   {
     path: '/docs/api',
-    name: 'DocsApi',
-    component: () => import('../views/Docs.vue'),
+    redirect: '/docs/api/v3'
+  },
+  {
+    path: '/docs/api/v2',
+    name: 'ApiDocsV2',
+    component: () => import('../views/ApiDocs.vue'),
     meta: {
-      title: 'API Reference',
-      description: 'OneGPS API reference with authentication, request formats, endpoints and examples.'
+      standalone: true,
+      title: 'Standard API Reference',
+      description: 'OneGPS Standard API v2 reference with endpoints, parameters and request examples.'
+    }
+  },
+  {
+    path: '/docs/api/v3',
+    name: 'ApiDocsV3',
+    component: () => import('../views/ApiDocs.vue'),
+    meta: {
+      standalone: true,
+      title: 'NextGen API Reference',
+      description: 'OneGPS NextGen API v3 reference with Bearer authentication, JSON payloads and telematics endpoints.'
     }
   },
   {

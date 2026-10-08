@@ -9,15 +9,13 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
-  API_ROOT_SLUG,
   defaultVersion,
   docsPath,
   flattenNav,
   getVersion,
   hasPage,
   loadNav,
-  loadPage,
-  splitDocsNav
+  loadPage
 } from '../docs/registry.js'
 import DocsArticle from '../components/docs/DocsArticle.vue'
 import DocsSearch from '../components/docs/DocsSearch.vue'
@@ -40,18 +38,11 @@ const versionId = computed(() => {
 
 const version = computed(() => getVersion(versionId.value))
 
-const slug = computed(() => route.name === 'DocsApi' ? API_ROOT_SLUG : route.params.slug || '')
-
-const navSections = computed(() => splitDocsNav(nav.value))
-const apiSlugs = computed(() => new Set(flattenNav(navSections.value.api).map((entry) => entry.slug)))
-const activeSection = computed(() =>
-  route.name === 'DocsApi' || apiSlugs.value.has(slug.value) ? 'api' : 'guide'
-)
-const scopedNav = computed(() => navSections.value[activeSection.value])
-const entries = computed(() => flattenNav(scopedNav.value))
+const slug = computed(() => route.params.slug || '')
+const entries = computed(() => flattenNav(nav.value))
 const entrySlugs = computed(() => entries.value.map((entry) => entry.slug))
-const sectionLabel = computed(() => activeSection.value === 'api' ? 'API Reference' : 'User Guide')
-const sectionPath = computed(() => activeSection.value === 'api' ? '/docs/api' : '/docs')
+const sectionLabel = 'User Guide'
+const sectionPath = '/docs'
 
 const currentIndex = computed(() => entries.value.findIndex((entry) => entry.slug === slug.value))
 const previous = computed(() => (currentIndex.value > 0 ? entries.value[currentIndex.value - 1] : null))
@@ -91,12 +82,12 @@ const loadContent = async () => {
 
   if (!loaded) {
     page.value = null
-    document.title = `Page not found | ${sectionLabel.value} | OneGPS`
+    document.title = `Page not found | ${sectionLabel} | OneGPS`
     return
   }
 
   page.value = loaded
-  document.title = `${loaded.title} | OneGPS ${sectionLabel.value}`
+  document.title = `${loaded.title} | OneGPS ${sectionLabel}`
 
   const description = loaded.blocks
     .filter((block) => block.t === 'p')
@@ -190,11 +181,8 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
           <span aria-hidden="true">/</span>
           <span>{{ sectionLabel }}</span>
         </nav>
-        <h1>OneGPS {{ activeSection === 'api' ? 'API reference' : 'user guide' }}</h1>
-        <p v-if="activeSection === 'api'" class="lead">
-          Authentication, request formats, endpoints and practical examples for integrating with OneGPS.
-        </p>
-        <p v-else class="lead">
+        <h1>OneGPS user guide</h1>
+        <p class="lead">
           The complete product documentation: every screen, module and integration of the OneGPS
           platform, from first login to advanced configuration.
         </p>
@@ -207,7 +195,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
           <DocsSearch
             :version-id="versionId"
             :allowed-slugs="entrySlugs"
-            :scope-label="activeSection === 'api' ? 'API reference' : 'user guide'"
+            scope-label="user guide"
             @navigate="goToResult"
           />
         </div>
@@ -215,16 +203,14 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
         <nav class="docs-tabs" aria-label="Documentation sections">
           <router-link
             to="/docs"
-            :class="{ 'is-active': activeSection === 'guide' }"
-            :aria-current="activeSection === 'guide' ? 'page' : undefined"
+            class="is-active"
+            aria-current="page"
           >
             <i class="fas fa-book" aria-hidden="true"></i>
             User Guide
           </router-link>
           <router-link
             to="/docs/api"
-            :class="{ 'is-active': activeSection === 'api' }"
-            :aria-current="activeSection === 'api' ? 'page' : undefined"
           >
             <i class="fas fa-code" aria-hidden="true"></i>
             API Reference
@@ -240,7 +226,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
             v-model="sidebarFilter"
             type="search"
             class="form-control docs-aside__filter"
-            :placeholder="`Filter ${activeSection === 'api' ? 'API' : 'guide'} pages…`"
+            placeholder="Filter guide pages…"
             :aria-label="`Filter ${sectionLabel} pages`"
           />
           <DocsSidebar
@@ -261,7 +247,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
           @click="isSidebarOpen = !isSidebarOpen"
         >
           <i class="fas fa-list" aria-hidden="true"></i>
-          {{ isSidebarOpen ? 'Close navigation' : `Browse the ${activeSection === 'api' ? 'API' : 'guide'}` }}
+          {{ isSidebarOpen ? 'Close navigation' : 'Browse the guide' }}
         </button>
 
         <p v-if="isLoading" class="docs-state">Loading…</p>

@@ -1,0 +1,2515 @@
+[
+  {
+    "category": "Vehicles",
+    "endpoints": [
+      {
+        "id": "vehicle-list",
+        "title": "Vehicle list",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API provides comprehensive information about vehicles, including their current location, sensor data, technical specifications, and extra parameters.",
+        "parameters": [
+          {
+            "name": "cmd=list",
+            "description": "command to retrieve the list of vehicles.",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "the number of the node where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"list\": [\n    {\n      \"agentid\": 9003,\n      \"imei\": \"356307046873054\",\n      \"typeid\": 1,\n      \"type\": \"Car\",\n      \"vehiclenumber\": \"Х444МР123\",\n      \"vin\": \"TRDFG65876\",\n      \"folder\": \"Geo-Center OOO\",\n      \"created_time\": 1414224633,\n      \"current_mileage\": 881,\n      \"status\": {\n        \"unixtimestamp\": \"1418744535\",\n        \"lat\": \"43.5562\",\n        \"lon\": \"39.9084\",\n        \"speed\": 0,\n        \"dir\": 268,\n        \"alt\": 246,\n        \"satsinview\": 16\n      },\n      \"extra_params\": {\n        \"kmlimit\": \"2\",\n        \"mvanumber\": \"12312\",\n        \"make_model\": \"BMW\"\n      },\n      \"sensors\": [\n        {\n          \"name\": \"Parking\",\n          \"description\": \"TEST SPEED\"\n        },\n        {\n          \"name\": \"Fuel sensor\",\n          \"description\": \"Fuel sensor\"\n        },\n        {\n          \"name\": \"External power supply\",\n          \"description\": \"External power supply\"\n        },\n        {\n          \"name\": \"Ignition sensor\",\n          \"description\": \"Ignition sensor\"\n        }\n      ],\n      \"sensors_status\": [\n        {\n          \"name\": \"Ignition sensor\",\n          \"id\": \"1187852\",\n          \"hum_value\": \"off\",\n          \"dig_value\": \"0\",\n          \"raw_value\": \"0\",\n          \"change_ts\": \"1627467122\",\n          \"group\": \"\"\n        },\n        {\n          \"name\": \"External power supply\",\n          \"id\": \"1187851\",\n          \"hum_value\": \"26.27 V\",\n          \"dig_value\": \"26.27\",\n          \"raw_value\": \"26272\",\n          \"change_ts\": \"1627467122\",\n          \"group\": \"\"\n        },\n        {\n          \"name\": \"Fuel sensor\",\n          \"id\": \"1187850\",\n          \"hum_value\": \"1 l\",\n          \"dig_value\": \"1\",\n          \"raw_value\": \"1\",\n          \"change_ts\": \"1626336197\",\n          \"group\": \"\"\n        }\n      ]\n    }\n  ]\n}"
+      },
+      {
+        "id": "list-of-objects",
+        "title": "List of objects",
+        "method": "POST",
+        "url": "https://onegps.africa/api/CRIT/api.php?node=<node_id>",
+        "description": "This API provides information about vehicles, including their current location.",
+        "parameters": [
+          {
+            "name": "Username",
+            "description": "user login",
+            "required": true
+          },
+          {
+            "name": "Password",
+            "description": "user password",
+            "required": true
+          },
+          {
+            "name": "functionName=api_objectlist",
+            "description": "command to get the list of objects",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "the node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "[\n {\n \"IMEI\": \"352016704092097\",\n \"PLATE\": \"5209\",\n \"NAME\": \"\",\n \"LATITUDE\": 29.7682433,\n \"LONGITUDE\": 39.9979749\n },\n {\n \"IMEI\": \"352016703961657\",\n \"PLATE\": \"6561\",\n \"NAME\": \"\",\n \"LATITUDE\": 25.9131066,\n \"LONGITUDE\": 46.4645949\n }\n]"
+      },
+      {
+        "id": "finding-the-nearest-vehicles",
+        "title": "Finding the nearest vehicles",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API allows you to search for vehicles within a specified radius from a given point, sorted by distance. It is useful for rapid response scenarios (e.g., police, emergency services), where operators need to quickly determine which vehicles are closest to an incident location.",
+        "parameters": [
+          {
+            "name": "cmd=get_nearest_vehicles",
+            "description": "command to get nearest vehicles",
+            "required": true
+          },
+          {
+            "name": "group_id",
+            "description": "ID of the vehicle group (orgdep.id)",
+            "required": true
+          },
+          {
+            "name": "lat",
+            "description": "latitude of the target point (from −90 to 90)",
+            "required": true
+          },
+          {
+            "name": "lon",
+            "description": "longitude of the target point (from −180 to 180)",
+            "required": true
+          },
+          {
+            "name": "radius",
+            "description": "search radius. Supports values like 500M, 1KM, 10KM, 20KM, or a numeric value in meters",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"group_id\": 123,\n  \"group_name\": \"Police Fleet\",\n  \"location\": { \"latitude\": 24.4539, \"longitude\": 54.3773 },\n  \"radius_meters\": 10000,\n  \"vehicles_found\": 2,\n  \"vehicles\": [\n    {\n      \"vehiclenumber\": \"POL-001\",\n      \"agentid\": 456,\n      \"veh_id\": 789,\n      \"imei\": \"123456789\",\n      \"model\": \"Toyota Land Cruiser\",\n      \"vehicle_type\": \"Car\",\n      \"location\": {\n        \"address\": \"Sheikh Zayed Road, Dubai, UAE\",\n        \"latitude\": 24.4550,\n        \"longitude\": 54.3780,\n        \"altitude\": 10\n      },\n      \"status\": {\n        \"active\": 1,\n        \"speed\": 0,\n        \"direction\": 0,\n        \"altitude\": 10,\n        \"satsinview\": 12,\n        \"ignition\": 1,\n        \"unixtimestamp\": 1706964000,\n        \"zone\": []\n      },\n      \"distance\": {\n        \"meters\": 1234,\n        \"kilometers\": 1.23,\n        \"straight_line_meters\": 1200\n      },\n      \"travel_time\": {\n        \"seconds\": 180,\n        \"minutes\": 3.0,\n        \"formatted\": \"3 min\"\n      }\n    }\n  ]\n}"
+      },
+      {
+        "id": "object-information",
+        "title": "Object information",
+        "method": "POST",
+        "url": "https://onegps.africa/api/CRIT/api.php?node=<node_id>",
+        "description": "This API provides detailed information about a specific vehicle.",
+        "parameters": [
+          {
+            "name": "Username",
+            "description": "user login",
+            "required": true
+          },
+          {
+            "name": "Password",
+            "description": "user password",
+            "required": true
+          },
+          {
+            "name": "functionName=api_objectdetails",
+            "description": "command to get object details",
+            "required": true
+          },
+          {
+            "name": "parameters",
+            "description": "IMEI of the object for which details are requested",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "the node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n \"IMEI\": \"352016704092097\",\n \"PLATE\": \"5209 \",\n \"INSTALLATIONDATE\": \"Dec 06, 2023\",\n \"NAME\": \"\",\n \"LATITUDE\": 29.7682433,\n \"LONGITUDE\": 39.9979749\n}"
+      },
+      {
+        "id": "object-history",
+        "title": "Object history",
+        "method": "POST",
+        "url": "https://onegps.africa/api/CRIT/api.php?node=<node_id>",
+        "description": "This API returns the movement history of a vehicle for a specified period. It provides tracks with information about mileage, operating time, stops, start and end coordinates, and more.",
+        "parameters": [
+          {
+            "name": "Username",
+            "description": "user login",
+            "required": true
+          },
+          {
+            "name": "Password",
+            "description": "user password",
+            "required": true
+          },
+          {
+            "name": "functionName=api_objecthistory",
+            "description": "command to get the object history",
+            "required": true
+          },
+          {
+            "name": "parameters",
+            "description": "a parameter string in the following format:\nIMEI,FROM_DATETIME,TO_DATETIME\nwhere:",
+            "required": true
+          },
+          {
+            "name": "IMEI",
+            "description": "object IMEI",
+            "required": true
+          },
+          {
+            "name": "FROM_DATETIME",
+            "description": "start date and time of the period",
+            "required": true
+          },
+          {
+            "name": "TO_DATETIME",
+            "description": "end date and time of the period",
+            "required": true
+          }
+        ],
+        "responseExample": "[\n {\n \"FLCNSMD\": 0,\n \"ENDTM\": \"2025-11-21 19:05:30\",\n \"MILEGND\": 106286.11,\n \"ENDLCTN\": \"Sakaka, Al Jawf Region, 3628, Saudi Arabia\",\n \"IDLDRTN\": \"00:00:00\",\n \"CNT\": 1,\n \"WRKNGDRTN\": \"07:47:22\",\n \"MILEGN\": 826.37,\n \"DRVR\": \"\",\n \"startlatitude\": 24.399892,\n \"OBJTID\": 1344487,\n \"WRKNGSTRTTM\": \"2025-11-21 11:18:08\",\n \"endlongitude\": 48.20568,\n \"startlongitude\": 39.644265,\n \"STPDRTN\": \"00:12:28\",\n \"DY\": \"2025-11-21\",\n \"endlatitude\": 29.960238,\n \"OBJCTNME\": \"5209 ب د م\",\n \"WRKNGSTRTLCTN\": \"Sakaka, Al Jawf Region, 3628, Saudi Arabia\",\n \"MXSPDP\": 136\n }\n]"
+      },
+      {
+        "id": "current-vehicle-status",
+        "title": "Current vehicle status",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API is used to obtain the current status information of one or more vehicles, including data on location, speed, sensor readings, and technical condition.",
+        "parameters": [
+          {
+            "name": "cmd=status",
+            "description": "command to retrieve status information",
+            "required": true
+          },
+          {
+            "name": "imei",
+            "description": "unique identifier of the GPS tracker",
+            "required": true
+          },
+          {
+            "name": "agents",
+            "description": "list of agent IDs, specified as a comma-separated list to request statuses of multiple vehicles",
+            "required": true
+          },
+          {
+            "name": "veh_numbers",
+            "description": "registration number of the vehicle, exactly as it appears in the system, with strict adherence to letter and number case",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command is executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"data\": [\n    {\n      \"agentid\": 44841,\n      \"imei\": \"865473034076573\",\n      \"configuration\": \"Teltonika FM2200\",\n      \"typeid\": 27,\n      \"type\": \"Car\",\n      \"vehiclenumber\": \"NURKA\",\n      \"folder\": \"REAL\",\n      \"created_time\": 1518167398,\n      \"uniqid\": \"865473034076573\",\n      \"current_mileage\": 65345,\n      \"initial_mileage\": 0,\n      \"driver_name\": null,\n      \"driver_phone\": null,\n      \"model\": \"ВАЗ (Lada) Kalina\",\n      \"info\": \" test\",\n      \"vin\": \"XTA219470K0259832\",\n      \"status\": {\n        \"active\": 1,\n        \"speed\": 0,\n        \"direction\": 27,\n        \"lat\": \"47.119755\",\n        \"lon\": \"39.667492\",\n        \"alt\": 0,\n        \"satsinview\": 16,\n        \"unixtimestamp\": \"1621432378\",\n        \"moving\": 0,\n        \"parking\": 9267,\n        \"firing\": 0\n      },\n      \"sensors_status\": [\n        {\n          \"name\": \"Ignition sensor\",\n          \"id\": \"150549\",\n          \"hum_value\": \"выкл.\",\n          \"dig_value\": \"0\",\n          \"raw_value\": \"12494\",\n          \"change_ts\": \"1621423461\",\n          \"group\": \"GROUP!\"\n        },\n        {\n          \"name\": \"Датчик топлива\",\n          \"id\": \"368013\",\n          \"hum_value\": \"1249.4 -\",\n          \"dig_value\": \"1249.4\",\n          \"raw_value\": \"12494\",\n          \"change_ts\": \"1621432378\",\n          \"group\": \"myGroup\"\n        }\n      ]\n    }\n  ],\n  \"reqest_time\": 0.0642\n}"
+      },
+      {
+        "id": "daily-vehicle-summary",
+        "title": "Daily vehicle summary",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API retrieves data about a vehicle over the past 24 hours, including mileage, fuel level, refueling, and fuel consumption.",
+        "parameters": [
+          {
+            "name": "cmd=vehinfo_24_hours",
+            "description": "command to get 24-hour vehicle info",
+            "required": true
+          },
+          {
+            "name": "agent_id",
+            "description": "vehicle ID (can specify multiple IDs separated by commas)",
+            "required": true
+          },
+          {
+            "name": "imei",
+            "description": "device IMEI (can specify multiple IMEIs separated by commas)",
+            "required": true
+          },
+          {
+            "name": "ts",
+            "description": "timestamp (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"10518\": {\n    \"total_mileage\": 745851.44,\n    \"fuel_start\": 229.37,\n    \"fuel_stop\": 229.37,\n    \"fuel_fill\": 409.6,\n    \"fuel_drain\": 153.15,\n    \"fuel_consumption_l\": 256.45,\n    \"fuel_consumption_l_per_100km\": 35,\n    \"fuel_consumption_norm_l\": 161.5658,\n    \"fuel_consumption_norm_l_per_100km\": 22,\n    \"engine_hours\": 0\n  },\n  \"165182\": {\n    \"total_mileage\": 100946.68,\n    \"fuel_start\": 0,\n    \"fuel_stop\": 0,\n    \"fuel_fill\": 0,\n    \"fuel_drain\": 0,\n    \"fuel_consumption_l\": 0,\n    \"fuel_consumption_l_per_100km\": 0,\n    \"fuel_consumption_norm_l\": 22.313,\n    \"fuel_consumption_norm_l_per_100km\": 10,\n    \"engine_hours\": 0\n  }\n}"
+      },
+      {
+        "id": "link-contract-to-vehicle",
+        "title": "Link contract to vehicle",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API links a contract to a vehicle, specifying its license plate, contract start date, contract name, and distance.",
+        "parameters": [
+          {
+            "name": "cmd=link_contract",
+            "description": "command to link the contract",
+            "required": true
+          },
+          {
+            "name": "PlateNum",
+            "description": "vehicle license plate number",
+            "required": true
+          },
+          {
+            "name": "Date",
+            "description": "contract start date (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "Name",
+            "description": "contract name",
+            "required": true
+          },
+          {
+            "name": "Distance",
+            "description": "distance (e.g., mileage under the contract)",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"The linking is successful\"\n}"
+      },
+      {
+        "id": "unlink-contract-from-vehicle",
+        "title": "Unlink contract from vehicle",
+        "method": "DELETE",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API unlinks a contract from a vehicle.",
+        "parameters": [
+          {
+            "name": "cmd=unlink_contract",
+            "description": "command to unlink the contract",
+            "required": true
+          },
+          {
+            "name": "PlateNum",
+            "description": "vehicle license plate number",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed (optional)",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"Deletion is successful\"\n}"
+      },
+      {
+        "id": "update-vehicle-custom-fields",
+        "title": "Update vehicle custom fields",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php",
+        "description": "This API updates a vehicle’s custom fields in a single request by agent_id or imei. You can update all fields or just a subset; the number of fields is not limited. Method POST Request address To get the data, use the address: https://onegps.africa/api/api.php Headers Content-Type: application/json Authorization: Basic <your_credentials_b64> Request parameters",
+        "parameters": [
+          {
+            "name": "cmd=agent_update_custom_fields",
+            "description": "API command",
+            "required": true
+          },
+          {
+            "name": "agent_id",
+            "description": "vehicle identifier (use if you don’t send imei)",
+            "required": true
+          },
+          {
+            "name": "imei",
+            "description": "device IMEI (use if you don’t send agent_id)",
+            "required": true
+          },
+          {
+            "name": "custom_fields",
+            "description": "object with key-value pairs for updating custom fields",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n\"code\": 1,\n\"msg\": \"OK\"\n}"
+      },
+      {
+        "id": "mileage-and-fuel-level",
+        "title": "Mileage and fuel level",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API gets information about a vehicle’s mileage and fuel level at a specific moment in time.",
+        "parameters": [
+          {
+            "name": "cmd=istatus",
+            "description": "API command to get the status",
+            "required": true
+          },
+          {
+            "name": "imei",
+            "description": "unique vehicle identifier in OneGPS",
+            "required": true
+          },
+          {
+            "name": "unixtimestamp",
+            "description": "timestamp for the requested moment (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n    \"code\": 0,\n    \"msg\": \"OK\",\n    \"total_run\": 0,\n    \"total_run_by_can\": 0,\n    \"engine_hours\": 0,\n    \"fuel_sensors\": [\n        {\n            \"info\": \"Fuel Sensor 1\",\n            \"id\": 150325,\n            \"fieldname\": \"t_53lls1\",\n            \"fuel\": 0\n        },\n        {\n            \"info\": \"Fuel Sensor 2\",\n            \"id\": 150326,\n            \"fieldname\": \"lls2\",\n            \"fuel\": 0\n        }\n    ],\n    \"fuel\": 0,\n    \"unixtimestamp\": 1408840780\n}"
+      },
+      {
+        "id": "mileage-for-selected-period",
+        "title": "Mileage for selected period",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API returns the mileage and engine hours of a vehicle within the selected time range.",
+        "parameters": [
+          {
+            "name": "cmd=istatus",
+            "description": "command to get mileage",
+            "required": true
+          },
+          {
+            "name": "imei",
+            "description": "object identifier in the system",
+            "required": true
+          },
+          {
+            "name": "start",
+            "description": "start of the interval (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "stop",
+            "description": "end of the interval (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"run\": 126.79500000000007,\n  \"run_by_can\": 0,\n  \"motorhours\": 9897,\n  \"unixtimestamp_start\": 1664917200,\n  \"unixtimestamp_stop\": 1665003600\n}"
+      },
+      {
+        "id": "trip-statistics-and-distance",
+        "title": "Trip statistics and distance",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API provides information about mileage, trips, and parkings of a vehicle for a specified time period.",
+        "parameters": [
+          {
+            "name": "cmd=distance",
+            "description": "API command to get mileage data",
+            "required": true
+          },
+          {
+            "name": "imei",
+            "description": "unique identifier of the vehicle/device",
+            "required": true
+          },
+          {
+            "name": "start",
+            "description": "start time of data collection (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "stop",
+            "description": "end time of data collection (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"distance\": {\n    \"duration\": 23740,\n    \"length\": 104.54,\n    \"start\": 1761944400,\n    \"stop\": 1762030800,\n    \"can\": 0,\n    \"usecan\": false,\n    \"gps\": 104.54,\n    \"parking_time\": 62237,\n    \"parking_count\": 14,\n    \"max_speed\": 92,\n    \"avg_speed\": 18,\n    \"trips_cnt\": 6,\n    \"trips_ts\": 1761947653,\n    \"trips_te\": 1762027933,\n    \"trips_time\": 80280,\n    \"trips_driving\": 18043,\n    \"parkings\": {\n      \"1761948742\": {\n        \"ts\": 1761948742,\n        \"te\": 1761949164,\n        \"lat\": \"25.404495\",\n        \"lon\": \"55.443546\",\n        \"track_id\": 341967622\n      },\n      \"1761950225\": {\n        \"ts\": 1761950225,\n        \"te\": 1761978656,\n        \"lat\": \"25.380997\",\n        \"lon\": \"55.434662\"\n      },\n      \"1761978976\": {\n        \"ts\": 1761978976,\n        \"te\": 1761979445,\n        \"lat\": \"25.386534\",\n        \"lon\": \"55.439198\",\n        \"track_id\": 342008717\n      },\n      \"1761983958\": {\n        \"ts\": 1761983958,\n        \"te\": 1761984933,\n        \"lat\": \"25.386375\",\n        \"lon\": \"55.413776\",\n        \"track_id\": 342008717\n      },\n      \"1761986309\": {\n        \"ts\": 1761986309,\n        \"te\": 1761988132,\n        \"lat\": \"25.341892\",\n        \"lon\": \"55.397186\",\n        \"track_id\": 342008717\n      },\n      \"1761988857\": {\n        \"ts\": 1761988857,\n        \"te\": 1761989297,\n        \"lat\": \"25.368885\",\n        \"lon\": \"55.42438\",\n        \"track_id\": 342008717\n      },\n      \"1761989685\": {\n        \"ts\": 1761989685,\n        \"te\": 1762002192,\n        \"lat\": \"25.380968\",\n        \"lon\": \"55.434662\"\n      },\n      \"1762002484\": {\n        \"ts\": 1762002484,\n        \"te\": 1762002826,\n        \"lat\": \"25.378464\",\n        \"lon\": \"55.442036\",\n        \"track_id\": 342062148\n      },\n      \"1762003344\": {\n        \"ts\": 1762003344,\n        \"te\": 1762003645,\n        \"lat\": \"25.381042\",\n        \"lon\": \"55.434467\",\n        \"track_id\": 342062148\n      },\n      \"1762005988\": {\n        \"ts\": 1762005988,\n        \"te\": 1762006366,\n        \"lat\": \"25.316278\",\n        \"lon\": \"55.382927\",\n        \"track_id\": 342062148\n      },\n      \"1762007656\": {\n        \"ts\": 1762007656,\n        \"te\": 1762008203,\n        \"lat\": \"25.354523\",\n        \"lon\": \"55.382133\",\n        \"track_id\": 342062148\n      },\n      \"1762010014\": {\n        \"ts\": 1762010014,\n        \"te\": 1762012025,\n        \"lat\": \"25.381067\",\n        \"lon\": \"55.434717\"\n      },\n      \"1762012439\": {\n        \"ts\": 1762012439,\n        \"te\": 1762021038,\n        \"lat\": \"25.369600\",\n        \"lon\": \"55.435860\"\n      },\n      \"1762022306\": {\n        \"ts\": 1762022306,\n        \"te\": 1762027298,\n        \"lat\": \"25.380917\",\n        \"lon\": \"55.434715\"\n      }\n    },\n    \"tracks\": {\n      \"341967622\": {\n        \"start\": 1761947653,\n        \"stop\": 1761950225,\n        \"ts\": 1761947653,\n        \"te\": 1761950225,\n        \"length\": 22.83,\n        \"can\": null,\n        \"gps\": 22.83,\n        \"max_speed\": 92,\n        \"avg_speed\": 26,\n        \"parkings\": [1761948742],\n        \"parking_count\": 1,\n        \"parking_time\": 422,\n        \"startlat\": \"25.381645\",\n        \"stoplat\": \"25.380997\",\n        \"startlon\": \"55.528587\",\n        \"stoplon\": \"55.434662\"\n      },\n      \"342008717\": {\n        \"start\": 1761978656,\n        \"stop\": 1761989685,\n        \"ts\": 1761978656,\n        \"te\": 1761989685,\n        \"length\": 43.99,\n        \"can\": null,\n        \"gps\": 43.99,\n        \"max_speed\": 72,\n        \"avg_speed\": 18,\n        \"parkings\": [1761978976, 1761983958, 1761986309, 1761988857],\n        \"parking_count\": 4,\n        \"parking_time\": 3707,\n        \"startlat\": \"25.380960\",\n        \"stoplat\": \"25.380968\",\n        \"startlon\": \"55.434743\",\n        \"stoplon\": \"55.434662\"\n      },\n      \"342062148\": {\n        \"start\": 1762002192,\n        \"stop\": 1762010014,\n        \"ts\": 1762002192,\n        \"te\": 1762010014,\n        \"length\": 28.78,\n        \"can\": null,\n        \"gps\": 28.78,\n        \"max_speed\": 61,\n        \"avg_speed\": 14,\n        \"parkings\": [1762002484, 1762003344, 1762005988, 1762007656],\n        \"parking_count\": 4,\n        \"parking_time\": 1568,\n        \"startlat\": \"25.381003\",\n        \"stoplat\": \"25.381067\",\n        \"startlon\": \"55.434752\",\n        \"stoplon\": \"55.434717\"\n      },\n      \"342078382\": {\n        \"start\": 1762012025,\n        \"stop\": 1762012439,\n        \"ts\": 1762012025,\n        \"te\": 1762012439,\n        \"length\": 2.32,\n        \"can\": null,\n        \"gps\": 2.32,\n        \"max_speed\": 34,\n        \"avg_speed\": 19,\n        \"parkings\": [],\n        \"parking_count\": 0,\n        \"parking_time\": 0,\n        \"startlat\": \"25.381067\",\n        \"stoplat\": \"25.369600\",\n        \"startlon\": \"55.434717\",\n        \"stoplon\": \"55.435860\"\n      },\n      \"342089059\": {\n        \"start\": 1762021038,\n        \"stop\": 1762022306,\n        \"ts\": 1762021038,\n        \"te\": 1762022306,\n        \"length\": 3.97,\n        \"can\": null,\n        \"gps\": 3.97,\n        \"max_speed\": 49,\n        \"avg_speed\": 11,\n        \"parkings\": [],\n        \"parking_count\": 0,\n        \"parking_time\": 0,\n        \"startlat\": \"25.369557\",\n        \"stoplat\": \"25.380917\",\n        \"startlon\": \"55.435802\",\n        \"stoplon\": \"55.434715\"\n      },\n      \"342095630\": {\n        \"start\": 1762027298,\n        \"stop\": 1762027933,\n        \"ts\": 1762027298,\n        \"te\": 1762027933,\n        \"length\": 2.65,\n        \"can\": null,\n        \"gps\": 2.65,\n        \"max_speed\": 32,\n        \"avg_speed\": 13,\n        \"parkings\": [],\n        \"parking_count\": 0,\n        \"parking_time\": 0,\n        \"startlat\": \"25.380903\",\n        \"stoplat\": \"25.380952\",\n        \"startlon\": \"55.434485\",\n        \"stoplon\": \"55.434668\"\n      }\n    },\n    \"startlat\": \"25.381645\",\n    \"startlon\": \"55.528587\",\n    \"stoplat\": \"25.380952\",\n    \"stoplon\": \"55.434668\",\n    \"active_days\": 1,\n    \"range_dates\": {\n      \"1761944400\": 1\n    }\n  }\n}"
+      },
+      {
+        "id": "odometer-and-fuel-for-selected-period",
+        "title": "Odometer and fuel for selected period",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API retrieves information about vehicle mileage (odometer readings) and fuel consumption over a selected time interval.",
+        "parameters": [
+          {
+            "name": "cmd=odo_and_fuel",
+            "description": "command to fetch odometer and fuel data",
+            "required": true
+          },
+          {
+            "name": "imei",
+            "description": "device identifier (object ID)",
+            "required": true
+          },
+          {
+            "name": "start",
+            "description": "start time of the period (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "stop",
+            "description": "end time of the period (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number on which the command is executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n    \"code\": 0,\n    \"msg\": \"ok\",\n    \"data\": {\n        \"fuel\": 7.6,\n        \"start_odo\": 407121.6,\n        \"stop_odo\": 407229.4\n    }\n}"
+      },
+      {
+        "id": "fuel-consumption-and-idle-statistics",
+        "title": "Fuel consumption and idle statistics",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API provides data on how much fuel was consumed during the selected time period, as well as how long the vehicle was idling.",
+        "parameters": [
+          {
+            "name": "cmd=fuelconsumtion",
+            "description": "API command to get the report",
+            "required": true
+          },
+          {
+            "name": "imei",
+            "description": "unique vehicle identifier",
+            "required": true
+          },
+          {
+            "name": "start",
+            "description": "start time of the data range (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "stop",
+            "description": "end time of the data range (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n    \"code\": 0,\n    \"data\": {\n        \"7157153151020\": [\n            {\n                \"idle\": 98872,\n                \"fuel consumed\": 457.92\n            }\n        ]\n    },\n    \"message\": \"success\"\n}"
+      },
+      {
+        "id": "vehicle-status-and-distance-to-point-or-geofence",
+        "title": "Vehicle status and distance to point or geofence",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API provides the current status of a vehicle and the time and distance to a specified point or geofence.",
+        "parameters": [
+          {
+            "name": "cmd=get_status_and_distance",
+            "description": "command to get the vehicle status and distance",
+            "required": true
+          },
+          {
+            "name": "vehnum",
+            "description": "garage number or license plate of the vehicle; multiple values can be specified separated by commas",
+            "required": true
+          },
+          {
+            "name": "zone",
+            "description": "geofence name (if you want to calculate distance to a geofence)",
+            "required": true
+          },
+          {
+            "name": "point",
+            "description": "coordinates of a point in the format latitude,longitude (if you want distance to a specific point)",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"cstatus\": 6,\n  \"cstatus_timestamp\": 1554985159,\n  \"destination_name\": \"Zero coordinates\",\n  \"distance\": {\n    \"code\": 0,\n    \"length\": 27613,\n    \"msg\": \"OK\",\n    \"point\": \"55.923032,37.659668\",\n    \"time\": 2002,\n    \"type\": \"point\"\n  },\n  \"ignition\": 1,\n  \"rbu\": \"08\",\n  \"sensors\": {\n    \"Unloading Sensor\": \"on|1554985138\",\n    \"Loading Sensor\": \"on|1554985138\",\n    \"Ignition Sensor\": \"on|1554985138\",\n    \"FUEL SENSORS OPERATION SENSORS\": \"Operating|1554985138\",\n    \"Fuel ... fuel\": \"202.96 Liter|1554995669\"\n  },\n  \"source_name\": \"Loading_Chertanovo\",\n  \"status\": 4,\n  \"status_timestamp\": 1554985072,\n  \"unixtimestamp\": 1554995864,\n  \"vehiclenumber\": \"M897ET777\",\n  \"zone\": []\n}"
+      },
+      {
+        "id": "vehicle-idle-time",
+        "title": "Vehicle idle time",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API allows you to get information about vehicle idle periods.",
+        "parameters": [
+          {
+            "name": "cmd=get_idle",
+            "description": "command to retrieve idle periods",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "the number of the node where the command should be executed",
+            "required": true
+          },
+          {
+            "name": "time_start",
+            "description": "start of the period (timestamp, unixtime)",
+            "required": true
+          },
+          {
+            "name": "time_end",
+            "description": "end of the period (timestamp, unixtime)",
+            "required": true
+          },
+          {
+            "name": "imei",
+            "description": "IMEI of the monitoring device. If there are multiple devices, separate them with commas: imei=887556,io9987,76573",
+            "required": true
+          }
+        ],
+        "responseExample": "{}"
+      },
+      {
+        "id": "tracking-link-for-object",
+        "title": "Tracking link for object",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API is used for getting a temporary link to track an object on the map, with activation and deactivation based on specified geofences.",
+        "parameters": [
+          {
+            "name": "cmd=get_temp_link",
+            "description": "command to get a temporary link",
+            "required": true
+          },
+          {
+            "name": "imei",
+            "description": "unique identifier of the object (vehicle) in the system",
+            "required": true
+          },
+          {
+            "name": "startgeo",
+            "description": "geofence for link activation",
+            "required": true
+          },
+          {
+            "name": "stopgeo",
+            "description": "geofence for link deactivation",
+            "required": true
+          },
+          {
+            "name": "max_duration",
+            "description": "maximum duration of the link in minutes (default: 1440 minutes / 24 hours)",
+            "required": true
+          }
+        ],
+        "responseExample": "https://onegps.africa/monitor_token.php?token=1f87a19c068ad47f3f769dc151527794&lang=en&zoom=10&startgeo=Rostov test API&stopgeo=Rostov exit test API"
+      },
+      {
+        "id": "send-command-to-vehicle",
+        "title": "Send command to vehicle",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API sends a command to a vehicle using a pre-created command template in the Commands module.",
+        "parameters": [
+          {
+            "name": "cmd=send_command",
+            "description": "API command to send a command to a vehicle",
+            "required": true
+          },
+          {
+            "name": "agent_id",
+            "description": "vehicle (agent) identifier",
+            "required": true
+          },
+          {
+            "name": "template_name",
+            "description": "name of the pre-created command template",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed (optional)",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": null,\n  \"command_id\": 3989\n}"
+      },
+      {
+        "id": "sent-command-status",
+        "title": "Sent command status",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API retrieves the status of a complex command, including the overall status and the status/responses from all objects and sub-commands included in the complex command.",
+        "parameters": [
+          {
+            "name": "cmd=get_command_status",
+            "description": "API command to request the status of a command",
+            "required": true
+          },
+          {
+            "name": "command_id",
+            "description": "identifier of the complex command",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"message\": \"\",\n  \"detailed_status\": {\n    \"43207\": [\n      {\n        \"type\": \"GPRS\",\n        \"status\": \"accepted\",\n        \"response\": \"Ver: 03.25.15_88 GPS: AXN_3.80_3333 Hw: FMB010 Mod: 3 IMEI: 352094083043221 Init: 2024-3-30 12:29 Uptime: 505289 MAC: 001E428490AF SPC: 0 (0) AXL: 0 OBD :0 BL:0,2 BT:3\"\n      },\n      {\n        \"type\": \"GPRS\",\n        \"status\": \"accepted\",\n        \"response\": \"Data channel: 1 GPRS: 1 Phone: 0 SIM: 0 OP: 25001 Signal: 4 New SMS: 0 Roaming: 0 SMSFull: 0 LAC: 10 Cell ID: 11522 NetType: 1 FwUpd: -65536\"\n      }\n    ]\n  },\n  \"general_status\": \"completed\",\n  \"version\": \"7.2.0\"\n}"
+      }
+    ]
+  },
+  {
+    "category": "Fuel",
+    "endpoints": [
+      {
+        "id": "fuel-card-transactions",
+        "title": "Fuel card transactionss",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "Use this API to retrieve data about vehicle refueling over a selected period. With it, you can: — view fuel card transactions (fuel purchases, card balance, fuel type, gas station) — get data on fuel refills and drains from the vehicle’s sensor (coordinates, fuel amount, event location) — monitor fuel levels at the start and end of each day for every vehicle",
+        "parameters": [
+          {
+            "name": "cmd=fuel",
+            "description": "command to get fuel data",
+            "required": true
+          },
+          {
+            "name": "imei",
+            "description": "vehicle identifier in the system",
+            "required": true
+          },
+          {
+            "name": "start",
+            "description": "start time of the period (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "stop",
+            "description": "end time of the period (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "addr",
+            "description": "адрес заправок",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number on which to execute the command",
+            "required": true
+          }
+        ],
+        "responseExample": "\"fuel\": {\n    \"1404072000\": {\n        \"ts\": 1404072000,   // day start timestamp\n        \"te\": 1404158400,   // day end timestamp\n        \"start\": \"4.76\",    // fuel at start of day (liters)\n        \"stop\": \"18.93\"     // fuel at end of day (liters)\n    }\n}"
+      },
+      {
+        "id": "add-fuel-card-transaction",
+        "title": "Add fuel card transaction",
+        "method": "POST",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API adds a fuel transaction record for a fuel card, including information about the amount of fuel, cost, location, and driver.",
+        "parameters": [
+          {
+            "name": "cmd=add_fuel_transaction",
+            "description": "API command to add a transaction",
+            "required": true
+          },
+          {
+            "name": "card_num",
+            "description": "fuel card number",
+            "required": true
+          },
+          {
+            "name": "operation",
+            "description": "type of operation (e.g., refill)",
+            "required": true
+          },
+          {
+            "name": "unixtimestamp",
+            "description": "transaction time in Unix timestamp format",
+            "required": true
+          },
+          {
+            "name": "place",
+            "description": "location of the operation",
+            "required": true
+          },
+          {
+            "name": "azs",
+            "description": "name of the fuel station",
+            "required": true
+          },
+          {
+            "name": "liters",
+            "description": "amount of fuel in liters",
+            "required": true
+          },
+          {
+            "name": "fuel",
+            "description": "fuel type",
+            "required": true
+          },
+          {
+            "name": "price",
+            "description": "price per liter without discount",
+            "required": true
+          },
+          {
+            "name": "sum",
+            "description": "total amount without discount",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\"\n}"
+      },
+      {
+        "id": "fuel-station-list",
+        "title": "Fuel station list",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API gets a list of fuel stations (gas stations) including coordinates, type, and description.",
+        "parameters": [
+          {
+            "name": "cmd=azs",
+            "description": "API command to get the list of fuel stations",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n   \"code\": 0,\n   \"msg\": \"OK\",\n   \"list\": [\n       {\n           \"lat\": \"50.5\",\n           \"lon\": \"30.3643\",\n           \"type_id\": 8,\n           \"type_name\": \"RosBerlio\",\n           \"descr\": \"<b>WOG Gas Station</b><br>Phone: (+38033)2787914<br>Address: Okr. Road, Berkovetskaya St, 6, between Varshavska and Zhytomyr Tr., near Auchan and Epicenter\"\n       },\n       {\n           \"lat\": \"50.6586\",\n           \"lon\": \"29.8808\",\n           \"type_id\": 8,\n           \"type_name\": \"RosBerlio\",\n           \"descr\": \"<b>AviaCom Gas Station</b><br>Phone: (+38045)7752175<br>Address: 56 km of M-07 (E-373) Kyiv-Kovel-Yagodyn-Lublin\"\n       },\n       {\n           \"lat\": \"55.551\",\n           \"lon\": \"53.4085\",\n           \"type_id\": 8,\n           \"type_name\": \"RosBerlio\",\n           \"descr\": \"<b>Proton-A LLC Gas Station</b><br>Phone: 8-919-680-07-77<br>Address: 1130 km of M7 highway, Tatarstan, Aktanyshsky District (left side)\"\n       }\n   ]\n}"
+      }
+    ]
+  },
+  {
+    "category": "Reports",
+    "endpoints": [
+      {
+        "id": "trip-report",
+        "title": "Trip report",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API is used for getting information about a vehicle’s trips over a specified period. When the Geofences module is enabled, each trip can be split into segments based on entry and exit from geofences.",
+        "parameters": [
+          {
+            "name": "cmd=run",
+            "description": "command to get the trip report",
+            "required": true
+          },
+          {
+            "name": "imei",
+            "description": "unique identifier of the object (vehicle)",
+            "required": true
+          },
+          {
+            "name": "start",
+            "description": "start time of the period (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "stop",
+            "description": "end time of the period (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "zones",
+            "description": "include geozone information:\n- 0 - tracks are returned as whole trips, without splitting by zones\n- 1- trips are split into segments based on entry/exit from geozones",
+            "required": true
+          },
+          {
+            "name": "eco",
+            "description": "include eco-driving data in tracks",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number on which to execute the command",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n   \"code\": 0,\n   \"msg\": \"OK\",\n   \"zones\": {\n       \"1406341994\": {\n           \"ts\": 1406341994,\n           \"stopuid\": \"213854753412306\",\n           \"stopname\": \"Garage\",\n           \"lat\": \"53.3861\",\n           \"lon\": \"83.7127\",\n           \"msgtype\": 2\n       },\n       \"1406353422\": {\n           \"ts\": 1406353422,\n           \"stopuid\": \"966971618589014\",\n           \"stopname\": \"Barnaul Bus Station\",\n           \"lat\": \"53.3508\",\n           \"lon\": \"83.7593\",\n           \"msgtype\": 1\n       }\n   },\n   \"tracks\": {\n       \"1406341955\": {\n           \"ts\": 1406341955,\n           \"te\": 1406341994,\n           \"length\": 0.26,\n           \"maxspeed\": \"17\",\n           \"avgspeed\": 17\n       },\n       \"1406341994\": {\n           \"ts\": 1406341994,\n           \"te\": 1406353389,\n           \"length\": 119.83,\n           \"maxspeed\": \"96\",\n           \"avgspeed\": 58\n       }\n   }\n}"
+      },
+      {
+        "id": "parking-and-stops-report",
+        "title": "Parking and stops report",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API is used for getting information about vehicle stops and parking events over a specified period. You can get coordinates, duration, and the address of the stop or parking location.",
+        "parameters": [
+          {
+            "name": "cmd=runstops",
+            "description": "API command for getting stop and parking report",
+            "required": true
+          },
+          {
+            "name": "imei",
+            "description": "vehicle identifier in the system",
+            "required": true
+          },
+          {
+            "name": "start",
+            "description": "start of the period (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "stop",
+            "description": "end of the period (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n    \"code\": 0,\n    \"msg\": \"OK\",\n    \"stops\": [\n        {\n            \"ts\": 1676840400,\n            \"te\": 1676873376,\n            \"dur\": 32976,\n            \"lat\": \"56.733388\",\n            \"lon\": \"61.051853\",\n            \"address\": {\n                \"road\": \"R-351\",\n                \"county\": \"Beloyarsky Urban District\",\n                \"state\": \"Sverdlovsk Oblast\",\n                \"region\": \"Ural Federal District\",\n                \"postcode\": \"624053\",\n                \"country\": \"Russia\",\n                \"country_code\": \"ru\"\n            }\n        },\n        {\n            \"ts\": 1676875342,\n            \"te\": 1676880065,\n            \"dur\": 4723,\n            \"lat\": \"56.893278\",\n            \"lon\": \"60.770452\",\n            \"address\": {\n                \"road\": \"Yekaterinburg Ring Road\",\n                \"county\": \"Beryozovsky Urban District\",\n                \"state\": \"Sverdlovsk Oblast\",\n                \"region\": \"Ural Federal District\",\n                \"postcode\": \"623703\",\n                \"country\": \"Russia\",\n                \"country_code\": \"ru\"\n            }\n        }\n    ],\n    \"parkings\": [\n        {\n            \"ts\": 1676887881,\n            \"te\": 1676889637,\n            \"dur\": 1756,\n            \"lat\": \"56.781017\",\n            \"lon\": \"58.40189\",\n            \"address\": {\n                \"road\": \"Access to Zobnina from km 216+740 of Perm – Yekaterinburg highway\",\n                \"county\": \"Achitsky District\",\n                \"state\": \"Sverdlovsk Oblast\",\n                \"region\": \"Ural Federal District\",\n                \"postcode\": \"623235\",\n                \"country\": \"Russia\",\n                \"country_code\": \"ru\"\n            }\n        }\n    ]\n}"
+      },
+      {
+        "id": "trip-report-with-geolocation",
+        "title": "Trip report with geolocation",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API provides a detailed report on a vehicle’s movements during a selected period, including coordinates and geographic information (address, district, city, etc.). The data includes start and end points of each trip, average and maximum speed, trip length, and location details based on geo-coordinates.",
+        "parameters": [
+          {
+            "name": "cmd=rungeo",
+            "description": "command to retrieve the trip report",
+            "required": true
+          },
+          {
+            "name": "imei",
+            "description": "unique identifier of the vehicle in the system",
+            "required": true
+          },
+          {
+            "name": "start",
+            "description": "start time of the report period (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "stop",
+            "description": "end time of the report period (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"tracks\": {\n    \"1439443509\": {\n      \"avgspeed\": 35.3889,\n      \"length\": 12.7304,\n      \"maxspeed\": 59,\n      \"ts\": 1439443509,\n      \"te\": 1439445837,\n      \"slat\": \"47.2037\",\n      \"slon\": \"39.6325\",\n      \"elat\": \"47.2037\",\n      \"elon\": \"39.6325\",\n      \"sgeo\": {\n        \"city\": \"Rostov-on-Don\",\n        \"road\": \"2-ya Krasnodarskaya ulitsa\",\n        \"house_number\": \"80 к13\",\n        \"state\": \"Rostov Oblast\",\n        \"postcode\": \"344091\"\n      },\n      \"egeo\": {\n        \"city\": \"Rostov-on-Don\",\n        \"road\": \"2-ya Krasnodarskaya Street\",\n        \"house_number\": \"80 к13\",\n        \"state\": \"Rostov Oblast\",\n        \"postcode\": \"344091\"\n      }\n    }\n  }\n}"
+      },
+      {
+        "id": "track-data",
+        "title": "Track data",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API loads detailed route points (track data) for a trip previously obtained via the rungeo method. Each track point contains coordinates, speed, and a timestamp relative to the start of the trip.",
+        "parameters": [
+          {
+            "name": "cmd=gettrack",
+            "description": "command to retrieve the track",
+            "required": true
+          },
+          {
+            "name": "id",
+            "description": "track ID obtained from the rungeo API response",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"track_data\": \"47.2037;39.6325;10;0:47.2037;39.6324;13;1:47.2037;39.6323;15;3:...\",\n  \"track_id\": 70685695,\n  \"unixstarttimestamp\": 1439443509\n}"
+      },
+      {
+        "id": "approved-track-management",
+        "title": "Approved track management",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API helps work with approved vehicle tracks: set periods, retrieve tracks, and use the track player.",
+        "parameters": [
+          {
+            "name": "cmd=set_approved_tracks",
+            "description": "command to set approved periods",
+            "required": true
+          },
+          {
+            "name": "cmd=get_approved_tracks",
+            "description": "command to get approved tracks",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "the number of the node where the command should be executed",
+            "required": true
+          },
+          {
+            "name": "veh",
+            "description": "vehicle registration number or identifier",
+            "required": true
+          },
+          {
+            "name": "ts",
+            "description": "start of the period (timestamp)",
+            "required": true
+          },
+          {
+            "name": "te",
+            "description": "end of the period (timestamp)",
+            "required": true
+          }
+        ],
+        "responseExample": "{}"
+      },
+      {
+        "id": "get-report",
+        "title": "Get report",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API generates a report for vehicles, drivers, zones, clients, or tags over a selected time period, with detailed options for customizing the report content.",
+        "parameters": [
+          {
+            "name": "cmd=get_report",
+            "description": "API command to retrieve a report",
+            "required": true
+          },
+          {
+            "name": "report_type",
+            "description": "report type (numeric identifier)",
+            "required": true
+          },
+          {
+            "name": "start",
+            "description": "start of the period (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "stop",
+            "description": "end of the period (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "veh_id",
+            "description": "vehicle IDs (comma-separated)",
+            "required": true
+          },
+          {
+            "name": "explode",
+            "description": "data separation: 1 - by days, 2 - by weeks, 3 - no separation",
+            "required": true
+          },
+          {
+            "name": "group",
+            "description": "data grouping: 1 - by days, 2 - by objects, 3 - by zones, 4 - by drivers, 5 - by clients, 6 - by groups, 7 - by tags",
+            "required": true
+          },
+          {
+            "name": "format",
+            "description": "report format: json, pdf, xls",
+            "required": true
+          },
+          {
+            "name": "tz",
+            "description": "time zone of the report (e.g., Africa/Johannesburg)",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"data\": [\n    {\n      \"veh_id\": \"1234\",\n      \"date\": \"2025-09-22\",\n      \"distance\": 125.5,\n      \"fuel_consumption\": 15.2,\n      \"stops\": 5,\n      \"speed_avg\": 60\n    },\n    {\n      \"veh_id\": \"5678\",\n      \"date\": \"2025-09-22\",\n      \"distance\": 98.3,\n      \"fuel_consumption\": 12.7,\n      \"stops\": 4,\n      \"speed_avg\": 55\n    }\n  ]\n}"
+      },
+      {
+        "id": "report-list",
+        "title": "Report list",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API retrieves a list of all available reports in the account, including their IDs, names, and the groups they belong to.",
+        "parameters": [
+          {
+            "name": "cmd=reports_list",
+            "description": "command to get the list of reports",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"data\": [\n    { \"id\": 266, \"name\": \"Administrative Actions\", \"group\": \"Administrator\" },\n    { \"id\": 258, \"name\": \"Blocked Users\", \"group\": \"Administrator\" },\n    { \"id\": 263, \"name\": \"Created Users\", \"group\": \"Administrator\" },\n    { \"id\": 261, \"name\": \"Disabled User Account\", \"group\": \"Administrator\" },\n    { \"id\": 265, \"name\": \"Inactive Users\", \"group\": \"Administrator\" },\n    { \"id\": 267, \"name\": \"Failed Login Attempts\", \"group\": \"Administrator\" }\n  ]\n}"
+      }
+    ]
+  },
+  {
+    "category": "Geofences",
+    "endpoints": [
+      {
+        "id": "add-geofence",
+        "title": "Add geofence",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API creates a new geofence, specifying its name, type, color, group, and geometry.",
+        "parameters": [
+          {
+            "name": "cmd=geofenceadd",
+            "description": "command to add a geofence",
+            "required": true
+          },
+          {
+            "name": "zonename",
+            "description": "geofence name",
+            "required": true
+          },
+          {
+            "name": "zonetype",
+            "description": "type of the geofence (1 - polygon, 2 - circle)",
+            "required": true
+          },
+          {
+            "name": "color",
+            "description": "geofence color in HEX format (e.g., #FFFFFF)",
+            "required": true
+          },
+          {
+            "name": "info",
+            "description": "text information about the geofence",
+            "required": true
+          },
+          {
+            "name": "group_name",
+            "description": "name of the geofence group (created if it doesn’t exist, optional)",
+            "required": true
+          },
+          {
+            "name": "group_id",
+            "description": "ID of an existing group (if specified, group_name is ignored, optional)",
+            "required": true
+          },
+          {
+            "name": "geometry",
+            "description": "GEOJson describing the polygon or circle",
+            "required": true
+          },
+          {
+            "name": "external_id",
+            "description": "external identifier for the geofence (optional)",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"data\": {\n    \"id\": 158412,\n    \"zonename\": \"test_api_polygon\",\n    \"zonetype\": 1,\n    \"external_id\": \"12354\",\n    \"created_at\": 1610536445,\n    \"updated_at\": 1610536445,\n    \"color\": \"#FF3300\",\n    \"info\": \"blabla\",\n    \"group_id\": 6984\n  }\n}"
+      },
+      {
+        "id": "geofence-list",
+        "title": "Geofence list",
+        "method": "POST",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API returns a list of all geofences with their characteristics, including coordinates, type, color, and group.",
+        "parameters": [
+          {
+            "name": "cmd=geofencelist",
+            "description": "API command to get the list of geofences",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"data\": [\n    {\n      \"id\": 157828,\n      \"zonename\": \"Test Magnit\",\n      \"zonetype\": 2,\n      \"external_id\": null,\n      \"created_at\": 1609780839,\n      \"updated_at\": 1609780839,\n      \"color\": \"#00CC00\",\n      \"info\": \"geozone text info\",\n      \"group_name\": \"TEST\",\n      \"group_id\": 6531,\n      \"geometry\": {\n        \"type\": \"Circle\",\n        \"coordinates\": [40.036497, 46.981936],\n        \"radius\": 305\n      }\n    },\n    {\n      \"id\": 153244,\n      \"zonename\": \"school\",\n      \"zonetype\": 1,\n      \"external_id\": 1234,\n      \"created_at\": 1609780839,\n      \"updated_at\": 1609780839,\n      \"color\": \"#FF9900\",\n      \"info\": \"kml upload\",\n      \"group_name\": \"TEST\",\n      \"group_id\": 6531,\n      \"geometry\": {\n        \"type\": \"Polygon\",\n        \"coordinates\": [\n          [\n            [55.184334, 25.112866],\n            [55.183512, 25.113472],\n            [55.182154, 25.112516],\n            [55.183511, 25.111016],\n            [55.184923, 25.112133]\n          ]\n        ]\n      }\n    }\n  ]\n}"
+      },
+      {
+        "id": "link-geofence-to-object",
+        "title": "Link geofence to object",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API links an existing geofence to a vehicle, allowing you to set control parameters such as speed limits, idle time, and alerts.",
+        "parameters": [
+          {
+            "name": "cmd=geofencelink",
+            "description": "command to link a geofence",
+            "required": true
+          },
+          {
+            "name": "zone_id",
+            "description": "geofence ID (required if external_id is not specified)",
+            "required": true
+          },
+          {
+            "name": "external_id",
+            "description": "external identifier of the geofence (optional, ignored if zone_id is provided)",
+            "required": true
+          },
+          {
+            "name": "agent_id",
+            "description": "identifier of the agent (vehicle)",
+            "required": true
+          },
+          {
+            "name": "idle",
+            "description": "idle time control in the geofence in minutes (optional)",
+            "required": true
+          },
+          {
+            "name": "speedlimit",
+            "description": "speed limit in the geofence in km/h (optional)",
+            "required": true
+          },
+          {
+            "name": "alerts",
+            "description": "alerts configuration:",
+            "required": true
+          },
+          {
+            "name": "0",
+            "description": "no alerts",
+            "required": true
+          },
+          {
+            "name": "1",
+            "description": "idle alert",
+            "required": true
+          },
+          {
+            "name": "2",
+            "description": "border crossing alert",
+            "required": true
+          },
+          {
+            "name": "3",
+            "description": "border and checkpoint alert",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\"\n}"
+      },
+      {
+        "id": "unlink-geofence-from-object",
+        "title": "Unlink geofence from object",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API removes the link between an existing geofence and a vehicle.",
+        "parameters": [
+          {
+            "name": "cmd=geofenceunlink",
+            "description": "command to unlink a geofence",
+            "required": true
+          },
+          {
+            "name": "zone_id",
+            "description": "geofence ID (required if external_id is not specified)",
+            "required": true
+          },
+          {
+            "name": "external_id",
+            "description": "external identifier of the geofence (optional, ignored if zone_id is provided)",
+            "required": true
+          },
+          {
+            "name": "agent_id",
+            "description": "identifier of the agent (vehicle)",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\"\n}"
+      },
+      {
+        "id": "geofence-visit-history",
+        "title": "Geofence visit history",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API retrieves information about when objects (vehicles) entered and exited specific geozones over a specified period.",
+        "parameters": [
+          {
+            "name": "cmd=ag_geozones",
+            "description": "API command to get geozone visit history",
+            "required": true
+          },
+          {
+            "name": "start",
+            "description": "start of the period (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "stop",
+            "description": "end of the period (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "imei",
+            "description": "vehicle identifier(s). Multiple IMEIs can be provided, separated by commas",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command is executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"data\": {\n    \"865291046424635\": [\n      {\n        \"group\": \"General\",\n        \"zonename\": \"Golitsyno Base\",\n        \"ts\": 1606805707,\n        \"te\": 1606808500\n      },\n      {\n        \"group\": \"General\",\n        \"zonename\": \"Golitsyno Base\",\n        \"ts\": 1606865643,\n        \"te\": 1606868103\n      }\n    ],\n    \"867481037184458\": [\n      {\n        \"group\": \"General\",\n        \"zonename\": \"Golitsyno Base\",\n        \"ts\": 1607949101,\n        \"te\": 1607956478\n      },\n      {\n        \"group\": \"General\",\n        \"zonename\": \"Golitsyno Base\",\n        \"ts\": 1608012176,\n        \"te\": 1608041334\n      }\n    ]\n  }\n}"
+      },
+      {
+        "id": "mileage-inside-geofences",
+        "title": "Mileage inside geofences",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API gets information about the mileage of vehicles within specified geofences for a selected period of time.",
+        "parameters": [
+          {
+            "name": "cmd=zones_mileage",
+            "description": "command for getting mileage in geofences",
+            "required": true
+          },
+          {
+            "name": "ts",
+            "description": "start time of the period (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "te",
+            "description": "end time of the period (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "imei",
+            "description": "list of device IMEIs, separated by commas",
+            "required": true
+          },
+          {
+            "name": "zones",
+            "description": "list of geofence names, separated by commas (optional; if not specified, mileage for all zones is returned)",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\":0,\n  \"ts\":\"1596229200\",\n  \"te\":\"1597006800\",\n  \"data\":{\n     \"867857035056105\":[\n        {\n           \"zone\":\"Simferopol\",\n           \"duration\":88308,\n           \"mileage\":259.84\n        },\n        {\n           \"zone\":\"Outside city\",\n           \"duration\":21564,\n           \"mileage\":283.47\n        },\n        {\n           \"zone\":\"Belogorsk\",\n           \"duration\":704,\n           \"mileage\":10.77\n        },\n        {\n           \"zone\":\"Sudak\",\n           \"duration\":1332,\n           \"mileage\":11.45\n        }\n     ]\n  }\n}"
+      },
+      {
+        "id": "delete-geofence",
+        "title": "Delete geofence",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API deletes a geofence from the system. When a geofence is deleted, all links between this geofence and vehicles are automatically removed.",
+        "parameters": [
+          {
+            "name": "cmd=geofencedel",
+            "description": "command to delete a geofence",
+            "required": true
+          },
+          {
+            "name": "zone_id",
+            "description": "internal geofence identifier",
+            "required": true
+          },
+          {
+            "name": "external_id",
+            "description": "external geofence identifier (optional)",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n \"code\": 0,\n \"msg\": \"OK\",\n \"data\": {\n \"zones_deleted\": [\n 473989\n ]\n }\n}"
+      }
+    ]
+  },
+  {
+    "category": "Drivers",
+    "endpoints": [
+      {
+        "id": "create-driver",
+        "title": "Create driver",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API allows you to add a new driver to the system or update an existing driver’s information. You can specify the full name, iButton code, contact information, driver’s license number, and a list of objects the driver has access to.",
+        "parameters": [
+          {
+            "name": "cmd=drivers_add",
+            "description": "command to add or update a driver",
+            "required": true
+          },
+          {
+            "name": "name",
+            "description": "driver’s full name",
+            "required": true
+          },
+          {
+            "name": "code",
+            "description": "driver’s iButton code (required)",
+            "required": true
+          },
+          {
+            "name": "description",
+            "description": "driver description (optional)",
+            "required": true
+          },
+          {
+            "name": "phone",
+            "description": "driver’s phone number (optional)",
+            "required": true
+          },
+          {
+            "name": "license",
+            "description": "driver’s license number (optional)",
+            "required": true
+          },
+          {
+            "name": "email",
+            "description": "driver’s email address",
+            "required": true
+          },
+          {
+            "name": "access",
+            "description": "comma-separated list of object IDs (agent_id) the driver is allowed to access",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"data\": {\n     \"id\": 16990,\n     \"name\": \"NewDriverName\",\n     \"code\": \"123456\",\n     \"description\": \"DESCR\",\n     \"phone\": \"122212343\",\n     \"license\": \"rrr3335552\",\n     \"email\": \"new@email.com\",\n     \"access\": [1122, 3344]\n  }\n}"
+      },
+      {
+        "id": "drivers-list",
+        "title": "Drivers list",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API is used to get information about drivers registered in the account. It allows retrieving data for each driver, including full name, contact information, description, access rights, and identifiers.",
+        "parameters": [
+          {
+            "name": "cmd=drivers_list",
+            "description": "command to get the list of drivers",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"data\": [\n    {\n      \"id\": 317,\n      \"name\": \"Ivan Ivanov\",\n      \"code\": \"\",\n      \"description\": \"Driver #3\",\n      \"phone\": \"798345546\",\n      \"license\": \"\",\n      \"email\": \"\",\n      \"access\": []\n    },\n    {\n      \"id\": 1122,\n      \"name\": \"Andrey Petrov\",\n      \"code\": \"\",\n      \"description\": \"Driver #1\",\n      \"phone\": \"+525531696255\",\n      \"license\": \"\",\n      \"email\": null,\n      \"access\": [1122]\n    }\n  ]\n}"
+      },
+      {
+        "id": "assign-driver-to-vehicle",
+        "title": "Assign driver to vehicle",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API links a driver to a specific vehicle using its unique identifier (IMEI) and the driver’s key.",
+        "parameters": [
+          {
+            "name": "cmd=linkdriver",
+            "description": "API command for driver linking",
+            "required": true
+          },
+          {
+            "name": "imei",
+            "description": "unique vehicle identifier in the system",
+            "required": true
+          },
+          {
+            "name": "driver",
+            "description": "driver’s full name",
+            "required": true
+          },
+          {
+            "name": "driverkey",
+            "description": "driver’s key number",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n    \"code\": 0,\n    \"data\": [],\n    \"message\": \"success\"\n}"
+      },
+      {
+        "id": "driver-activity-report",
+        "title": "Driver activity report",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API retrieves information about driver activities for vehicles over a selected period. The response includes different work modes (e.g., driving, working, resting).",
+        "parameters": [
+          {
+            "name": "cmd=gettachodata",
+            "description": "command to retrieve tachograph data",
+            "required": true
+          },
+          {
+            "name": "agent_id",
+            "description": "vehicle ID (or multiple IDs, separated by commas)",
+            "required": true
+          },
+          {
+            "name": "imei",
+            "description": "device ID (alternative to agent_id)",
+            "required": true
+          },
+          {
+            "name": "ts",
+            "description": "start time (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "te",
+            "description": "end time (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"С 220 СК 750\": {\n    \"First driver\": {\n      \"Work\": 4997,\n      \"Drive\": 248,\n      \"Rest\": 9117\n    },\n    \"Second driver\": {\n      \"Driver available\": 1722,\n      \"Rest\": 9117\n    }\n  },\n  \"А 152 АК 790\": {\n    \"First driver\": {\n      \"Drive\": 5436,\n      \"Work\": 1706,\n      \"Rest\": 9084\n    },\n    \"Second driver\": {\n      \"Driver available\": 4995,\n      \"Rest\": 9084\n    }\n  }\n}"
+      }
+    ]
+  },
+  {
+    "category": "Notifications",
+    "endpoints": [
+      {
+        "id": "notifications-configuration",
+        "title": "Notifications configuration",
+        "method": "GET",
+        "url": "https://onegps.africa/api/ptm/notification.php",
+        "description": "This API is used to create, retrieve, update, and delete notification configurations in the OneGPS system. This API is not intended for sending notifications. Instead, it defines the conditions under which notifications will be triggered in the future.  Supported HTTP methods POST —  create a new notification configuration GET — retrieve a notification configuration by ID PUT — update an existing notification configuration DELETE— remove one or more notification configurations Request address To get the data, use the address:  https://onegps.africa/api/ptm/notification.php",
+        "parameters": [],
+        "responseExample": "{\n  \"count\": 1 // Number of deleted notifications\n}"
+      },
+      {
+        "id": "notification-events",
+        "title": "Notification events",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API retrieves notification events for a selected period, such as speeding, leaving a geofence, or other pre-configured alerts.",
+        "parameters": [
+          {
+            "name": "cmd=notifications",
+            "description": "command to get notification events",
+            "required": true
+          },
+          {
+            "name": "ts",
+            "description": "start time of the period (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "te",
+            "description": "end time of the period (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "notification",
+            "description": "name of the notification to retrieve events for",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"data\": [\n    {\n      \"vehiclenumber\": \"PS2\",\n      \"agentid\": 109792,\n      \"message\": \"Speed > 10 km/h longer than 10 sec max speed=52km/h Duration: 42 sec\",\n      \"ts\": 1606988609\n    },\n    {\n      \"vehiclenumber\": \"PS2\",\n      \"agentid\": 109792,\n      \"message\": \"Speed > 10 km/h longer than 10 sec max speed=29km/h Duration: 12 sec\",\n      \"ts\": 1606988438\n    },\n    {\n      \"vehiclenumber\": \"PS2\",\n      \"agentid\": 109792,\n      \"message\": \"Speed > 10 km/h longer than 10 sec max speed=17km/h Duration: 13 sec\",\n      \"ts\": 1606988106\n    }\n  ],\n  \"id\": 3701\n}"
+      },
+      {
+        "id": "event-media-files",
+        "title": "Event media files",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API retrieves media files for selected objects over a specified period. It provides links to photos and videos associated with events, including ADAS and DMS events.",
+        "parameters": [
+          {
+            "name": "cmd=get_media",
+            "description": "command used to retrieve media files",
+            "required": true
+          },
+          {
+            "name": "agent_id",
+            "description": "ID of an object or a comma-separated list of object IDs",
+            "required": true
+          },
+          {
+            "name": "start",
+            "description": "start of the requested period as a Unix timestamp",
+            "required": true
+          },
+          {
+            "name": "stop",
+            "description": "end of the requested period as a Unix timestamp",
+            "required": true
+          }
+        ],
+        "responseExample": "{}"
+      },
+      {
+        "id": "object-live-events",
+        "title": "Object live events",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API returns real-time events (live events) for vehicles, including contract info, company, driver, speed, and event start location.",
+        "parameters": [
+          {
+            "name": "cmd=live_events",
+            "description": "command to get live events",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"1264\": {\n    \"Contract Number\": \"CONTRACT ID\",\n    \"Company Name\": \"Al Turki Enterprises\",\n    \"Base Location\": \"LEK\",\n    \"Vehicle Owner\": \"SUB-CONTRACTOR\",\n    \"ID\": 1680881937,\n    \"EventID, EventType\": 0,\n    \"VehicleID\": \"5174 WA\",\n    \"Asset Category\": \"Light\",\n    \"Road Type\": \"Blacktop\",\n    \"DriverID\": 18262972,\n    \"Event Start Time\": \"1680881932\",\n    \"Event Start Speed\": 0,\n    \"Event Start Location\": {\n      \"lat\": \"18.185841\",\n      \"lon\": \"55.213230\"\n    }\n  },\n  \"1123\": {\n    \"Contract Number\": \"\",\n    \"Company Name\": \"Al Turki Enterprises\",\n    \"Base Location\": \"\",\n    \"Vehicle Owner\": \"\",\n    \"ID\": 1680881937,\n    \"EventID, EventType\": 0,\n    \"VehicleID\": \"6076MB\",\n    \"Asset Category\": \"Light\",\n    \"Road Type\": \"Blacktop\",\n    \"DriverID\": 0,\n    \"Event Start Time\": \"1680881413\",\n    \"Event Start Speed\": 0,\n    \"Event Start Location\": {\n      \"lat\": \"18.188658\",\n      \"lon\": \"55.206314\"\n    }\n  }\n}"
+      }
+    ]
+  },
+  {
+    "category": "Waybills",
+    "endpoints": [
+      {
+        "id": "create-waybill",
+        "title": "Create waybill",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API creates a new waybill for a specified time period.",
+        "parameters": [
+          {
+            "name": "cmd=add_waybill",
+            "description": "command to add a waybill",
+            "required": true
+          },
+          {
+            "name": "ts",
+            "description": "start time (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "te",
+            "description": "end time (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "agent_id",
+            "description": "agent identifier",
+            "required": true
+          },
+          {
+            "name": "name",
+            "description": "name of the waybill",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"data\": {\n    \"ts\": 1596022528,\n    \"te\": 1596488400,\n    \"agent_id\": 44841,\n    \"account_id\": 3934,\n    \"waybill\": {\n      \"name\": \"test bill1\"\n    }\n  }\n}"
+      },
+      {
+        "id": "waybill-information",
+        "title": "Waybill information",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API allows you to get waybill data for a specified period.",
+        "parameters": [
+          {
+            "name": "cmd=get_waybill",
+            "description": "command to get waybills",
+            "required": true
+          },
+          {
+            "name": "ts",
+            "description": "start time of the selection period (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "agent_id",
+            "description": "agent identifier",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"data\": [\n    {\n      \"ts\": 1596022528,\n      \"te\": 1596488400,\n      \"agent_id\": 44841,\n      \"account_id\": 3934,\n      \"waybill\": {\n        \"name\": \"test bill1\"\n      }\n    }\n  ]\n}"
+      },
+      {
+        "id": "delete-waybill",
+        "title": "Delete waybill",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API deletes an existing waybill for a specified time period.",
+        "parameters": [
+          {
+            "name": "cmd=remove_waybill",
+            "description": "command to remove a waybill",
+            "required": true
+          },
+          {
+            "name": "ts",
+            "description": "start time (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "te",
+            "description": "end time (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "agent_id",
+            "description": "agent identifier",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"data\": 1\n}"
+      }
+    ]
+  },
+  {
+    "category": "Users",
+    "endpoints": [
+      {
+        "id": "create-user",
+        "title": "Create user",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API allows you to create a new user in OneGPS with specified parameters: login, password, role, and contact information.",
+        "parameters": [
+          {
+            "name": "cmd=create_user",
+            "description": "command to create a user",
+            "required": true
+          },
+          {
+            "name": "login",
+            "description": "login of the new user",
+            "required": true
+          },
+          {
+            "name": "password",
+            "description": "user password",
+            "required": true
+          },
+          {
+            "name": "name",
+            "description": "user name",
+            "required": true
+          },
+          {
+            "name": "phone",
+            "description": "user phone number",
+            "required": true
+          },
+          {
+            "name": "email",
+            "description": "user email",
+            "required": true
+          },
+          {
+            "name": "role_id",
+            "description": "user role: 0 - Admin, 1 - User",
+            "required": true
+          },
+          {
+            "name": "vehicles",
+            "description": "list of accessible vehicles (IDs or quantity)",
+            "required": true
+          },
+          {
+            "name": "folders",
+            "description": "list of accessible folders (IDs or quantity)",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n    \"code\": 0,\n    \"msg\": \"Success create user: 48\"\n}"
+      },
+      {
+        "id": "update-user-login",
+        "title": "Update user login and password",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API allows you to change the login and password of an existing user in the OneGPS system.",
+        "parameters": [
+          {
+            "name": "cmd=update_user_auth",
+            "description": "command to update authentication data",
+            "required": true
+          },
+          {
+            "name": "login",
+            "description": "new user login",
+            "required": true
+          },
+          {
+            "name": "password",
+            "description": "new user password",
+            "required": true
+          },
+          {
+            "name": "user_id",
+            "description": "ID of the user whose data should be changed",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{}"
+      },
+      {
+        "id": "delete-user",
+        "title": "Delete user",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API deletes an existing user in the OneGPS system by their user ID.",
+        "parameters": [
+          {
+            "name": "cmd=remove_user",
+            "description": "command to delete a user",
+            "required": true
+          },
+          {
+            "name": "user_id",
+            "description": "ID of the user to be removed",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed (optional)",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n    \"code\": 0,\n    \"msg\": \"Success remove\"\n}"
+      },
+      {
+        "id": "user-information",
+        "title": "User information",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API retrieves detailed information about a user by their user_id.",
+        "parameters": [
+          {
+            "name": "cmd=get_user",
+            "description": "API command to get user information",
+            "required": true
+          },
+          {
+            "name": "user_id",
+            "description": "identifier of the user whose information should be retrieved",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n    \"code\": 0,\n    \"msg\": \"Success\",\n    \"data\": {\n        \"id\": 19,\n        \"roleid\": 1,\n        \"info\": \"\",\n        \"msisdn\": \"123123\",\n        \"email\": \"testTOTP@testTOTP.com\",\n        \"name\": \"dasd\",\n        \"account_id\": 1000,\n        \"lang\": \"en\",\n        \"parent_id\": 2\n    }\n}"
+      },
+      {
+        "id": "user-list-of-own-account",
+        "title": "User list of own account",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API is used to retrieve a list of all users registered under your account.",
+        "parameters": [
+          {
+            "name": "cmd=get_account_user_list",
+            "description": "API command to get the list of account users",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"data\": [\n    {\n      \"id\": 19,\n      \"roleid\": 1,\n      \"info\": \"\",\n      \"msisdn\": \"123123\",\n      \"email\": \"testTOTP@testTOTP.com\",\n      \"name\": \"dasd\",\n      \"account_id\": 1000,\n      \"lang\": \"en\",\n      \"parent_id\": 2\n    }\n  ]\n}"
+      },
+      {
+        "id": "accessible-accounts-list",
+        "title": "Accessible accounts list",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API is used to retrieve the list of accounts that the currently authorized user has access to.",
+        "parameters": [
+          {
+            "name": "cmd=get_account_map",
+            "description": "API command to retrieve the list of accessible accounts",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"data\": [\n    {\"account_id\": 1005},\n    {\"account_id\": 1000}\n  ]\n}"
+      },
+      {
+        "id": "user-folders-list",
+        "title": "User folders list",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API returns a list of folders that the user has access to in the account.",
+        "parameters": [
+          {
+            "name": "cmd=get_folders_user",
+            "description": "command to get the list of folders\nFor POST requests, parameters can be sent in the request body as JSON",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"Success\",\n  \"data\": [\n    {\"id\":1,\"name\":\"DEMO\"},\n    {\"id\":6,\"name\":\"IP Emelyanov\"},\n    {\"id\":11,\"name\":\"FOLDER1\"},\n    {\"id\":12,\"name\":\"FOLDER2\"}\n  ]\n}"
+      },
+      {
+        "id": "other-users-folders-list",
+        "title": "Other user’s folders list",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API returns the folders accessible to a specified user.",
+        "parameters": [
+          {
+            "name": "cmd=get_folders_user",
+            "description": "command to get the list of folders",
+            "required": true
+          },
+          {
+            "name": "user_id",
+            "description": "user ID (required when requesting folders for another user)",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed (optional)\nFor POST requests, parameters can be sent in the request body as JSON",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"Success\",\n  \"data\": [\n    {\"id\":1,\"name\":\"DEMO\"},\n    {\"id\":6,\"name\":\"IP Emelyanov\"},\n    {\"id\":11,\"name\":\"FOLDER1\"},\n    {\"id\":12,\"name\":\"FOLDER2\"}\n  ]\n}"
+      },
+      {
+        "id": "update-folder-list",
+        "title": "Update folder list",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API allows updating the set of folders accessible to a specific user.",
+        "parameters": [
+          {
+            "name": "cmd=update_user_folders",
+            "description": "command to update the folder list",
+            "required": true
+          },
+          {
+            "name": "folders",
+            "description": "comma-separated list of folder IDs to assign to the user",
+            "required": true
+          },
+          {
+            "name": "user_id",
+            "description": "ID of the user whose folder access is being updated",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"Success\"\n}"
+      },
+      {
+        "id": "update-users-accessible-accounts",
+        "title": "Update user’s accessible accounts",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API allows assigning a user access to specific accounts. If a partner in the system has multiple accounts, an administrator can choose which accounts a particular user can access.",
+        "parameters": [
+          {
+            "name": "cmd=update_user_accounts_map",
+            "description": "command to update the list of accessible accounts",
+            "required": true
+          },
+          {
+            "name": "accounts",
+            "description": "comma-separated list of contract IDs (accounts) to assign to the user\nAccounts must belong to the same partner as the user.",
+            "required": true
+          },
+          {
+            "name": "user_id",
+            "description": "ID of the user to whom the contracts are assigned",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"Success\"\n}"
+      },
+      {
+        "id": "update-user-vehicles",
+        "title": "Update user vehicles",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API assigns a user access only to the selected vehicles.",
+        "parameters": [
+          {
+            "name": "cmd=update_user_vehicles",
+            "description": "command to update the list of vehicles",
+            "required": true
+          },
+          {
+            "name": "vehicles",
+            "description": "comma-separated list of vehicle IDs",
+            "required": true
+          },
+          {
+            "name": "user_id",
+            "description": "ID of the user whose access is being updated",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"Success\"\n}"
+      }
+    ]
+  },
+  {
+    "category": "Other",
+    "endpoints": [
+      {
+        "id": "equipment-management",
+        "title": "Equipment management",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API allows you to retrieve sensor activity data for a vehicle over a selected period. Using it, you can: — track periods when sensors were active (e.g., ignition, equipment turned on) — obtain location data when a sensor was triggered — analyze vehicle behavior and equipment usage",
+        "parameters": [
+          {
+            "name": "cmd=sensors",
+            "description": "command to get sensor data",
+            "required": true
+          },
+          {
+            "name": "imei",
+            "description": "vehicle identifier in the system",
+            "required": true
+          },
+          {
+            "name": "start",
+            "description": "start time of the period (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "stop",
+            "description": "end time of the period (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command is executed",
+            "required": true
+          }
+        ],
+        "responseExample": "\"sensors\": {\n    \"9175\": {\n        \"fieldname\": \"DIS1\",\n        \"info\": \"Ignition sensor\",\n        \"id\": 9175,\n        \"work\": {\n            \"1404637430\": {\n                \"ts\": 1404637430,\n                \"te\": 1404637834,\n                \"lat\": \"46.3825\",\n                \"lon\": \"48.0031\",\n                \"place\": \"Russia, Astrakhan Region, Narimanovsky District, Nikolaevskoye Highway, 1b\"\n            },\n            \"1404638577\": {\n                \"ts\": 1404638577,\n                \"te\": 1404639841,\n                \"lat\": \"46.3625\",\n                \"lon\": \"48.0478\",\n                \"place\": \"RU, Astrakhan, Savushkina Street\"\n            }\n            // ... more sensor activity periods\n        }\n    }\n}"
+      },
+      {
+        "id": "sensor-values",
+        "title": "Sensor values",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API retrieves values of discrete sensors (fuel level, temperature, weight, etc.) for a specified period of time.",
+        "parameters": [
+          {
+            "name": "cmd=get_discrete_sensor_data",
+            "description": "command to get sensor data",
+            "required": true
+          },
+          {
+            "name": "imei",
+            "description": "object identifier",
+            "required": true
+          },
+          {
+            "name": "start",
+            "description": "start of the period (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "stop",
+            "description": "end of the period (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "tag_id",
+            "description": "sensor identifier",
+            "required": true
+          },
+          {
+            "name": "agent_id",
+            "description": "agent identifier (optional)",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"sensor_data\": {\n    \"966960\": {\n      \"1677682772\": {\n        \"sensor_id\": 966960,\n        \"unixtimestamp\": 1677682772,\n        \"calibrated_value\": \"95.09\",\n        \"speed\": \"0\"\n      },\n      \"1677682950\": {\n        \"sensor_id\": 966960,\n        \"unixtimestamp\": 1677682950,\n        \"calibrated_value\": \"94.9\",\n        \"speed\": \"12\"\n      }\n    }\n  }\n}"
+      },
+      {
+        "id": "battery-charge-by-vin",
+        "title": "Battery charge by VIN",
+        "method": "GET",
+        "url": "https://onegps.africa/api/VTB/api_vtb.php",
+        "description": "This API retrieves battery charge information for a vehicle based on its VIN. It works only for vehicles that meet the following conditions: — the VIN field is filled in the vehicle card — a battery charge sensor is connected You can specify multiple VINs in a single request. The response will include battery data for all specified vehicles.",
+        "parameters": [],
+        "responseExample": "[\n  {\n    \"Number\": \"456789123\",\n    \"ApplicationNumber\": null,\n    \"CurrentStatus\": \"ACTIVE\",\n    \"CloseDateTime\": \"\",\n    \"LastSyncDate\": \"2024-08-28 15:42:45\",\n    \"AlarmDateTime\": \"2024-08-28 15:42:45\",\n    \"Latitude\": \"55.578352\",\n    \"Longitude\": \"38.125267\",\n    \"BatteryCharge\": \"full charge\",\n    \"LocationLinesID\": \"\",\n    \"FullAddress\": \"ulitsa Garnaeva, Market, Zhukovsky, Moscow Region, Russia\",\n    \"Country\": \"Russia\",\n    \"Region\": \"Moscow Region\",\n    \"Town\": \"Zhukovsky\",\n    \"Street\": \"ulitsa Garnaeva\",\n    \"House\": null,\n    \"numberRegion\": 10\n  }\n]"
+      },
+      {
+        "id": "imei-by-vehicle-number",
+        "title": "IMEI by vehicle number",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API allows you to determine the IMEI of the device installed in a vehicle by its number.",
+        "parameters": [
+          {
+            "name": "cmd=get_imei",
+            "description": "API command",
+            "required": true
+          },
+          {
+            "name": "vehnum",
+            "description": "vehicle number",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"imei\": \"356307045913463\"\n}"
+      },
+      {
+        "id": "raw-data-by-imei",
+        "title": "Raw data by IMEI",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API allows you to get raw device data for a specified time period.",
+        "parameters": [
+          {
+            "name": "cmd=ag_events",
+            "description": "API command to get raw points",
+            "required": true
+          },
+          {
+            "name": "imei",
+            "description": "unique device identifier",
+            "required": true
+          },
+          {
+            "name": "ts",
+            "description": "start time of the data (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "te",
+            "description": "end time of the data (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n   \"code\": 0,\n   \"data\": {\n       \"1498201016\": {\"alt\": 33, \"lat\": \"47.2124\", \"lon\": \"39.6922\", \"sat\": 15, \"speed\": 0, \"ts\": 1498201016},\n       \"1498201037\": {\"alt\": 29, \"lat\": \"47.2124\", \"lon\": \"39.6924\", \"sat\": 15, \"speed\": 6, \"ts\": 1498201037},\n       \"1498201097\": {\"alt\": 31, \"lat\": \"47.2128\", \"lon\": \"39.6933\", \"sat\": 15, \"speed\": 0, \"ts\": 1498201097}\n   },\n   \"msg\": \"OK\",\n   \"vehicle\": {\n       \"agentid\": 2914,\n       \"created_time\": 1359797592,\n       \"current_mileage\": 90224,\n       \"folder\": \"Sky Electronics\",\n       \"imei\": \"356307045913463\",\n       \"type\": \"Cow\",\n       \"typeid\": 31,\n       \"vehiclenumber\": \"IX35\"\n   }\n}"
+      },
+      {
+        "id": "ibutton-list",
+        "title": "iButton list",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API retrieves a list of iButtons assigned to a vehicle for a specified period. An iButton is a small electronic device (tag) used to identify drivers or objects. It is typically applied for access control, work time tracking, or recording the start/end of vehicle usage.",
+        "parameters": [
+          {
+            "name": "cmd=take_ibutton_list",
+            "description": "command for the API to get the iButton list",
+            "required": true
+          },
+          {
+            "name": "ts",
+            "description": "start date of the period (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "te",
+            "description": "end date of the period (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "agentId",
+            "description": "vehicle identifier",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command is executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n    \"code\": 0,\n    \"msg\": \"OK\",\n    \"data\": [\n        {\n            \"ibutton\": \"ae00001000000000\",\n            \"ts\": 1643680128\n        },\n        {\n            \"ibutton\": \"ae00001000000001\",\n            \"ts\": 1643680128\n        }\n    ]\n}"
+      },
+      {
+        "id": "passenger-flow",
+        "title": "Passenger flow",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API is used to retrieve data on passenger flow in vehicles equipped with the Autoconductor system. With it, you can: — see how many passengers boarded and exited at each stop — get stop coordinates, event timestamps, and a video identifier (if video recording is supported by the system)",
+        "parameters": [
+          {
+            "name": "cmd=pass_counter",
+            "description": "command to call the API",
+            "required": true
+          },
+          {
+            "name": "ts",
+            "description": "start time of the selection period (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "te",
+            "description": "end time of the selection period (Unix timestamp)",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command is executed",
+            "required": true
+          },
+          {
+            "name": "imei (optional)",
+            "description": "IMEI of the vehicle equipped with Autoconductor. If not specified, the selection will include all vehicles with the system",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"data\": {\n    \"36571\": {\n      \"agent_id\": 36571,\n      \"stops\": [\n        {\n          \"busline_id\": 1371,\n          \"door_id\": 0,\n          \"lat\": \"54.9346\",\n          \"lon\": \"51.8981\",\n          \"p_in\": 1,\n          \"p_out\": 0,\n          \"ts\": 1554696995,\n          \"video_id\": 13\n        },\n        {\n          \"busline_id\": 1371,\n          \"door_id\": 0,\n          \"lat\": \"54.9238\",\n          \"lon\": \"51.9098\",\n          \"p_in\": 4,\n          \"p_out\": 0,\n          \"ts\": 1554697232,\n          \"video_id\": 14\n        }\n      ],\n      \"vehiclenumber\": \"autoconductor\"\n    }\n  },\n  \"msg\": \"OK\"\n}"
+      },
+      {
+        "id": "bus-route-management",
+        "title": "Bus route management",
+        "method": "POST",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API is used for managing bus routes and assigning vehicles to routes. It allows you to create routes, assign vehicles to trips, and manage route bindings.",
+        "parameters": [
+          {
+            "name": "cmd",
+            "description": "the command to execute",
+            "required": true
+          },
+          {
+            "name": "data",
+            "description": "JSON object with parameters specific to the command",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"status\": \"success\",\n  \"message\": \"Route and binding created successfully\",\n  \"data\": {\n    \"uid\": \"qiwduhqiwdqkdqkn\",\n    \"imei\": \"359772039289781\",\n    \"lineuid\": \"2e23e23e2e\"\n  }\n}"
+      },
+      {
+        "id": "bus-status",
+        "title": "Bus status",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API returns the current status of a bus: its route, the current and next stops, as well as route information (number, fare, interval, etc.).",
+        "parameters": [
+          {
+            "name": "cmd=currentBusState",
+            "description": "command to get the bus status",
+            "required": true
+          },
+          {
+            "name": "vehnum",
+            "description": "bus number",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"lines\": [\n    {\n      \"id\": 1086,\n      \"name\": \"1A\",\n      \"number\": \"1A\",\n      \"bidirectional\": 1,\n      \"description\": \"1A\",\n      \"active\": 1,\n      \"price\": \"25.00\",\n      \"interval\": 10,\n      \"folder\": null,\n      \"currentstop_id\": 0,\n      \"currentstop_order\": 0,\n      \"nextstop_id\": 5217,\n      \"nextstop_order\": 48\n    }\n  ]\n}"
+      },
+      {
+        "id": "vehicle-arrival-forecast-at-stop",
+        "title": "Vehicle arrival forecast at stop",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API provides the predicted arrival time of buses, trolleybuses, and minibuses at a specified stop.",
+        "parameters": [
+          {
+            "name": "cmd=stationForecast",
+            "description": "command to get the arrival forecast",
+            "required": true
+          },
+          {
+            "name": "stopid",
+            "description": "identifier of the stop (taken from the OneGPS interface)",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "[\n  {\n    \"curent_stop\": 1,\n    \"line_id\": 1371,\n    \"line_name\": \"№ 17 S. KALFA - PL. SUVOROVA - UL. GENERAL ZHIDILOVA\",\n    \"line_num\": \"17\",\n    \"line_type\": \"A\",\n    \"this_stop\": 32,\n    \"time\": 4065,\n    \"vehicle\": \"BUS FLIGHT\",\n    \"vehid\": 48854\n  }\n]"
+      },
+      {
+        "id": "route-stop-list",
+        "title": "Route stop list",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API returns all stops for a given route, including coordinates, stop type, order, and fare information.",
+        "parameters": [
+          {
+            "name": "cmd=stopList",
+            "description": "command to get stop list",
+            "required": true
+          },
+          {
+            "name": "line_num",
+            "description": "route number",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"line\": {\n    \"id\": 1083,\n    \"name\": \"1Б\",\n    \"number\": \"1Б\",\n    \"bidirectional\": 1,\n    \"description\": \"1Б\",\n    \"active\": 1,\n    \"price\": \"25.00\",\n    \"interval\": 25,\n    \"folder\": null,\n    \"stops\": [\n      {\n        \"id\": 5085,\n        \"name\": \"Центр занятости\",\n        \"lat\": \"54.9036\",\n        \"lon\": \"52.3315\",\n        \"radius\": 60,\n        \"stop_type\": 0,\n        \"descr\": null,\n        \"stop_order\": 1,\n        \"price\": \"0.00\",\n        \"ts\": 0,\n        \"te\": 0,\n        \"dir\": 0,\n        \"silent\": 0\n      },\n      {\n        \"id\": 5086,\n        \"name\": \"Автовокзал\",\n        \"lat\": \"54.9039\",\n        \"lon\": \"52.3236\",\n        \"radius\": 60,\n        \"stop_type\": 2,\n        \"descr\": null,\n        \"stop_order\": 2,\n        \"price\": \"0.00\",\n        \"ts\": 0,\n        \"te\": 0,\n        \"dir\": 0,\n        \"silent\": 0\n      }\n    ]\n  }\n}"
+      },
+      {
+        "id": "route-calculation-and-estimated-arrival-time",
+        "title": "Route calculation and estimated arrival time",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API builds a route between two points and provides the estimated arrival time depending on the selected transport mode.",
+        "parameters": [
+          {
+            "name": "cmd=route",
+            "description": "command to build the route",
+            "required": true
+          },
+          {
+            "name": "mode",
+            "description": "transport type, one of:",
+            "required": true
+          },
+          {
+            "name": "bicycle",
+            "description": "bicycle",
+            "required": true
+          },
+          {
+            "name": "bus",
+            "description": "bus",
+            "required": true
+          },
+          {
+            "name": "car",
+            "description": "car",
+            "required": true
+          },
+          {
+            "name": "pedestrian",
+            "description": "pedestrian",
+            "required": true
+          },
+          {
+            "name": "scooter",
+            "description": "scooter",
+            "required": true
+          },
+          {
+            "name": "taxi",
+            "description": "taxi",
+            "required": true
+          },
+          {
+            "name": "truck",
+            "description": "truck",
+            "required": true
+          },
+          {
+            "name": "origin",
+            "description": "starting point coordinates (lat,long)",
+            "required": true
+          },
+          {
+            "name": "destination",
+            "description": "destination point coordinates (lat,long)",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"data\": {\n    \"routes\": [\n      {\n        \"id\": \"79de74af-5040-441a-ab7a-62d3d9f7a4b4\",\n        \"sections\": [\n          {\n            \"id\": \"2cc5fff7-fd4f-43ac-bcda-00d662207c63\",\n            \"type\": \"vehicle\",\n            \"departure\": {\n              \"time\": \"2023-02-22T09:40:07+03:00\",\n              \"place\": {\n                \"type\": \"place\",\n                \"location\": {\n                  \"lat\": 47.2119,\n                  \"long\": 39.61372\n                },\n                \"originalLocation\": {\n                  \"lat\": 47.211908,\n                  \"long\": 39.613767\n                }\n              }\n            },\n            \"arrival\": {\n              \"time\": \"2023-02-22T09:52:32+03:00\",\n              \"place\": {\n                \"type\": \"place\",\n                \"location\": {\n                  \"lat\": 47.2017113,\n                  \"long\": 39.668221\n                },\n                \"originalLocation\": {\n                  \"lat\": 47.201699,\n                  \"long\": 39.668183\n                }\n              }\n            },\n            \"summary\": {\n              \"duration\": 745,\n              \"length\": 5452,\n              \"baseDuration\": 530\n            },\n            \"transport\": {\n              \"mode\": \"bus\"\n            }\n          }\n        ]\n      }\n    ]\n  }\n}"
+      },
+      {
+        "id": "rental-contracts-list",
+        "title": "Rental contracts list",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API provides information about rental contracts from the Rent Car module, including open, booked, and closed contracts. For each contract, the response includes details about the renter, pickup and drop-off locations, planned start and end dates, as well as contract and vehicle numbers.",
+        "parameters": [
+          {
+            "name": "cmd=rentcar_contracts",
+            "description": "command to get the list of rental contracts",
+            "required": true
+          },
+          {
+            "name": "status",
+            "description": "contract status(es) to retrieve. You can pass one or multiple values separated by commas:",
+            "required": true
+          },
+          {
+            "name": "open",
+            "description": "active contracts (rental is currently ongoing)",
+            "required": true
+          },
+          {
+            "name": "booked",
+            "description": "reserved contracts (booking created, rental not started yet)",
+            "required": true
+          },
+          {
+            "name": "closed",
+            "description": "completed contracts (rental finished)",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"msg\": \"OK\",\n  \"list\": [\n    {\n      \"driver_name\": \"Test renter\",\n      \"driver_phone\": \"905074521698\",\n      \"end_location\": {\n        \"title\": \"Dubai\"\n      },\n      \"start_location\": {\n        \"title\": \"Dubai\"\n      },\n      \"mva\": \"12312\",\n      \"ra\": \"16\",\n      \"te_expected\": 1775901540,\n      \"ts_expected\": 1775812680,\n      \"plate_number\": \"Private house\"\n    },\n    {\n      \"driver_name\": \"Test renter\",\n      \"driver_phone\": \"905074521698\",\n      \"end_location\": {\n        \"title\": \"rgergrr\"\n      },\n      \"start_location\": {\n        \"title\": \"erterter\"\n      },\n      \"mva\": \"2222\",\n      \"ra\": \"17\",\n      \"te_expected\": 1775901540,\n      \"ts_expected\": 1775812680,\n      \"plate_number\": \"ABC-123\"\n    }\n  ]\n}"
+      },
+      {
+        "id": "eco-driving-data",
+        "title": "Eco-driving data",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API allows you to obtain detailed information about the eco-friendliness of vehicle driving over a specified period.",
+        "parameters": [
+          {
+            "name": "cmd = mileco_drive",
+            "description": "command to obtain trip data",
+            "required": true
+          },
+          {
+            "name": "start",
+            "description": "date and time of the start of the period for which you want to obtain data",
+            "required": true
+          },
+          {
+            "name": "stop",
+            "description": "date and time of the end of the period\nTime is specified in Unix timestamp format - the number of seconds that have elapsed since January 1, 1970.",
+            "required": true
+          },
+          {
+            "name": "vehid",
+            "description": "the identifier of the vehicle. If you need data for one vehicle - enter its ID, if for several vehicles - list their IDs separated by commas. \n \nf you do not specify the vehid parameter, the system will automatically provide information for all vehicles assigned to your account.",
+            "required": true
+          },
+          {
+            "name": "imei",
+            "description": "a unique number of the vehicle's GPS tracker. Use this parameter to obtain data for a specific tracker. \nWhen specifying imei, it is not necessary to indicate the vehid parameter.\n\nExample API request with imei:",
+            "required": true
+          }
+        ],
+        "responseExample": "{}"
+      },
+      {
+        "id": "timezone-list",
+        "title": "Timezone list",
+        "method": "GET",
+        "url": "https://onegps.africa/api/api.php?",
+        "description": "This API returns a list of available time zones that can be used when configuring a user or an object.",
+        "parameters": [
+          {
+            "name": "cmd=get_time_zones",
+            "description": "API command to retrieve the list of time zones",
+            "required": true
+          },
+          {
+            "name": "node",
+            "description": "node number where the command should be executed",
+            "required": true
+          }
+        ],
+        "responseExample": "{\n  \"code\": 0,\n  \"data\": [\n    { \"text\": \"Africa/Abidjan\" },\n    { \"text\": \"Africa/Accra\" },\n    { \"text\": \"Africa/Addis Ababa\" },\n    { \"text\": \"Africa/Algeria\" },\n    { \"text\": \"Africa/Asmara\" },\n    { \"text\": \"Africa/Bamako\" },\n    { \"text\": \"Africa/Bangui\" }\n  ]\n}"
+      }
+    ]
+  }
+]

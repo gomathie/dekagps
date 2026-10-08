@@ -24,14 +24,12 @@ import DocsArticle from '../src/components/docs/DocsArticle.vue'
 import DocsSidebar from '../src/components/docs/DocsSidebar.vue'
 import pageMap from '../src/docs/pages.js'
 import {
-  API_ROOT_SLUG,
   flattenNav,
   getVersion,
   hasPage,
   loadNav,
   loadPage,
   loadSearchIndex,
-  splitDocsNav,
   versions
 } from '../src/docs/registry.js'
 
@@ -115,9 +113,6 @@ function samplePages(entries, count = 5) {
 async function checkData(version) {
   const nav = await loadNav(version.id)
   const entries = flattenNav(nav)
-  const sections = splitDocsNav(nav)
-  const guideEntries = flattenNav(sections.guide)
-  const apiEntries = flattenNav(sections.api)
   const index = await loadSearchIndex(version.id)
 
   const slugs = new Set(entries.map((entry) => entry.slug))
@@ -125,15 +120,7 @@ async function checkData(version) {
   const indexed = new Set(index.map((page) => page.s))
 
   if (hasPage(version.id, 'release-notes')) fail(`${version.id}: archived release-note pages remain`)
-  if (!apiEntries.length || apiEntries[0].slug !== API_ROOT_SLUG) {
-    fail(`${version.id}: API reference root is missing from its documentation tab`)
-  }
-  const guideSlugs = new Set(guideEntries.map((entry) => entry.slug))
-  const overlap = apiEntries.find((entry) => guideSlugs.has(entry.slug))
-  if (overlap) fail(`${version.id}: ${overlap.slug} appears in both documentation tabs`)
-  if (guideEntries.length + apiEntries.length !== entries.length) {
-    fail(`${version.id}: guide and API tab page counts do not cover the full navigation`)
-  }
+  if (hasPage(version.id, 'working-with-api-requests')) fail(`${version.id}: legacy API pages remain in the user guide`)
 
   if (entries.length !== version.pageCount) {
     fail(`${version.id}: versions.js announces ${version.pageCount} pages, navigation has ${entries.length}`)
@@ -177,7 +164,7 @@ async function checkReferences(version, entries) {
         } else if (link.anchor && !target.toc.some((heading) => heading.id === link.anchor)) {
           fail(`${version.id}/${entry.slug}: missing target ${link.v}/${link.page}#${link.anchor}`)
         }
-      } else if (!link.href || !/^\/docs\/7\.10\/?$/.test(link.href)) {
+      } else if (!link.href || !/^\/docs\/(?:7\.10\/?$|api\/v2#event-media-files$)/.test(link.href)) {
         fail(`${version.id}/${entry.slug}: unresolved link`)
       }
     }

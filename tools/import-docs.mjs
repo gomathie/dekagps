@@ -41,7 +41,7 @@
  */
 
 import { existsSync } from 'node:fs'
-import { mkdir, readFile, readdir, rename, stat, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, readdir, rename, stat, unlink, writeFile } from 'node:fs/promises'
 import { execFile } from 'node:child_process'
 import https from 'node:https'
 import path from 'node:path'
@@ -85,6 +85,8 @@ const PRODUCT_HOSTS = [/^https?:\/\/(?:www\.)?pilot-gps\.(?:africa|com)(?:\/|$)/
 
 // The source timetable page still uses the report's former file name.
 const PAGE_ALIASES = new Map([['report-on-round-trip', 'report-on-timetable-adherence-']])
+const EXCLUDED_BRANCHES = new Set(['release-notes', 'working-with-api-requests'])
+const REPLACEMENT_ROUTES = new Map([['event-media-files', '/docs/api/v2#event-media-files']])
 
 /**
  * Source-vendor URL and identifier text must not leak into the white-label docs.
@@ -974,7 +976,7 @@ async function loadNavigation(version) {
     const depth = Math.round(parseFloat(match[2]) / 20)
     if (excludedDepth !== null && depth > excludedDepth) continue
     excludedDepth = null
-    if (slug === 'release-notes') {
+    if (EXCLUDED_BRANCHES.has(slug)) {
       excludedDepth = depth
       continue
     }
@@ -1121,6 +1123,16 @@ function resolveLinks(pages, pageSlugs) {
       if (node.t === 'a') {
         if (node.res === 'page') {
           if (!pageSlugs.has(node.slug)) {
+            const replacement = REPLACEMENT_ROUTES.get(node.slug)
+            if (replacement) {
+              node.href = replacement
+              node.external = false
+              delete node.res
+              delete node.v
+              delete node.slug
+              delete node.anchor
+              continue
+            }
             unresolved.add(node.slug)
             nodes.splice(i, 1, ...(node.in || []))
             continue
@@ -1229,7 +1241,7 @@ async function writeVersionFiles(version, pages, tree) {
 
   for (const file of await readdir(dir)) {
     if (file.startsWith('chunk-') && !files.includes(file)) {
-      await writeFile(path.join(dir, file), `${GENERATED_HEADER}export default {}\n`, 'utf8')
+      await unlink(path.join(dir, file))
     }
   }
 
