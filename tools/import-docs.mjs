@@ -1010,7 +1010,15 @@ async function collectPage(version, entry) {
   if (!region) throw new Error(`no content region in ${entry.href}`)
 
   const converter = new PageConverter(version, entry.slug)
-  const blocks = PageConverter.groupBullets(converter.blocksFrom(region.children))
+  const rawBlocks = converter.blocksFrom(region.children)
+  const headings = rawBlocks.flatMap((block, index) =>
+    block.t === 'h' && block.id ? [{ index, id: block.id }] : []
+  ).reverse()
+  const anchors = converter.anchorPoints.map((anchor) => ({
+    sourceAnchorId: anchor.sourceAnchorId,
+    headingId: headings.find((heading) => heading.index <= anchor.blockIndex)?.id || ''
+  }))
+  const blocks = PageConverter.groupBullets(rawBlocks)
 
   return {
     slug: entry.slug,
@@ -1018,7 +1026,7 @@ async function collectPage(version, entry) {
     source: entry.href,
     blocks,
     toc: converter.headings,
-    anchors: converter.anchorPoints,
+    anchors,
     linkCount: converter.pendingLinks.length
   }
 }
@@ -1091,16 +1099,7 @@ function applyMirroredImages(page) {
 function resolveLinks(pages, pageSlugs) {
   const anchorIndex = new Map()
   for (const page of pages) {
-    const headings = []
-    page.blocks.forEach((block, index) => {
-      if (block.t === 'h' && block.id) headings.push({ index, id: block.id })
-    })
-    const anchorToHeading = new Map()
-    for (const anchor of [...page.anchors].sort((a, b) => a.blockIndex - b.blockIndex)) {
-      const heading = [...headings].reverse().find((item) => item.index <= anchor.blockIndex)
-      anchorToHeading.set(anchor.sourceAnchorId, heading?.id || '')
-    }
-    anchorIndex.set(page.slug, anchorToHeading)
+    anchorIndex.set(page.slug, new Map(page.anchors.map((anchor) => [anchor.sourceAnchorId, anchor.headingId])))
   }
 
   const unresolved = new Set()
