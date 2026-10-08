@@ -8,29 +8,29 @@ The Docs section is a normal part of the existing Vue 3 SPA: same header, main n
 
 ## Status
 
-**Implemented and verified** — generated content is committed, `npm run build` and `npm run check:docs` both pass.
+**Implemented** — 7.10 is the only published guide: 682 pages, 28 content chunks, 14 sections and 693 local article references. Archive guides and their release-note branch have been removed.
 
 ## Steps
 
 - [x] 1. Inspect existing website architecture
 - [x] 2. Inspect reference documentation
 - [x] 3. Map documentation structure
-- [x] 4. Collect/recreate documentation content — imported: 4 versions, 2 413 pages
-- [x] 5. Collect/recreate documentation assets — 4 675 images mirrored, 0 unresolved
+- [x] 4. Collect/recreate documentation content — 7.10 only, 682 pages
+- [x] 5. Collect/recreate documentation assets — 3 082 referenced images retained
 - [x] 6. Design documentation content architecture
 - [x] 7. Implement Docs page (`/docs`, `/docs/:version`, `/docs/:version/:slug`)
 - [x] 8. Add Docs to main navigation (navbar *Resources* dropdown + footer *Company* column)
 - [x] 9. Implement documentation navigation (687 entry tree, collapsible, filterable)
 - [x] 10. Implement documentation search (per-version index, ranked, keyboard navigable)
-- [x] 11. Implement version navigation (selector + version index page)
+- [x] 11. Publish 7.10 only; replace the version selector with a version label
 - [x] 12. Implement previous/next navigation (reading order of the navigation tree)
 - [x] 13. White-label branding (text, titles, slugs, file names, source-vendor hosts and outbound docs links; D3)
-- [x] 14. Fix internal documentation links (rewritten to SPA routes at import time)
+- [x] 14. Preserve all 693 internal references, including linked headings, bullet lists and section jumps
 - [x] 15. Implement responsive behavior (sidebar becomes a drawer under 992 px)
 - [x] 16. Accessibility review (landmarks, labels, roles, focus, keyboard, alt text)
 - [x] 17. Performance review (per-version, per-chunk lazy loading; D5, D6)
-- [x] 18. Test all documentation pages (every page checked; 5 rendered per version)
-- [x] 19. Test mobile/tablet/desktop — breakpoints reviewed in code; browser pass pending (Follow-ups)
+- [x] 18. Test all documentation pages and article targets; SSR-render nine representative pages
+- [x] 19. Check desktop and mobile in Chrome: layout, images, sidebar, section jumps and archive URL redirects
 - [x] 20. Final QA (build, SSR render, image and link checks)
 - [x] 21. Finalize implementation
 
@@ -47,7 +47,7 @@ The Docs section is a normal part of the existing Vue 3 SPA: same header, main n
 ### Step 2 — Reference documentation inspected
 
 - The reference is a **Dr.Explain** static export (`de_style.css`, `js/drexplain.data.index.js`).
-- Current guide at the site root, previous guides under `/7.9/`, `/7.8/`, `/7.7/`; `contents.html` is the table of contents and also the print entry point.
+- The 7.10 guide is at the source site root; `contents.html` is the table of contents and also the print entry point. Archive guides are excluded from import.
 - Page bodies live in `<div id="hiddenContent"><article><div class="description_on_page">`; the shell (menu, search, breadcrumbs, print button) is generated at runtime by the reference's own JS.
 - Body constructs: `h1`–`h4`, `div.p` paragraphs, Dr.Explain lists (`ul.de_list` with `list-marker` divs), `<table>` (often used for layout), screenshots (`img.de_custom_img` / `de_wndimg` / `de_ctrlimg`), internal links (`a.local_link` → `page.html#anchor`), anchors (`a.anchor[id]`), inline bold/code.
 
@@ -56,7 +56,7 @@ The Docs section is a normal part of the existing Vue 3 SPA: same header, main n
 - Hierarchy comes from `contents.html`: each entry is an `<a>` with `padding-left: Npt`, so depth = `Npt / 20`.
 - Page identity = source file name (`logging_in_1.html` → `logging-in-1`), which makes internal link rewriting deterministic.
 - Previous/next order = document order of the navigation tree.
-- Versions are independent: own page set, own nav tree, own image folder.
+- The importer supports only 7.10 and excludes the historical release-note branch. The 7.10 release summary is retained.
 
 ### Step 4 — Content imported
 
@@ -64,20 +64,16 @@ The Docs section is a normal part of the existing Vue 3 SPA: same header, main n
 
 | Version | Pages | Chunk files |
 | --- | --- | --- |
-| 7.10 (current) | 687 | 28 |
-| 7.9 | 631 | 26 |
-| 7.8 | 558 | 23 |
-| 7.7 | 537 | 22 |
-| **Total** | **2 413** | **99** |
+| 7.10 | **682** | **28** |
 
 ### Step 5 — Assets imported
 
 | Metric | Value |
 | --- | --- |
-| Mirrored images | 4 675 |
-| On disk | 108.8 MB |
+| Referenced images retained | 3 082 |
+| On disk | 72.5 MB |
 | Unresolved references | 0 |
-| Transferred while importing | ≈ 510 MB |
+| Unreferenced images removed | 1 593 |
 
 ### Steps 7–17 — Implementation
 
@@ -100,7 +96,7 @@ src/components/docs/
   DocsArticle.vue                      breadcrumbs, on-page headings, blocks, pager, print
   DocsBlocks.vue                       recursive block renderer (headings, paragraphs, lists, tables, images, quotes, code, rules)
   DocsInline.vue                       recursive inline renderer (text, bold, italic, code, sup/sub, links, inline images)
-src/views/Docs.vue                     route shell (hero, version selector, sidebar, search, overview)
+src/views/Docs.vue                     route shell (version label, sidebar, search, overview)
 public/docs-assets/images/             mirrored documentation images
 ```
 
@@ -108,11 +104,11 @@ public/docs-assets/images/             mirrored documentation images
 
 ### D1 — Assets are mirrored, downscaled and re-encoded
 
-The reference stores screenshots at an average of ~134 KB (≈ 2 GB across the four versions). Every mirrored image is downscaled to a maximum width of 900 px and re-encoded as JPEG (quality 72) — verified on disk: the widest files are exactly 900 px, at ~23 KB each. The work is done by `tools/resize-images.ps1` (Windows PowerShell + `System.Drawing`, called in batches by the importer), so the import needs **no npm dependency at all**. All four versions are mirrored, archives included: reusing a mirrored file whenever the source file name matches keeps the overlapping versions cheap (the archives cost only 857 extra downloads / 59.5 MB).
+Screenshots are mirrored, downscaled to a maximum width of 900 px and re-encoded as JPEG (quality 72). `tools/resize-images.ps1` uses Windows PowerShell and `System.Drawing`, called in batches by the importer. Only the 3 082 files referenced by the retained 7.10 content are published; unreferenced archive assets were removed.
 
 Consequences to keep in mind:
 
-- `public/docs-assets` adds 108.8 MB to the repository and to every deployment, and `vite build` takes ~14 s instead of ~2 s because the folder is copied into `dist`.
+- `public/docs-assets` adds 72.5 MB to the repository and each deployment; copying it into `dist` accounts for most build time.
 - Image optimisation is Windows-only. On other platforms the importer warns and stores the untouched original, or `--no-images` skips image work entirely.
 
 ### D2 — Hotspots, embeds and the tab widget
@@ -134,7 +130,10 @@ URL-like tokens are still protected from the generic word pass, because applying
 - source-vendor technical subdomains become neutral placeholders such as `<server_address>` or OneGPS service names;
 - source-vendor package IDs, bot handles, Swagger hosts and extension identifiers are replaced with OneGPS or generic equivalents;
 - external HTTP(S) anchors are unwrapped so the text remains but the page does not link visitors away from the OneGPS guide;
-- source documentation links are rewritten to internal SPA docs routes when they target an imported page.
+- source documentation links are rewritten to internal SPA docs routes when they target an imported page;
+- links around headings, paragraphs made entirely of links, and links next to bullet markers remain clickable;
+- source section IDs are associated with generated headings before paragraph regrouping, so section links reach the intended heading;
+- the stale Round Trips report reference is mapped to the existing timetable-adherence report page.
 
 `tools/check-docs.mjs` now enforces this rule by failing when generated docs contain outbound HTTP(S) `href` fields or source-vendor host references. The latest audit reports `0` outbound HTTP links and `0` source-vendor host references in `src/docs/**`.
 
@@ -144,8 +143,8 @@ Screenshots still show the original product UI, including its logo and name. The
 
 Every page becomes `{ title, toc, blocks }` where `blocks` is a recursive tree (`h`, `p`, `list`, `table`, `img`, `quote`, `code`, `hr`). 25 pages per chunk, one chunk set per version. Rationale:
 
-- 2 413 single-page modules would bloat the Vite module graph; 99 chunks keep the build fast while staying easy to inspect.
-- Chunks, navigation and search index are loaded per version on demand, so reading the 7.10 guide never downloads the 7.7 guide.
+- 682 single-page modules would bloat the Vite module graph; 28 chunks keep the build fast while staying easy to inspect.
+- Chunks, navigation and the 7.10 search index are loaded on demand.
 - A markdown/MDX pipeline plus a sanitising renderer would have been a new dependency and an XSS surface for content we do not control; rendering a typed block tree with `v-for`/`v-if` is safer and smaller.
 
 ### D5 — Search
@@ -166,9 +165,9 @@ Mirrored images live in `public/docs-assets/images/` and are referenced by absol
 
 Three routes, one view, registered in `src/router/index.js` next to the other resources routes, so the existing `<title>`/description/`og:` handling and the Analytics hook apply unchanged. `Docs.vue` additionally sets `document.title` and the meta description from the imported page, and deep anchors (`#information-tab`) are scrolled manually because the target only exists once the page chunk has loaded.
 
-### D8 — Version switcher keeps your place
+### D8 — Removed-version URLs resolve to 7.10
 
-Switching version keeps the page you are reading when that slug exists in the target version, and falls back to that version's overview otherwise.
+Only 7.10 is available, so the selector and archive overview cards were removed. Visiting an unsupported version URL redirects to the same slug in 7.10 when it exists, or to the 7.10 overview otherwise. The importer rejects requests for removed versions and rebuilds the page map without their entries.
 
 ### D9 — Print
 
@@ -179,8 +178,8 @@ The reference ships separate print pages. Instead, `@media print` rules in `src/
 Commands (both pass):
 
 ```bash
-npm run build       # ✓ built in ~14 s, no errors, no warnings other than the search-index chunk size
-npm run check:docs  # ✓ 2 413 pages checked, 20 pages SSR-rendered, 0 failures
+npm run build       # production build; existing search-index size warning
+npm run check:docs  # 682 pages, 693 article links, 9 pages SSR-rendered
 ```
 
 `tools/check-docs.mjs` asserts that:
@@ -188,23 +187,27 @@ npm run check:docs  # ✓ 2 413 pages checked, 20 pages SSR-rendered, 0 failures
 - navigation, page map and search index describe exactly the same page set in every version;
 - the page count announced in `versions.js` matches the navigation;
 - sampled pages render a title, their headings and no `undefined` markup;
-- every image referenced by a rendered page exists on disk (4 522 unique references validated separately);
-- every internal documentation link in rendered output resolves to a page that exists in the target version;
+- every image referenced anywhere in the guide exists on disk;
+- every article reference resolves to an available page and, when present, a real heading ID;
 - every heading anchor in the on-page navigation has a real target;
 - the sidebar renders entries and its filter returns matches;
-- generated docs contain no outbound HTTP(S) `href` fields and no source-vendor host references.
+- generated docs contain no outbound HTTP(S) `href` fields and no source-vendor host references;
+- metadata, content, navigation and search files contain only the supported 7.10 guide;
+- representative linked headings, bullet references and the corrected timetable report reference render as clickable links.
 
 Additional checks performed:
 
-- the largest imported page (93 blocks, 36 images, 8 tables) renders to 46 KB of HTML with the recursive renderers intact;
+- sampled complex pages render with recursive blocks, tables and images intact;
 - self-referencing components resolve (`resolveComponent("DocsBlocks", true)` is resolved through the explicit `name` in each SFC);
-- no page and no search entry in any version is left without its module;
-- `npm run import:docs -- --no-images` refreshed all 2 413 generated pages from the local cache with `0` network requests and reused all 4 675 mirrored images.
+- no retained page or search entry is left without its module;
+- cached imports made `0` network requests;
+- comparing the retained cached source pages with generated content found 693 source cross-references and 693 local article links;
+- Chrome checks at 1440 × 1000 and 390 × 844 covered overview layout, loaded screenshots, mobile sidebar navigation, section jumps, linked release headings and removed-version redirects.
 
 ## Follow-ups (not defects)
 
-1. **Browser pass** — responsive behaviour, focus order and the print stylesheet were reviewed in code, not in a real browser. Recommended: `/docs`, `/docs/7.10`, `/docs/7.10/top-panel`, `/docs/7.10/top-panel#information-tab` on mobile and desktop.
+1. **Remaining browser coverage** — exhaustive keyboard focus order and print output have not been tested in a browser.
 2. **Screenshots** show the reference product UI and brand.
-3. **Repository size** — 108.8 MB of mirrored images plus 13 MB of generated content. If that becomes a problem, `IMAGE_MAX_WIDTH` / `IMAGE_JPEG_QUALITY` in the importer are the cheapest lever.
+3. **Repository size** — 72.5 MB of retained screenshots. `IMAGE_MAX_WIDTH` / `IMAGE_JPEG_QUALITY` control future image imports.
 4. **Re-import prerequisites** — the upstream export must be reachable; the cached HTML under `node_modules/.cache/docs-import` is not committed. The generated output *is* committed, so an import is only needed when the source content changes. Image optimisation additionally requires Windows PowerShell (D1).
 5. **Recon leftovers** — `docs_contents.html`, `docs_home.html` and `drex_index.js` in the repository root are saved reference pages from Step 3. Nothing references them; they can be deleted.

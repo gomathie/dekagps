@@ -44,9 +44,10 @@ pre-filled `mailto:` fallback to `info@onegps.africa` rather than reporting a fa
 
 ## User Guide (`/docs`)
 
-The product documentation is part of the site: `/docs` (version overview),
-`/docs/:version` and `/docs/:version/:slug`. It covers four guide versions (7.10, 7.9, 7.8, 7.7 —
-2 413 pages) with search, a navigation tree, previous/next paging and printing.
+The product documentation is part of the site: `/docs`, `/docs/7.10` and
+`/docs/7.10/:slug`. Version 7.10 is the only published guide, with 682 pages,
+693 local article references, search, a navigation tree, previous/next paging and printing.
+Older guide URLs redirect to an available 7.10 page or its overview.
 
 All of it is generated and committed:
 
@@ -55,8 +56,8 @@ All of it is generated and committed:
 | `tools/import-docs.mjs` | Importer: crawls the reference documentation, converts pages to structured blocks, rewrites internal links, white-labels the copy, mirrors and re-encodes images. |
 | `src/docs/**` | Generated content: `versions.js`, `pages.js`, `content/<version>/chunk-*.js`, `nav/`, `search/`. Never edit by hand. |
 | `src/docs/registry.js` | Hand-written runtime loader used by the docs view. |
-| `public/docs-assets/images/**` | Mirrored screenshots (4 675 files, ~109 MB). |
-| `tools/check-docs.mjs` | Verification: data consistency + SSR render pass. |
+| `public/docs-assets/images/**` | Referenced screenshots (3 082 files, ~72.5 MB). |
+| `tools/check-docs.mjs` | Verification: all page references and images, data consistency, SSR rendering and white-label rules. |
 
 ```bash
 # Re-import the guide (reference host must be reachable; HTML is cached, ~45 s on a repeat run)
@@ -69,8 +70,7 @@ npm run check:docs
 Reference HTML is cached under `node_modules/.cache/docs-import` (not committed); the generated
 output is committed, so an import is only needed when the source documentation changes.
 See [`IMPLEMENTATION_PLAN.md`](IMPLEMENTATION_PLAN.md) for the content model, the white-label rule
-set and the known limitations (screenshots and functional identifiers still name the reference
-product).
+set and known limitations (raster screenshots still show the original product UI).
 
 ## Analytics & Tracking (Google Tag)
 

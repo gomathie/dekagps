@@ -8,13 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- **User Guide (`/docs`):** The complete OneGPS product documentation is now part of the site instead of an external link. Three routes (`/docs`, `/docs/:version`, `/docs/:version/:slug`) render 2 413 pages across four versions (7.10 current, plus 7.9, 7.8 and 7.7 archives), with a collapsible 687-entry navigation tree, an on-page heading list, previous/next paging, a version switcher that keeps your place and a print stylesheet. Linked from the navbar *Resources* dropdown and the footer *Company* column.
+- **User Guide (`/docs`):** The OneGPS 7.10 product documentation is part of the site. Three routes (`/docs`, `/docs/:version`, `/docs/:version/:slug`) render 682 pages with a collapsible navigation tree, an on-page heading list, previous/next paging and a print stylesheet. Linked from the navbar *Resources* dropdown and the footer *Company* column.
 - **Guide search:** Per-version full-text index (title, headings, body), ranked results with surrounding text, keyboard navigable (`/` focuses the field, arrows/Enter/Escape), loaded lazily on first search so it costs nothing until used.
 - **Documentation pipeline:** `tools/import-docs.mjs` crawls the upstream documentation export once, converts every page to a typed block tree, rewrites internal links to SPA routes and slugs, white-labels the copy, mirrors and re-encodes the screenshots, and writes the generated ES modules under `src/docs/**` + `public/docs-assets/images/**`. `npm run import:docs` re-runs it (HTML is cached, so a repeat import takes ~45 s).
-- **Documentation verification:** `tools/check-docs.mjs` (`npm run check:docs`) checks that navigation, page map and search index agree on every page of every version, then SSR-renders a sample of pages per version and validates headings, image files, internal links, heading anchors, outbound docs links and source-vendor host references. Exits non-zero on failure.
+- **Documentation verification:** `tools/check-docs.mjs` (`npm run check:docs`) checks every page, article link target and image file, and SSR-renders nine representative pages. It also verifies published versions, navigation/search consistency and white-label rules, exiting non-zero on failure.
 - **Print support for the guide:** `@media print` rules in `src/style.css` replace the reference's separate print pages with clean black-on-white output (chrome, sidebar and pager hidden, figures and table rows kept off page boundaries).
 
 ### Changed
+- **7.10 guide only:** The User Guide now publishes 682 pages from version 7.10, with a static version label. Removed-version URLs redirect to the matching 7.10 page when available or to its overview; future imports support only 7.10.
 - **Docs white-label hardening:** The docs importer now unwraps external HTTP(S) links, neutralizes source-vendor hostnames and identifiers in visible docs text, and regenerates the 2 413-page corpus without outbound documentation links.
 - **Navbar and footer:** A *User Guide* entry was added to the existing *Resources* dropdown and *Company* column — no new navigation pattern was introduced.
 - **Analytics Routing Hook:** Added a global `router.afterEach` hook in `src/router/index.js` to manually dispatch Google Analytics pageview events on route navigation, ensuring accurate tracking across the SPA.
@@ -29,9 +30,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Contact Form Honesty:** The form used to switch to a "request captured" success state without sending anything. It now only reports success after an accepted HTTP response; otherwise it explains the failure and offers the email fallback. The `:disabled` state of `.btn-primary` and link styling inside `.form-error` were added to `src/style.css` to support this.
 
 ### Fixed
+- **In-article docs navigation:** Preserved linked headings, link-only paragraphs and references next to bullet markers. Section targets are resolved before list regrouping, and an outdated timetable report reference now points to its existing page. All 693 retained source cross-references are local, with page/heading targets checked across the full guide.
 - **Docs external link leakage:** Removed generated outbound HTTP(S) links and source-vendor host references from the white-labeled User Guide, and added automated checks so they cannot return unnoticed.
 - **Non-functional Contact Form:** Submitting `ContactForm.vue` (used by `/contact` and `/book-a-demo`) previously showed a fake success message and never sent the enquiry — a silent lead loss. See the delivery changes above.
 - **HTML Layout Bugs:** Removed duplicated, improperly nested `.feature-card` and `.benefit-card` `<div>` tags in `src/views/Home.vue` and `src/views/Services/FleetManagement.vue` that were causing layout inconsistencies.
 - **Hero Background Missing in Production:** The home page hero background (`Leverage-1.webp`) was referenced as a raw relative path string inside `Hero.vue`, so Vite never emitted the file and the image 404'd in the built site. It is now a static asset import, which Vite fingerprints and rewrites for the production bundle.
 - **Broken Partner Logo Fallback:** The `@error` fallback on the industrial partner logo in `Home.vue` pointed at another raw relative asset path, which could never resolve once bundled. The fallback now uses an imported asset, so it works in both dev and production.
 - **Corrupted `README.md` (Git saw it as binary):** The file ended with a UTF-16LE fragment (`# dekagps`) and NUL bytes — an accidental PowerShell redirection artifact — which made Git classify the whole README as binary and hide it from diffs and review. The stray bytes were removed byte-precisely, so the README is valid UTF-8 and diffs as text again.
+
+### Removed
+- **Archived documentation:** Removed guide versions 7.9, 7.8 and 7.7, their content/navigation/search modules and cached source pages, the historical release-note branch in 7.10, and the archive version controls. Removed 1 593 unreferenced images; 3 082 referenced screenshots remain (~72.5 MB).

@@ -3,10 +3,11 @@
  *
  *   npm run check:docs
  *
- * Two passes:
+ * Three passes:
  *   1. data consistency — navigation, page map and search index of every version
  *      must describe exactly the same set of pages;
- *   2. render pass — a sample of pages per version is rendered to HTML with Vue's
+ *   2. references — all article links, section targets and image files;
+ *   3. render pass — a sample of pages per version is rendered to HTML with Vue's
  *      SSR renderer, which exercises the whole chain (registry → Docs.vue
  *      components → DocsArticle → DocsBlocks/DocsInline), then the produced
  *      markup, image references and internal links are checked.
