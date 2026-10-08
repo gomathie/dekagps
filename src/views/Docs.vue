@@ -213,11 +213,19 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
         </div>
 
         <nav class="docs-tabs" aria-label="Documentation sections">
-          <router-link to="/docs" :class="{ 'is-active': activeSection === 'guide' }">
+          <router-link
+            to="/docs"
+            :class="{ 'is-active': activeSection === 'guide' }"
+            :aria-current="activeSection === 'guide' ? 'page' : undefined"
+          >
             <i class="fas fa-book" aria-hidden="true"></i>
             User Guide
           </router-link>
-          <router-link to="/docs/api" :class="{ 'is-active': activeSection === 'api' }">
+          <router-link
+            to="/docs/api"
+            :class="{ 'is-active': activeSection === 'api' }"
+            :aria-current="activeSection === 'api' ? 'page' : undefined"
+          >
             <i class="fas fa-code" aria-hidden="true"></i>
             API Reference
           </router-link>

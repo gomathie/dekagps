@@ -29,7 +29,7 @@ const target = (slug) => `/docs/${props.version.id}/${slug}`
     <nav class="breadcrumbs" aria-label="Breadcrumb">
       <router-link :to="sectionPath">{{ sectionLabel }}</router-link>
       <span aria-hidden="true">/</span>
-      <router-link :to="`/docs/${version.id}`">{{ version.label }}</router-link>
+      <router-link :to="sectionPath">{{ version.label }}</router-link>
       <span aria-hidden="true">/</span>
       <span>{{ page.title }}</span>
     </nav>

@@ -329,6 +329,11 @@ The fix was made at the generator layer instead of hand-editing generated chunks
 
 **Date:** 2026-10-08
 
+**Agent Action:** In progress. Thinking of how to replay all pilot logos on images in the doc. to continue......
+
+
+**Date:** 2026-10-08
+
 **Agent Action:** Finished restoring internal guide references and retained only documentation version 7.10.
 
 **What was done:**
