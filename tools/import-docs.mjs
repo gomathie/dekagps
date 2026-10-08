@@ -962,17 +962,25 @@ async function loadNavigation(version) {
   const re = /<a href="([^"]+)"[^>]*?padding-left:\s*([0-9.]+)pt[^>]*?>([\s\S]*?)<\/a>/g
   const entries = []
   const seen = new Set()
+  let excludedDepth = null
   for (const match of region.matchAll(re)) {
     const href = match[1]
     if (!/\.html?$/i.test(href.split('#')[0])) continue
     const slug = pageSlugFromHref(href)
+    const depth = Math.round(parseFloat(match[2]) / 20)
+    if (excludedDepth !== null && depth > excludedDepth) continue
+    excludedDepth = null
+    if (slug === 'release-notes') {
+      excludedDepth = depth
+      continue
+    }
     if (seen.has(slug)) continue
     seen.add(slug)
     entries.push({
       href,
       slug,
       title: brandify(decodeEntities(match[3].replace(/<[^>]+>/g, ''))).replace(/\s+/g, ' ').trim(),
-      depth: Math.round(parseFloat(match[2]) / 20)
+      depth
     })
   }
 

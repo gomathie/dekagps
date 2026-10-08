@@ -112,6 +112,8 @@ async function checkData(version) {
   const mapped = entries.filter((entry) => !hasPage(version.id, entry.slug))
   const indexed = new Set(index.map((page) => page.s))
 
+  if (hasPage(version.id, 'release-notes')) fail(`${version.id}: archived release-note pages remain`)
+
   if (entries.length !== version.pageCount) {
     fail(`${version.id}: versions.js announces ${version.pageCount} pages, navigation has ${entries.length}`)
   }
