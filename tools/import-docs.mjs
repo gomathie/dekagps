@@ -29,7 +29,7 @@
  * until then those panels are the one construct that would not appear.
  *
  * Usage:
- *   node tools/import-docs.mjs                          # every version
+ *   node tools/import-docs.mjs                          # the supported 7.10 guide
  *   node tools/import-docs.mjs --versions=7.10          # the supported version
  *   node tools/import-docs.mjs --versions=7.10 --fresh  # ignore cache and generated files
  *   node tools/import-docs.mjs --only=concepts.html     # debug one page (prints blocks)
@@ -94,6 +94,7 @@ const REPLACEMENT_ROUTES = new Map([['event-media-files', '/docs/api/v2#event-me
  * replacement resumes on the surrounding text.
  */
 const SOURCE_URL_REPLACEMENTS = [
+  [/\b(?:gps\.)?naviafri\.com\b/gi, 'onegps.africa'],
   [/\bdocs\.pilot-gps\.africa\b/gi, 'onegps.africa'],
   [/\b([a-z0-9-]+)\.pilot-gps\.(?:africa|com|ru)\b/gi, 'onegps.africa'],
   [/\b(?:www\.)?pilot-gps\.(?:africa|com|ru)\b/gi, 'onegps.africa'],

@@ -45,9 +45,14 @@ pre-filled `mailto:` fallback to `info@onegps.africa` rather than reporting a fa
 ## User Guide (`/docs`)
 
 The product documentation is part of the site: `/docs`, `/docs/7.10` and
-`/docs/7.10/:slug`. Version 7.10 is the only published guide, with 682 pages,
-693 local article references, search, a navigation tree, previous/next paging and printing.
+`/docs/7.10/:slug`. Version 7.10 is the only published guide, with 574 pages,
+688 local article references, search, a navigation tree, previous/next paging and printing.
 Older guide URLs redirect to an available 7.10 page or its overview.
+
+The structured API reference is available separately at `/docs/api` (NextGen v3),
+`/docs/api/v3` and `/docs/api/v2`. It includes 96 v3 endpoints and 74 v2 endpoints,
+with category search, method badges, parameter tables, copyable URLs and cURL,
+JavaScript and Python examples. API examples use `https://onegps.africa` throughout.
 
 All of it is generated and committed:
 
@@ -56,8 +61,11 @@ All of it is generated and committed:
 | `tools/import-docs.mjs` | Importer: crawls the reference documentation, converts pages to structured blocks, rewrites internal links, white-labels the copy, mirrors and re-encodes images. |
 | `src/docs/**` | Generated content: `versions.js`, `pages.js`, `content/<version>/chunk-*.js`, `nav/`, `search/`. Never edit by hand. |
 | `src/docs/registry.js` | Hand-written runtime loader used by the docs view. |
-| `public/docs-assets/images/**` | Referenced screenshots (3 082 files, ~72.5 MB). |
+| `public/docs-assets/images/**` | Referenced guide screenshots (3 082 files, ~72.5 MB). |
 | `tools/check-docs.mjs` | Verification: all page references and images, data consistency, SSR rendering and white-label rules. |
+| `tools/import-api-reference.mjs` | Imports and white-labels the structured v2/v3 API datasets from the standalone API documentor. |
+| `src/api/data/**` | Generated v2/v3 endpoint definitions used by the API portal. |
+| `tools/check-api-reference.mjs` | Verifies endpoint counts, required fields and OneGPS-only addresses/branding. |
 
 ```bash
 # Re-import the guide (reference host must be reachable; HTML is cached, ~45 s on a repeat run)
@@ -65,6 +73,12 @@ npm run import:docs
 
 # Verify the imported guide (navigation/map/index consistency, rendering, images, links)
 npm run check:docs
+
+# Import structured API data from the sibling API documentor project
+npm run import:api -- "C:\path\to\api-documentor"
+
+# Verify the API datasets
+npm run check:api
 ```
 
 Reference HTML is cached under `node_modules/.cache/docs-import` (not committed); the generated

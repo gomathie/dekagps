@@ -368,6 +368,45 @@ Fixed the existing importer and reader, regenerated retained pages from the loca
 
 ---
 
+**Date:** 2026-10-09
+
+**Agent Action:** Replaced the duplicate API guide branch with a standalone OneGPS API portal.
+
+**What was done:**
+- Imported the reference API documentor datasets into `src/api/data/` and rebranded all endpoint URLs, descriptions and examples to OneGPS using `https://onegps.africa`.
+- Added the reference portal layout under `/docs/api`, `/docs/api/v2` and `/docs/api/v3`: responsive API navbar, v2/v3 switcher, searchable category sidebar, scroll-spy active endpoint, parameter tables, request/response examples and copy controls.
+- Kept the portal standalone from the marketing navbar/footer while providing direct links back to the OneGPS site and User Guide.
+- Removed the duplicate API branch from the generated 7.10 User Guide. The guide now contains 574 pages across 13 sections; its retained API handoff uses the internal `/docs/api/v2` route.
+- Added repeatable import and verification tools for the structured API datasets, including checks for source-brand text, server placeholders, non-OneGPS hosts, endpoint counts and required endpoint fields.
+
+**Files changed:**
+- `src/views/ApiDocs.vue`, `src/components/api/**`, `src/api/brand.js`, `src/api/data/**`
+- `src/App.vue`, `src/router/index.js`, `src/components/docs/DocsInline.vue`
+- `tools/import-api-reference.mjs`, `tools/check-api-reference.mjs`, `tools/import-docs.mjs`, `tools/check-docs.mjs`
+- `package.json`, `package-lock.json`
+- `src/docs/**`, `README.md`, `IMPLEMENTATION_PLAN.md`, `CHANGELOG.md`, `agents.md`
+
+**Why:**
+The standalone API documentor already contained the complete structured endpoint experience. Making it the sole API reference avoids maintaining duplicate prose and structured API implementations, while keeping the User Guide focused on product workflows.
+
+**Method:**
+Copied the reference component structure into API-scoped Vue components, adapted it to the OneGPS navy/gold theme and route architecture, imported the datasets through a transformation boundary, removed the old API navigation branch at the generator layer, and linked the one remaining guide reference to the internal API portal.
+
+**Verification:**
+- `npm.cmd run check:api` passes: 74 v2 endpoints and 96 v3 endpoints, all OneGPS-only addresses and no source-brand or placeholder text.
+- `npm.cmd run check:docs` passes: 574 guide pages, 688 article links and 9 SSR-rendered pages.
+- `npm.cmd run build` passes; only the existing large generated documentation chunk warning remains.
+- Chrome desktop/mobile checks pass for v2/v3 counts, category search, code tabs, copy controls, standalone chrome, mobile drawer and zero horizontal overflow.
+
+---
+
+**Date:** 2026-10-09
+**Agent Action:** Removed the final embedded source hostname from generated guide content.
+**What was done:** Updated the documentation importer to rewrite `gps.naviafri.com` when it appears inside embedded code/CSS examples, regenerated the 7.10 guide, and confirmed the public API and guide modules contain no `naviafri`, `pilot`, or `<server_address>` tokens.
+**Files changed:** `tools/import-docs.mjs`, `src/docs/content/7.10/chunk-020.js`, `src/docs/search/7.10.js`, `CHANGELOG.md`, `agents.md`.
+**Why:** White-labeling must cover code examples and search indexes as well as ordinary page copy, so users never encounter the previous client hostname.
+**Method:** Added the replacement at the importer layer, regenerated from cached source HTML with no network requests, then ran the docs/API validators and a generated-module token audit.
+
 ## Standing Instructions for ALL Future Agents
 
 > **READ THIS BEFORE MAKING ANY CHANGES.**

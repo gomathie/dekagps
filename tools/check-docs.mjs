@@ -216,6 +216,7 @@ async function checkRender(version, entries) {
     }
 
     for (const match of html.matchAll(/href="\/docs\/([^/"]+)\/([^"#]+)/g)) {
+      if (match[1] === 'api') continue
       if (!hasPage(match[1], match[2])) {
         fail(`${version.id}/${entry.slug}: broken internal link to ${match[1]}/${match[2]}`)
       }

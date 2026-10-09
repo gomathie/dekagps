@@ -8,24 +8,24 @@ The Docs section is a normal part of the existing Vue 3 SPA: same header, main n
 
 ## Status
 
-**Implemented and verified** — 7.10 is the only published guide: 682 pages, 28 content chunks, 14 sections and 693 local article references. Archive guides and their release-note branch have been removed. Docs checks, the production build and desktop/mobile Chrome navigation checks pass.
+**Implemented and verified** — 7.10 is the only published guide: 574 pages, 23 content chunks, 13 sections and 688 local article references. The legacy API branch is now a separate structured portal with 74 v2 and 96 v3 endpoints. Archive guides and duplicate API prose pages have been removed. Docs checks, API checks, the production build and desktop/mobile Chrome navigation checks pass.
 
 ## Steps
 
 - [x] 1. Inspect existing website architecture
 - [x] 2. Inspect reference documentation
 - [x] 3. Map documentation structure
-- [x] 4. Collect/recreate documentation content — 7.10 only, 682 pages
+- [x] 4. Collect/recreate documentation content — 7.10 only, 574 guide pages
 - [x] 5. Collect/recreate documentation assets — 3 082 referenced images retained
 - [x] 6. Design documentation content architecture
 - [x] 7. Implement Docs page (`/docs`, `/docs/:version`, `/docs/:version/:slug`)
 - [x] 8. Add Docs to main navigation (navbar *Resources* dropdown + footer *Company* column)
-- [x] 9. Implement documentation navigation (687 entry tree, collapsible, filterable)
+- [x] 9. Implement documentation navigation (574-entry tree, collapsible, filterable)
 - [x] 10. Implement documentation search (per-version index, ranked, keyboard navigable)
 - [x] 11. Publish 7.10 only; replace the version selector with a version label
 - [x] 12. Implement previous/next navigation (reading order of the navigation tree)
 - [x] 13. White-label branding (text, titles, slugs, file names, source-vendor hosts and outbound docs links; D3)
-- [x] 14. Preserve all 693 internal references, including linked headings, bullet lists and section jumps
+- [x] 14. Preserve all 688 guide references, including linked headings, bullet lists and section jumps
 - [x] 15. Implement responsive behavior (sidebar becomes a drawer under 992 px)
 - [x] 16. Accessibility review (landmarks, labels, roles, focus, keyboard, alt text)
 - [x] 17. Performance review (per-version, per-chunk lazy loading; D5, D6)
@@ -33,6 +33,7 @@ The Docs section is a normal part of the existing Vue 3 SPA: same header, main n
 - [x] 19. Check desktop and mobile in Chrome: layout, images, sidebar, section jumps and archive URL redirects
 - [x] 20. Final QA (build, SSR render, image and link checks)
 - [x] 21. Finalize implementation
+- [x] 22. Import the structured v2/v3 API portal and separate it from the User Guide
 
 ## Completed Work
 
@@ -64,7 +65,7 @@ The Docs section is a normal part of the existing Vue 3 SPA: same header, main n
 
 | Version | Pages | Chunk files |
 | --- | --- | --- |
-| 7.10 | **682** | **28** |
+| 7.10 | **574** | **23** |
 
 ### Step 5 — Assets imported
 
@@ -143,7 +144,7 @@ Screenshots still show the original product UI, including its logo and name. The
 
 Every page becomes `{ title, toc, blocks }` where `blocks` is a recursive tree (`h`, `p`, `list`, `table`, `img`, `quote`, `code`, `hr`). 25 pages per chunk, one chunk set per version. Rationale:
 
-- 682 single-page modules would bloat the Vite module graph; 28 chunks keep the build fast while staying easy to inspect.
+- 574 single-page modules would bloat the Vite module graph; 23 chunks keep the build fast while staying easy to inspect.
 - Chunks, navigation and the 7.10 search index are loaded on demand.
 - A markdown/MDX pipeline plus a sanitising renderer would have been a new dependency and an XSS surface for content we do not control; rendering a typed block tree with `v-for`/`v-if` is safer and smaller.
 
@@ -163,7 +164,7 @@ Mirrored images live in `public/docs-assets/images/` and are referenced by absol
 /docs/:version/:slug  → one guide page
 ```
 
-Three routes, one view, registered in `src/router/index.js` next to the other resources routes, so the existing `<title>`/description/`og:` handling and the Analytics hook apply unchanged. `Docs.vue` additionally sets `document.title` and the meta description from the imported page, and deep anchors (`#information-tab`) are scrolled manually because the target only exists once the page chunk has loaded.
+The guide routes (`/docs`, `/docs/:version`, `/docs/:version/:slug`) use one view, while the structured API portal has `/docs/api`, `/docs/api/v2` and `/docs/api/v3`. API routes use a standalone reference layout with its own responsive sidebar, version switcher, endpoint search and code examples, while linking back to the OneGPS site and User Guide.
 
 ### D8 — Removed-version URLs resolve to 7.10
 
@@ -179,7 +180,8 @@ Commands (both pass):
 
 ```bash
 npm run build       # production build; existing search-index size warning
-npm run check:docs  # 682 pages, 693 article links, 9 pages SSR-rendered
+npm run check:docs  # 574 pages, 688 article links, 9 pages SSR-rendered
+npm run check:api   # 74 v2 + 96 v3 endpoints and OneGPS-only address checks
 ```
 
 `tools/check-docs.mjs` asserts that:
@@ -201,7 +203,8 @@ Additional checks performed:
 - self-referencing components resolve (`resolveComponent("DocsBlocks", true)` is resolved through the explicit `name` in each SFC);
 - no retained page or search entry is left without its module;
 - cached imports made `0` network requests;
-- comparing the retained cached source pages with generated content found 693 source cross-references and 693 local article links;
+- comparing the retained cached source pages with generated content found 688 source cross-references and 688 generated local links;
+- API portal checks covered 74 v2 endpoints, 96 v3 endpoints, category search, code tabs, copy controls and responsive navigation;
 - Chrome checks at 1440 × 1000 and 390 × 844 covered overview layout, loaded screenshots, mobile sidebar navigation, section jumps, linked release headings and removed-version redirects.
 
 ## Follow-ups (not defects)
