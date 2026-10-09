@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **GSAP fleet hero animation:** Added GSAP-powered vehicle, truck, route, signal, and telemetry animations to the image-free homepage hero, with responsive positioning and reduced-motion handling.
 - **Standalone API portal:** Added `/docs/api`, `/docs/api/v2` and `/docs/api/v3` using the white-labeled API documentor layout, with 74 Standard API v2 endpoints, 96 NextGen API v3 endpoints, category navigation, endpoint search, parameter tables, copy controls and cURL/JavaScript/Python examples.
 - **API data pipeline:** Added `tools/import-api-reference.mjs` and `tools/check-api-reference.mjs`; imported endpoint data is normalized to `https://onegps.africa` and rejects source-brand text, placeholders and non-OneGPS hosts.
 - **User Guide (`/docs`):** The OneGPS 7.10 product documentation is part of the site. Three routes (`/docs`, `/docs/:version`, `/docs/:version/:slug`) render 574 guide pages with a collapsible navigation tree, an on-page heading list, previous/next paging and a print stylesheet. Linked from the navbar *Resources* dropdown and the footer *Company* column.
@@ -17,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Print support for the guide:** `@media print` rules in `src/style.css` replace the reference's separate print pages with clean black-on-white output (chrome, sidebar and pager hidden, figures and table rows kept off page boundaries).
 
 ### Changed
+- **Hero realism pass:** Expanded the GSAP scene into a full map-style operations view with grid texture, road corridors, district labels, distributed fleet vehicles, telemetry, and fleet-status panels.
+- **Full-hero fleet motion:** Expanded the GSAP scene across the complete hero with six moving car/truck markers, full-width route traces, and distributed signal points instead of concentrating the animation on one side.
+- **Hero image removal:** Removed the homepage hero photography and kept the animated tracking layer on a clean OneGPS navy background.
+- **Animated fleet hero:** Added a self-contained GPS tracking animation layer with pulsing vehicle markers, route lines, and a live fleet status chip over the subject-specific hero image. Includes reduced-motion support.
 - **Homepage hero imagery:** Replaced the generic hero background with a fleet-tracking scene showing live vehicle markers and telemetry dashboards, making the first viewport immediately relevant to OneGPS.
 - **Services directory completeness:** Added Driver Behavior and Vehicle Leasing image cards to the Services overview so every service route is represented on the page.
 - **Smart Farming industry listing:** Added Smart Farming as a named industry card on the Industries overview so the dedicated farming solution is visible alongside the other sectors.

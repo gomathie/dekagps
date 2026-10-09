@@ -470,6 +470,41 @@ Copied the reference component structure into API-scoped Vue components, adapted
 **Why:** The homepage first viewport should communicate GPS tracking and fleet operations immediately rather than relying on a generic technology image.
 **Method:** Reviewed local image candidates, selected the clearest fleet-tracking asset, and preserved the existing overlay and responsive hero behavior.
 
+**Date:** 2026-10-09
+**Agent Action:** Added a subject-specific animated hero treatment.
+**What was done:** Added local CSS animation to the homepage hero with route lines, pulsing tracking markers, and a live fleet-view status chip layered over the fleet telemetry image. Added mobile positioning and `prefers-reduced-motion` handling.
+**Files changed:** `src/components/Hero.vue`, `CHANGELOG.md`, `agents.md`.
+**Why:** The hero should communicate GPS/fleet tracking through motion as well as imagery, without an external embed, third-party branding, or a network dependency.
+**Method:** Used fleet-animation patterns found in current route-animation references, implemented the visual layer with existing CSS/design tokens, and verified the production build.
+
+**Date:** 2026-10-09
+**Agent Action:** Removed the homepage hero image.
+**What was done:** Removed the hero image import, inline background binding, and image background styles. The hero now uses the OneGPS navy background while retaining the relevant animated route and tracking markers.
+**Files changed:** `src/components/Hero.vue`, `CHANGELOG.md`, `agents.md`.
+**Why:** The requested hero treatment should be image-free while preserving a clear visual connection to GPS fleet tracking.
+**Method:** Removed the asset dependency at the component source and verified the production build.
+
+**Date:** 2026-10-09
+**Agent Action:** Upgraded the image-free hero to an advanced GSAP fleet animation.
+**What was done:** Installed GSAP and added animated car/truck markers, route movement, signal pulses, telemetry bars, and an active-unit status card to `Hero.vue`.
+**Files changed:** `src/components/Hero.vue`, `package.json`, `package-lock.json`, `CHANGELOG.md`, `agents.md`.
+**Why:** The requested hero needed richer subject-specific motion with visible fleet objects rather than simple CSS pulses alone.
+**Method:** Used GSAP timelines/tweens scoped to the component, Lucide vehicle icons, responsive CSS positions, component cleanup on unmount, and a `prefers-reduced-motion` guard. Verified with the production build.
+
+**Date:** 2026-10-09
+**Agent Action:** Expanded the GSAP fleet animation across the full hero.
+**What was done:** Added three more animated vehicle markers, widened route traces across the viewport, redistributed tracking signals, and added responsive positions for the full-hero scene.
+**Files changed:** `src/components/Hero.vue`, `CHANGELOG.md`, `agents.md`.
+**Why:** The previous animation was visually concentrated on the right side; the requested experience needed motion across the entire hero surface.
+**Method:** Extended the existing GSAP context/tweens and reused the Lucide car/truck icons without introducing another animation dependency. Verified the production build.
+
+**Date:** 2026-10-09
+**Agent Action:** Reworked the hero animation into a realistic fleet operations scene.
+**What was done:** Added a layered map surface, road corridors, district labels, fleet status panel, route corridors, telemetry card, and distributed car/truck markers to the GSAP hero scene.
+**Files changed:** `src/components/Hero.vue`, `CHANGELOG.md`, `agents.md`.
+**Why:** The prior motion was too minimal and abstract. A map-oriented operations view better represents real GPS fleet monitoring.
+**Method:** Built the scene from local CSS layers and GSAP motion using the existing Lucide vehicle icons, with responsive positioning and reduced-motion support. Verified the production build.
+
 ## Standing Instructions for ALL Future Agents
 
 > **READ THIS BEFORE MAKING ANY CHANGES.**
