@@ -3,12 +3,14 @@
     <div class="container">
       <div class="hero-inner">
         <div class="hero-text-box" v-reveal>
-          <h1 class="gradient-text">Cutting-Edge Fleet &amp;<br>Technology Solutions</h1>
+          <p class="hero-eyebrow">ONEGPS TELEMATICS PLATFORM</p>
+          <h1>Clarity for every mile your business moves.</h1>
           <div class="gold-divider"></div>
-          <p class="subtitle">Our cutting-edge technologies optimize all business processes to give the highest efficiency. The best solutions you can always trust!</p>
-          <router-link to="/services" class="btn-primary" style="margin-top: 1rem;">
-            Explore More <i class="fas fa-long-arrow-alt-right"></i>
-          </router-link>
+          <p class="subtitle">Track assets in real time, reduce operating costs, and turn fleet data into confident decisions with one connected platform.</p>
+          <div class="hero-actions">
+            <router-link to="/book-a-demo" class="btn-primary">Book a Demo <i class="fas fa-arrow-right"></i></router-link>
+            <router-link to="/services" class="btn-ghost">Explore solutions <i class="fas fa-arrow-right"></i></router-link>
+          </div>
         </div>
       </div>
     </div>
@@ -24,21 +26,21 @@ import bgImage from '../../images/Leverage-1.webp';
 
 <style scoped>
 .hero {
-  min-height: 660px;
+  min-height: min(760px, 88vh);
   display: flex;
   align-items: center;
   position: relative;
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
-  padding: 0;
+  padding: 5rem 0 3rem;
 }
 
 .hero::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 8, 18, 0.54);
   z-index: 1;
 }
 
@@ -54,23 +56,29 @@ import bgImage from '../../images/Leverage-1.webp';
 .hero-inner {
   display: flex;
   align-items: center;
-  min-height: 660px;
+  min-height: min(760px, 88vh);
 }
 
 .hero-text-box {
-  background: rgba(0, 0, 17, 0.47);
-  border-radius: 4px;
-  padding: 60px 50px;
-  max-width: 550px;
+  max-width: 680px;
+  padding: 2rem 0;
+}
+
+.hero-eyebrow {
+  color: var(--accent-gold);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  margin-bottom: 1.25rem;
 }
 
 .hero-text-box h1 {
-  font-size: 1.625rem;
+  font-size: clamp(2.75rem, 5vw, 4.75rem);
   text-transform: capitalize;
-  letter-spacing: 1px;
+  letter-spacing: 0;
   color: #ffffff;
   margin-bottom: 0;
-  line-height: 1.4;
+  line-height: 1.04;
 }
 
 .gold-divider {
@@ -81,11 +89,20 @@ import bgImage from '../../images/Leverage-1.webp';
 }
 
 .hero-text-box .subtitle {
-  font-size: 0.95rem;
+  max-width: 560px;
+  font-size: 1.08rem;
   color: var(--text-primary);
   opacity: 0.85;
   margin-bottom: 1.5rem;
   line-height: 1.7;
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  margin-top: 1.75rem;
 }
 
 .hero-text-box .btn-ghost {
@@ -104,20 +121,23 @@ import bgImage from '../../images/Leverage-1.webp';
 
 @media (max-width: 768px) {
   .hero {
-    min-height: 500px;
+    min-height: 620px;
+    padding: 4rem 0 2rem;
   }
 
   .hero-inner {
-    min-height: 500px;
+    min-height: 620px;
   }
 
   .hero-text-box {
-    padding: 30px 25px;
+    padding: 1.5rem 0;
     max-width: 100%;
   }
 
   .hero-text-box h1 {
-    font-size: 1.3rem;
+    font-size: 2.65rem;
   }
+
+  .hero-text-box .subtitle { font-size: 1rem; }
 }
 </style>

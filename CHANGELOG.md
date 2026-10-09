@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Print support for the guide:** `@media print` rules in `src/style.css` replace the reference's separate print pages with clean black-on-white output (chrome, sidebar and pager hidden, figures and table rows kept off page boundaries).
 
 ### Changed
+- **Services navigation:** Replaced the long Services hover menu with a direct `/services` page link. The Services page remains the visual service directory with image cards, descriptions, and dedicated detail links.
+- **Mobile home validation:** Checked the homepage at a 390px viewport; the fixed navbar, hero, proof strip, and stacked Solutions cards fit without horizontal overflow.
+- **Solutions section UI:** Reframed the home-page solutions area with a stronger heading, platform context, icon-led cards, clearer service links, consistent card heights, and responsive two-column/mobile layouts.
+- **Home page UI refresh:** Reworked the hero hierarchy and calls to action, added a responsive platform proof strip, and refined home-page card spacing and responsive layout for clearer scanning.
 - **API navigation:** API pages now use the main OneGPS site navbar, with a compact mobile API-navigation toggle retained for endpoint browsing.
 - **7.10 guide only:** The User Guide now publishes 574 pages from version 7.10, with a static version label. The duplicate legacy API branch is removed because the API reference is now a separate v2/v3 portal. Removed-version URLs redirect to the matching 7.10 page when available or to its overview; future guide imports support only 7.10.
 - **Docs white-label hardening:** The docs importer now unwraps external HTTP(S) links, neutralizes source-vendor hostnames and identifiers in visible docs text, and regenerates the 574-page guide without outbound documentation links.

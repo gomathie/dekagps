@@ -21,6 +21,23 @@ import industrialLogoFallback from '../../images/industrial-logo_logo2.webp';
       </div>
     </section>
 
+    <section class="home-proof" aria-label="OneGPS platform benefits" v-reveal>
+      <div class="home-proof-grid">
+        <div class="proof-item">
+          <strong>Live visibility</strong>
+          <span>Know where every asset is and what it is doing.</span>
+        </div>
+        <div class="proof-item">
+          <strong>Actionable data</strong>
+          <span>Turn vehicle and sensor data into better decisions.</span>
+        </div>
+        <div class="proof-item">
+          <strong>Built to integrate</strong>
+          <span>Connect hardware, teams, and business systems.</span>
+        </div>
+      </div>
+    </section>
+
     <!-- Our Solutions -->
     <Solutions />
 
@@ -109,7 +126,7 @@ import industrialLogoFallback from '../../images/industrial-logo_logo2.webp';
 
 <style scoped>
 .trusted-by {
-  padding: 4rem 2rem;
+  padding: 3.25rem 2rem 2.5rem;
   background: var(--bg-darker);
   text-align: center;
   border-bottom: 1px solid rgba(255,255,255,0.05);
@@ -137,8 +154,37 @@ import industrialLogoFallback from '../../images/industrial-logo_logo2.webp';
   filter: grayscale(0%) opacity(1);
 }
 
+.home-proof {
+  padding: 0 2rem 5rem;
+  background: var(--bg-darker);
+}
+.home-proof-grid {
+  max-width: 1140px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid var(--glass-border);
+  background: rgba(0, 23, 45, 0.45);
+}
+.proof-item {
+  padding: 1.5rem 2rem;
+  border-right: 1px solid var(--glass-border);
+}
+.proof-item:last-child { border-right: 0; }
+.proof-item strong {
+  display: block;
+  color: var(--accent-gold);
+  font-size: 1rem;
+  margin-bottom: 0.35rem;
+}
+.proof-item span {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
 .why-partner {
-  padding: 6rem 2rem;
+  padding: 7rem 2rem;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -154,7 +200,8 @@ import industrialLogoFallback from '../../images/industrial-logo_logo2.webp';
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   padding: 2rem;
-  border-radius: 12px;
+  border-radius: 8px;
+  min-height: 220px;
 }
 .feature-card h3 {
   margin-bottom: 1rem;
@@ -226,6 +273,9 @@ import industrialLogoFallback from '../../images/industrial-logo_logo2.webp';
   border-radius: 12px;
 }
 @media (max-width: 768px) {
+  .home-proof-grid { grid-template-columns: 1fr; }
+  .proof-item { border-right: 0; border-bottom: 1px solid var(--glass-border); }
+  .proof-item:last-child { border-bottom: 0; }
   .about-container {
     grid-template-columns: 1fr;
   }

@@ -414,6 +414,34 @@ Copied the reference component structure into API-scoped Vue components, adapted
 **Why:** The API reference should feel like part of the OneGPS website and provide the same primary navigation as every other page.
 **Method:** Reused the existing shell navbar, preserved the API sidebar and overlay behavior, and added responsive spacing/control only where the API layout needs it.
 
+**Date:** 2026-10-09
+**Agent Action:** Refined the OneGPS home page user experience.
+**What was done:** Reworked the hero copy and hierarchy, replaced the boxed hero treatment with a more open layout, added primary and secondary calls to action, introduced a responsive proof strip, and improved solution/benefit card rhythm and mobile layout.
+**Files changed:** `src/components/Hero.vue`, `src/views/Home.vue`, `CHANGELOG.md`, `agents.md`.
+**Why:** The home page is the primary entry point and needed a clearer first viewport, stronger conversion path, and more varied visual pacing while preserving the existing OneGPS palette and assets.
+**Method:** Extended the existing Hero and Home components in place, reused current routes/assets/design tokens, and verified the production bundle with `npm run build`.
+
+**Date:** 2026-10-09
+**Agent Action:** Refined the home-page Solutions section.
+**What was done:** Added a stronger section introduction, Lucide icons, numbered solution cards, clearer action labels, improved card hierarchy, and responsive layouts for tablet and mobile widths.
+**Files changed:** `src/components/Solutions.vue`, `CHANGELOG.md`, `agents.md`.
+**Why:** The solutions grid needed more visual distinction and clearer scanning/action cues as the next major section after the homepage hero.
+**Method:** Reworked the existing component in place, reused the current service routes and design tokens, and verified the production build.
+
+**Date:** 2026-10-09
+**Agent Action:** Validated the homepage mobile layout.
+**What was done:** Tested the homepage at 390x844 through the local Chrome debugging session, checking document width, navbar bounds, hero bounds, Solutions grid bounds, and card stacking.
+**Files changed:** `CHANGELOG.md`, `agents.md`.
+**Why:** The homepage UI changes needed a real narrow-viewport check to catch overflow or broken wrapping.
+**Method:** Used Chrome CDP device metrics and DOM geometry; confirmed viewport width remained 390px and all homepage regions stayed within it.
+
+**Date:** 2026-10-09
+**Agent Action:** Simplified Services navigation around the Services overview page.
+**What was done:** Removed the long Services dropdown from the main navbar and made Services a direct route link to `/services`, where the existing image-led service cards and descriptions provide the full directory.
+**Files changed:** `src/components/Navbar.vue`, `CHANGELOG.md`, `agents.md`.
+**Why:** A long hover menu was difficult to scan, especially on mobile. The visual Services page is a better place to compare offerings and choose a detail page.
+**Method:** Reused the existing Services route and cards, changing only the navbar ownership of the links.
+
 ## Standing Instructions for ALL Future Agents
 
 > **READ THIS BEFORE MAKING ANY CHANGES.**

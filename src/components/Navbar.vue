@@ -34,22 +34,7 @@ onUnmounted(() => {
     <ul class="nav-links" :class="{ 'mobile-open': isMobileMenuOpen }">
       <li><router-link to="/" @click="closeMobileMenu">Home</router-link></li>
 
-      <li class="dropdown">
-        <button class="nav-drop-toggle" type="button">
-          Services <i class="fas fa-chevron-down"></i>
-        </button>
-        <ul class="dropdown-menu">
-          <li><router-link to="/services" @click="closeMobileMenu">All Services</router-link></li>
-          <li><router-link to="/tracking-solutions" @click="closeMobileMenu">Tracking Solutions</router-link></li>
-          <li><router-link to="/fuel-monitoring" @click="closeMobileMenu">Fuel Monitoring</router-link></li>
-          <li><router-link to="/fleet-management" @click="closeMobileMenu">Fleet Management</router-link></li>
-          <li><router-link to="/driver-behavior" @click="closeMobileMenu">Driver Behavior</router-link></li>
-          <li><router-link to="/telematics" @click="closeMobileMenu">Telematics</router-link></li>
-          <li><router-link to="/iot-smart-homes" @click="closeMobileMenu">IoT and Smart Homes</router-link></li>
-          <li><router-link to="/web-services" @click="closeMobileMenu">Web Services</router-link></li>
-          <li><router-link to="/vehicle-leasing-solution" @click="closeMobileMenu">Vehicle Leasing Solution</router-link></li>
-        </ul>
-      </li>
+      <li><router-link to="/services" @click="closeMobileMenu">Services</router-link></li>
 
       <li class="dropdown">
         <button class="nav-drop-toggle" type="button">
