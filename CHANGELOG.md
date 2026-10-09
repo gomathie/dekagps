@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Print support for the guide:** `@media print` rules in `src/style.css` replace the reference's separate print pages with clean black-on-white output (chrome, sidebar and pager hidden, figures and table rows kept off page boundaries).
 
 ### Changed
+- **Homepage hero imagery:** Replaced the generic hero background with a fleet-tracking scene showing live vehicle markers and telemetry dashboards, making the first viewport immediately relevant to OneGPS.
+- **Services directory completeness:** Added Driver Behavior and Vehicle Leasing image cards to the Services overview so every service route is represented on the page.
+- **Smart Farming industry listing:** Added Smart Farming as a named industry card on the Industries overview so the dedicated farming solution is visible alongside the other sectors.
+- **Industries navigation:** Replaced the Industries dropdown with a direct `/industries` overview-page link, keeping detailed industry choices on the page for richer descriptions and visual browsing.
 - **Services navigation:** Replaced the long Services hover menu with a direct `/services` page link. The Services page remains the visual service directory with image cards, descriptions, and dedicated detail links.
 - **Mobile home validation:** Checked the homepage at a 390px viewport; the fixed navbar, hero, proof strip, and stacked Solutions cards fit without horizontal overflow.
 - **Solutions section UI:** Reframed the home-page solutions area with a stronger heading, platform context, icon-led cards, clearer service links, consistent card heights, and responsive two-column/mobile layouts.

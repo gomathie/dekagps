@@ -442,6 +442,34 @@ Copied the reference component structure into API-scoped Vue components, adapted
 **Why:** A long hover menu was difficult to scan, especially on mobile. The visual Services page is a better place to compare offerings and choose a detail page.
 **Method:** Reused the existing Services route and cards, changing only the navbar ownership of the links.
 
+**Date:** 2026-10-09
+**Agent Action:** Simplified Industries navigation around the overview page.
+**What was done:** Removed the Industries dropdown from the main navbar and made Industries a direct route link to `/industries`, leaving detailed industry navigation to the overview page.
+**Files changed:** `src/components/Navbar.vue`, `CHANGELOG.md`, `agents.md`.
+**Why:** Industries now follows the same clean navigation model as Services and avoids small, hard-to-scan dropdown menus.
+**Method:** Reused the existing Industries route and page content, changing only the navbar link structure.
+
+**Date:** 2026-10-09
+**Agent Action:** Added Smart Farming to the Industries overview.
+**What was done:** Renamed the existing Agriculture card to Smart Farming and kept its farming-specific imagery and description visible in the industry directory.
+**Files changed:** `src/views/Industries.vue`, `CHANGELOG.md`, `agents.md`.
+**Why:** Smart Farming already has a dedicated route and page but was not represented in the Industries overview after the navbar dropdown was removed.
+**Method:** Reused the existing agriculture image/card and updated its visible label without adding duplicate navigation.
+
+**Date:** 2026-10-09
+**Agent Action:** Completed the Services overview directory.
+**What was done:** Audited the Services page against the service routes and added missing Driver Behavior and Vehicle Leasing image cards with descriptions and detail links.
+**Files changed:** `src/views/Services.vue`, `CHANGELOG.md`, `agents.md`.
+**Why:** Removing the navbar dropdown made the Services overview the primary directory, so every available service needs to be discoverable there.
+**Method:** Reused existing local image assets and service routes, extended the existing data-driven card array, and verified the production build.
+
+**Date:** 2026-10-09
+**Agent Action:** Replaced the homepage hero with subject-specific fleet imagery.
+**What was done:** Updated `Hero.vue` to use the existing fleet-tracking image with vehicle markers and a telemetry dashboard as the production-safe Vite asset import.
+**Files changed:** `src/components/Hero.vue`, `CHANGELOG.md`, `agents.md`.
+**Why:** The homepage first viewport should communicate GPS tracking and fleet operations immediately rather than relying on a generic technology image.
+**Method:** Reviewed local image candidates, selected the clearest fleet-tracking asset, and preserved the existing overlay and responsive hero behavior.
+
 ## Standing Instructions for ALL Future Agents
 
 > **READ THIS BEFORE MAKING ANY CHANGES.**

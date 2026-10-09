@@ -21,7 +21,7 @@
 // Imported so Vite fingerprints the file and rewrites the URL for the production
 // bundle. A raw relative string only resolves while the dev server serves the
 // project root, which is why the hero background disappeared after `vite build`.
-import bgImage from '../../images/Leverage-1.webp';
+import bgImage from '../../images/Is-Your-Fleet-Ready-for-GPS-Tracking-Solutions_-Find-Out-Why-Its-Crucial.webp';
 </script>
 
 <style scoped>

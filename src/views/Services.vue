@@ -7,6 +7,8 @@ import webImg from '../../images/Cursos-de-Desenvolvimento-Web.webp';
 import telematicsImg from '../../images/Is-Your-Fleet-Ready-for-GPS-Tracking-Solutions_-Find-Out-Why-Its-Crucial.webp';
 import maintenanceImg from '../../images/car-mechanic-green-screen-tablet.jpg';
 import fuelImg from '../../images/driver-checking-stock-market-his-phone-while-car.webp';
+import driverImg from '../../images/autonomous-car-sensor-system-concept-safety-driverless-mode-car-control-1-scaled-1.webp';
+import leasingImg from '../../images/PTS-Vehicle-Hire-Berkshire-_-Ambulance-Hire-in-Berkshire.webp';
 
 const services = [
   {
@@ -44,6 +46,18 @@ const services = [
     to: '/fuel-monitoring',
     img: fuelImg,
     desc: 'Detect fuel misuse and monitor the entire fuel distribution cycle, from filling stations to vehicle tanks.'
+  },
+  {
+    title: 'Driver Behavior',
+    to: '/driver-behavior',
+    img: driverImg,
+    desc: 'Improve safety and reduce operating costs with reports for speeding, harsh braking, acceleration, idling, and risky driving.'
+  },
+  {
+    title: 'Vehicle Leasing',
+    to: '/vehicle-leasing-solution',
+    img: leasingImg,
+    desc: 'Protect leased vehicles with live location, mileage, usage visibility, geofencing alerts, and recovery support.'
   }
 ];
 </script>

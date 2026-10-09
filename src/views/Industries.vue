@@ -51,7 +51,7 @@ import CTA from '../components/CTA.vue';
           <div class="industry-card">
             <img src="../../images/tractor-agricultural-machine-cultivating-field-500x332-1.webp" alt="Agriculture">
             <div class="card-content">
-              <h3>Agriculture</h3>
+              <h3>Smart Farming</h3>
               <p>Deploy precision farming techniques using IoT environmental sensors and track exact tractor acreage.</p>
               <router-link to="/industries/perfect-fit" class="learn-more">Learn More →</router-link>
             </div>

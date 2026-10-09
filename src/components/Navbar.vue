@@ -36,16 +36,7 @@ onUnmounted(() => {
 
       <li><router-link to="/services" @click="closeMobileMenu">Services</router-link></li>
 
-      <li class="dropdown">
-        <button class="nav-drop-toggle" type="button">
-          Industries <i class="fas fa-chevron-down"></i>
-        </button>
-        <ul class="dropdown-menu">
-          <li><router-link to="/industries" @click="closeMobileMenu">All Industries</router-link></li>
-          <li><router-link to="/smart-farming" @click="closeMobileMenu">Smart Farming</router-link></li>
-          <li><router-link to="/industries/perfect-fit" @click="closeMobileMenu">Perfect Fit for Any Industry</router-link></li>
-        </ul>
-      </li>
+      <li><router-link to="/industries" @click="closeMobileMenu">Industries</router-link></li>
 
       <li class="dropdown">
         <button class="nav-drop-toggle" type="button">
