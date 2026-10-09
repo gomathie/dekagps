@@ -1,18 +1,13 @@
 <script setup>
-import { computed } from 'vue';
-import { useRoute } from 'vue-router';
 import Navbar from './components/Navbar.vue';
 import Footer from './components/Footer.vue';
-
-const route = useRoute();
-const usesStandaloneLayout = computed(() => Boolean(route.meta.standalone));
 </script>
 
 <template>
   <div class="app-container">
-    <Navbar v-if="!usesStandaloneLayout" />
+    <Navbar />
     <router-view />
-    <Footer v-if="!usesStandaloneLayout" />
+    <Footer v-if="!$route.meta.standalone" />
   </div>
 </template>
 

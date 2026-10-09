@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Print support for the guide:** `@media print` rules in `src/style.css` replace the reference's separate print pages with clean black-on-white output (chrome, sidebar and pager hidden, figures and table rows kept off page boundaries).
 
 ### Changed
+- **API navigation:** API pages now use the main OneGPS site navbar, with a compact mobile API-navigation toggle retained for endpoint browsing.
 - **7.10 guide only:** The User Guide now publishes 574 pages from version 7.10, with a static version label. The duplicate legacy API branch is removed because the API reference is now a separate v2/v3 portal. Removed-version URLs redirect to the matching 7.10 page when available or to its overview; future guide imports support only 7.10.
 - **Docs white-label hardening:** The docs importer now unwraps external HTTP(S) links, neutralizes source-vendor hostnames and identifiers in visible docs text, and regenerates the 574-page guide without outbound documentation links.
 - **Navbar and footer:** A *User Guide* entry was added to the existing *Resources* dropdown and *Company* column — no new navigation pattern was introduced.

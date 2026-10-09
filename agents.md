@@ -407,6 +407,13 @@ Copied the reference component structure into API-scoped Vue components, adapted
 **Why:** White-labeling must cover code examples and search indexes as well as ordinary page copy, so users never encounter the previous client hostname.
 **Method:** Added the replacement at the importer layer, regenerated from cached source HTML with no network requests, then ran the docs/API validators and a generated-module token audit.
 
+**Date:** 2026-10-09
+**Agent Action:** Unified API pages with the main site navigation.
+**What was done:** API routes now render the existing OneGPS `Navbar` from the application shell. The duplicate API header was removed, API content is offset below the fixed site navbar, and a small mobile API-navigation toggle keeps the endpoint sidebar accessible.
+**Files changed:** `src/App.vue`, `src/views/ApiDocs.vue`, `CHANGELOG.md`, `agents.md`.
+**Why:** The API reference should feel like part of the OneGPS website and provide the same primary navigation as every other page.
+**Method:** Reused the existing shell navbar, preserved the API sidebar and overlay behavior, and added responsive spacing/control only where the API layout needs it.
+
 ## Standing Instructions for ALL Future Agents
 
 > **READ THIS BEFORE MAKING ANY CHANGES.**

@@ -1,8 +1,7 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { ArrowUp } from '@lucide/vue'
-import ApiNavbar from '../components/api/ApiNavbar.vue'
+import { ArrowUp, Menu } from '@lucide/vue'
 import ApiSidebar from '../components/api/ApiSidebar.vue'
 import ApiContent from '../components/api/ApiContent.vue'
 import endpointsV2 from '../api/data/v2.json'
@@ -65,7 +64,16 @@ onBeforeUnmount(() => window.removeEventListener('scroll', updateScrollState))
 
 <template>
   <div class="api-docs">
-    <ApiNavbar :current-version="currentVersion" @toggle-sidebar="sidebarOpen = !sidebarOpen" />
+    <button
+      type="button"
+      class="api-mobile-nav-toggle"
+      :aria-expanded="sidebarOpen"
+      aria-controls="api-sidebar"
+      @click="sidebarOpen = !sidebarOpen"
+    >
+      <Menu :size="18" />
+      <span>API navigation</span>
+    </button>
 
     <button
       v-if="sidebarOpen"
@@ -76,6 +84,7 @@ onBeforeUnmount(() => window.removeEventListener('scroll', updateScrollState))
     ></button>
 
     <ApiSidebar
+      id="api-sidebar"
       :endpoints="currentEndpoints"
       :active-endpoint="activeEndpoint"
       :is-open="sidebarOpen"
@@ -119,6 +128,7 @@ onBeforeUnmount(() => window.removeEventListener('scroll', updateScrollState))
   max-width: 100vw;
   overflow-x: hidden;
   position: relative;
+  padding-top: var(--nav-height);
   background: #00172d;
   color: var(--text-color);
 }
@@ -139,6 +149,10 @@ onBeforeUnmount(() => window.removeEventListener('scroll', updateScrollState))
   border: 0;
   background: rgba(0, 8, 18, 0.68);
   backdrop-filter: blur(4px);
+}
+
+.api-mobile-nav-toggle {
+  display: none;
 }
 
 .api-back-to-top {
@@ -177,6 +191,30 @@ onBeforeUnmount(() => window.removeEventListener('scroll', updateScrollState))
 }
 
 @media (max-width: 768px) {
+  .api-mobile-nav-toggle {
+    position: fixed;
+    top: 64px;
+    left: 0;
+    right: 0;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 42px;
+    padding: 0 18px;
+    border: 0;
+    border-bottom: 1px solid var(--border-color);
+    background: rgba(0, 23, 45, 0.96);
+    color: var(--text-color);
+    font: inherit;
+    font-weight: 600;
+    text-transform: capitalize;
+  }
+
+  .api-docs {
+    --nav-height: 106px;
+  }
+
   .api-overlay {
     display: block;
   }
